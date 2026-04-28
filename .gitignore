@@ -1,0 +1,58 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 依赖
+vendor/
+node_modules/
+__pycache__/
+*.pyc
+
+# 构建产物
+bin/
+dist/
+build/
+*.exe
+*.dll
+*.so
+
+# 测试
+coverage/
+*.test
+
+# 环境配置
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# 密钥
+*.key
+*.pem
+*.p12
+*.crt
+*.der
+*secret*
+*private*
+*credential*
+*token*
+
+# 日志
+*.log
+logs/
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 项目特定
+.claude/settings.local.json
