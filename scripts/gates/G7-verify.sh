@@ -5,20 +5,35 @@
 set -e
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$PROJECT_ROOT/scripts/lib/project-config.sh"
 ERRORS=0
 
 echo "[G7] 安全检查..."
 
-# 检查gosec安装
-if ! command -v gosec &>/dev/null; then
-    echo "[G7] ⚠️ gosec 未安装，跳过详细检查"
-    echo "[HINT] 安装: go install github.com/securego/gosec/v2/cmd/gosec@latest"
+STACK="$(detect_stack)"
+
+if [ "$STACK" = "none" ]; then
+    echo "[G7] ℹ️ 未检测到已配置技术栈，security 门控不适用"
     exit 0
 fi
 
-# 运行gosec
-cd "$PROJECT_ROOT"
-GOSEC_OUTPUT=$(gosec -fmt json ./... 2>/dev/null || true)
+if ! stack_exists "$STACK"; then
+    echo "[G7] ❌ 未知技术栈: $STACK"
+    exit 1
+fi
+
+COMMAND="$(gate_command "$STACK" security)"
+if ! run_gate_command "$STACK" security "$COMMAND" G7; then
+    echo "[G7] ❌ security 命令失败"
+    exit 1
+fi
+
+if [ "$STACK" != "go" ]; then
+    echo "[G7] ✅ security 命令通过"
+    exit 0
+fi
+
+GOSEC_OUTPUT="$(cat "$PROJECT_ROOT/.agent/logs/gosec.json")"
 
 # 统计问题
 HIGH=$(echo "$GOSEC_OUTPUT" | jq '[.Issues[] | select(.severity=="HIGH")] | length' 2>/dev/null || echo "0")

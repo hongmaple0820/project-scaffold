@@ -88,7 +88,7 @@
       "Write(*.pem)",
       "Write(*.p12)",
       "Write(*.crt)",
-      "Write(*.der)
+      "Write(*.der)",
       "Write(*private*)",
       "Write(*secret*)",
       "Write(*credential*)",
@@ -170,7 +170,7 @@
     "Stop": [
       {
         "matcher": "",
-        "command": "bash scripts/gates/all.sh 2>&1 || echo \"[STOP] 门控未完全通过，请修复后提交\"",
+        "command": "bash scripts/gates/all.sh 2>&1 || { echo \"[STOP] 门控未完全通过，不可声称完成\"; exit 1; }",
         "timeout": 120000,
         "description": "会话结束运行门控"
       }

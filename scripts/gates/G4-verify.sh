@@ -5,21 +5,32 @@
 set -e
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$PROJECT_ROOT/scripts/lib/project-config.sh"
 LINT_OUTPUT="$PROJECT_ROOT/.agent/logs/lint.json"
 
 echo "[G4] Lint验证..."
 
-# 检查lint输出文件
-if [ ! -f "$LINT_OUTPUT" ]; then
-    echo "[G4] ⚠️ 缺少lint输出，运行: make lint"
-    # 尝试运行
-    cd "$PROJECT_ROOT"
-    if command -v golangci-lint &>/dev/null; then
-        golangci-lint run --out-format=json > "$LINT_OUTPUT" 2>&1 || true
-    else
-        echo "[G4] ❌ golangci-lint 未安装"
-        exit 1
-    fi
+STACK="$(detect_stack)"
+
+if [ "$STACK" = "none" ]; then
+    echo "[G4] ℹ️ 未检测到已配置技术栈，lint 门控不适用"
+    exit 0
+fi
+
+if ! stack_exists "$STACK"; then
+    echo "[G4] ❌ 未知技术栈: $STACK"
+    exit 1
+fi
+
+COMMAND="$(gate_command "$STACK" lint)"
+if ! run_gate_command "$STACK" lint "$COMMAND" G4; then
+    echo "[G4] ❌ lint 命令失败"
+    exit 1
+fi
+
+if [ "$STACK" != "go" ]; then
+    echo "[G4] ✅ lint 命令通过"
+    exit 0
 fi
 
 # 解析lint结果

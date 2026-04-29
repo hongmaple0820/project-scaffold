@@ -5,17 +5,36 @@
 set -e
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$PROJECT_ROOT/scripts/lib/project-config.sh"
 ERRORS=0
+CHECKED=0
 
 echo "[G3] TDD合规验证..."
 
-# 查找所有测试文件
-find "$PROJECT_ROOT" -name "*_test.go" -type f | while read test_file; do
-    # 获取对应的实现文件
-    impl_file="${test_file%_test.go}.go"
+STACK="$(detect_stack)"
 
-    if [ ! -f "$impl_file" ]; then
-        echo "[G3] ⚠️ 测试文件无对应实现: $test_file"
+if [ "$STACK" = "none" ]; then
+    echo "[G3] ℹ️ 未检测到已配置技术栈，TDD 门控不适用"
+    exit 0
+fi
+
+if ! stack_exists "$STACK"; then
+    echo "[G3] ❌ 未知技术栈: $STACK"
+    exit 1
+fi
+
+if [ "$STACK" != "go" ]; then
+    echo "[G3] ℹ️ $STACK 技术栈未配置文件级 TDD 检查，TDD 门控不适用"
+    exit 0
+fi
+
+while IFS= read -r impl_file; do
+    CHECKED=$((CHECKED+1))
+    test_file="${impl_file%.go}_test.go"
+
+    if [ ! -f "$test_file" ]; then
+        echo "[G3] ❌ 实现文件缺少对应测试: $impl_file"
+        ERRORS=$((ERRORS+1))
         continue
     fi
 
@@ -35,7 +54,12 @@ find "$PROJECT_ROOT" -name "*_test.go" -type f | while read test_file; do
             ERRORS=$((ERRORS+1))
         fi
     fi
-done
+done < <(find "$PROJECT_ROOT" -name "*.go" -not -name "*_test.go" -not -path "*/vendor/*" -type f)
+
+if [ "$CHECKED" -eq 0 ]; then
+    echo "[G3] ℹ️ 未检测到 Go 实现文件"
+    exit 0
+fi
 
 if [ $ERRORS -eq 0 ]; then
     echo "[G3] ✅ TDD合规"

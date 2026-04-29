@@ -1,5 +1,5 @@
 # Makefile - 通用项目脚手架
-.PHONY: help dev build test lint fmt gate plan checkpoint resume install-tools validate
+.PHONY: help dev build test lint fmt gate plan checkpoint resume install-tools validate test-scaffold
 
 # 默认目标
 .DEFAULT_GOAL := help
@@ -39,6 +39,7 @@ help:
 	@echo "$(GREEN)质量门控:$(NC)"
 	@echo "  make gate         运行所有门控"
 	@echo "  make validate     验证配置"
+	@echo "  make test-scaffold 脚手架自测"
 	@echo ""
 	@echo "$(GREEN)项目管理:$(NC)"
 	@echo "  make plan NAME=x  创建新计划"
@@ -117,6 +118,11 @@ resume:
 validate:
 	@echo "$(BLUE)[MAKE] 验证配置...$(NC)"
 	@bash scripts/validate-config.sh
+
+## test-scaffold: 运行脚手架自测
+test-scaffold:
+	@echo "$(BLUE)[MAKE] 运行脚手架自测...$(NC)"
+	@bash scripts/tests/run.sh
 
 ## preflight: 环境预检
 preflight:

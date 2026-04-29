@@ -18,6 +18,7 @@ REQUIRED_FILES=(
     "CLAUDE.md"
     "README.md"
     "Makefile"
+    ".agent/project.json"
     ".claude/settings.json"
     ".claude/workflow.json"
 )
@@ -58,18 +59,30 @@ echo ""
 # 检查JSON有效性
 echo "[CHECK] JSON文件..."
 if command -v jq &>/dev/null; then
-    for json in "$PROJECT_ROOT/.claude"/*.json; do
+    for json in "$PROJECT_ROOT/.claude"/*.json "$PROJECT_ROOT/.agent"/*.json; do
         if [ -f "$json" ]; then
             if jq empty "$json" 2>/dev/null; then
-                echo "[OK] $(basename $json)"
+                echo "[OK] ${json#$PROJECT_ROOT/}"
             else
-                echo "[ERROR] 无效JSON: $(basename $json)"
+                echo "[ERROR] 无效JSON: ${json#$PROJECT_ROOT/}"
                 ERRORS=$((ERRORS+1))
             fi
         fi
     done
 else
     echo "[SKIP] jq未安装，跳过JSON验证"
+fi
+echo ""
+
+# 检查换行格式
+echo "[CHECK] Shell脚本换行..."
+CRLF_FILES=$(find "$PROJECT_ROOT" -path "$PROJECT_ROOT/.git" -prune -o -name "*.sh" -type f -print0 | xargs -0 grep -Il $'\r' 2>/dev/null || true)
+if [ -n "$CRLF_FILES" ]; then
+    echo "[ERROR] Shell脚本包含CRLF换行:"
+    echo "$CRLF_FILES"
+    ERRORS=$((ERRORS+1))
+else
+    echo "[OK] Shell脚本均为LF换行"
 fi
 echo ""
 

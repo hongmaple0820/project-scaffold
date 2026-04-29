@@ -5,15 +5,32 @@
 set -e
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$PROJECT_ROOT/scripts/lib/project-config.sh"
 TEST_OUTPUT="$PROJECT_ROOT/.agent/logs/test.json"
 
 echo "[G5] 测试验证..."
 
-# 检查测试输出
-if [ ! -f "$TEST_OUTPUT" ]; then
-    echo "[G5] ⚠️ 缺少测试输出，运行: make test"
-    cd "$PROJECT_ROOT"
-    go test ./... -race -json > "$TEST_OUTPUT" 2>&1 || true
+STACK="$(detect_stack)"
+
+if [ "$STACK" = "none" ]; then
+    echo "[G5] ℹ️ 未检测到已配置技术栈，test 门控不适用"
+    exit 0
+fi
+
+if ! stack_exists "$STACK"; then
+    echo "[G5] ❌ 未知技术栈: $STACK"
+    exit 1
+fi
+
+COMMAND="$(gate_command "$STACK" test)"
+if ! run_gate_command "$STACK" test "$COMMAND" G5; then
+    echo "[G5] ❌ test 命令失败"
+    exit 1
+fi
+
+if [ "$STACK" != "go" ]; then
+    echo "[G5] ✅ test 命令通过"
+    exit 0
 fi
 
 # 解析测试结果

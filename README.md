@@ -16,6 +16,9 @@ make preflight
 
 # 或直接使用
 bash scripts/preflight/all.sh
+
+# 验证脚手架自身约束
+make test-scaffold
 ```
 
 预检内容:
@@ -38,6 +41,19 @@ make graphify
 # 查询依赖
 graphify query "模块依赖关系"
 ```
+
+### 技术栈适配
+
+脚手架通过 `.agent/project.json` 声明或自动检测技术栈，并为 G4-G7 读取对应的 lint、test、coverage、security 命令。
+
+```json
+{
+  "stack": "auto",
+  "coverage_threshold": 80
+}
+```
+
+支持默认适配：Go、Node、Python。生成真实项目后，应把 `.agent/project.json` 中的命令替换为项目实际命令。
 
 ### 3. 创建第一个功能
 
@@ -386,5 +402,6 @@ MIT
 ---
 
 **配置验证**: `make validate`  
+**脚手架自测**: `make test-scaffold`
 **快速开始**: `make preflight && make graphify`  
 **状态查看**: `cat .agent/state/current.json`

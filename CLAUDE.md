@@ -104,6 +104,32 @@ resume:
 
 ---
 
+## 3.1 技术栈适配配置
+
+门控 G4-G7 从 `.agent/project.json` 读取技术栈和命令，不应在脚本中硬编码项目命令。
+
+```json
+{
+  "stack": "auto",
+  "coverage_threshold": 80,
+  "stacks": {
+    "go": {
+      "detect": ["go.mod"],
+      "commands": {
+        "lint": "golangci-lint run --out-format=json > .agent/logs/lint.json",
+        "test": "go test ./... -race -json > .agent/logs/test.json",
+        "coverage": "go test -coverprofile=.agent/logs/coverage.out ./...",
+        "security": "gosec -fmt json -out .agent/logs/gosec.json ./... >/dev/null"
+      }
+    }
+  }
+}
+```
+
+生成真实项目后，Agent 必须先检查 `.agent/project.json` 是否匹配当前技术栈；不匹配时先修配置，再运行门控。
+
+---
+
 ## 4. 技能清单（命令+验证+版本）
 
 ### 4.1 必需技能
@@ -418,7 +444,49 @@ graphify:
 
 ---
 
-## 12. 快速启动检查清单
+## 12. Agent 诚实交付协议
+
+Agent 在最终回复中必须明确区分事实、推断和未验证项，禁止把未执行的检查描述为已完成。
+
+### 12.1 反幻觉规则
+
+- 不确定的事实必须标注 `[UNCERTAIN]`，并说明需要哪个工具或来源验证。
+- 外部版本、API、依赖行为、线上状态必须通过工具确认；无法确认时不得给确定结论。
+- 引用项目事实时必须来自已读取文件、命令输出或测试结果。
+- 不得编造文件、函数、配置、测试结果、命令输出。
+
+### 12.2 反懒惰规则
+
+- 修改代码前必须先定位相关文件和现有约定。
+- 声称完成前必须运行与变更相关的最小验证命令。
+- 验证失败不得降级为“建议用户自行验证”，除非明确说明失败原因和剩余风险。
+- 连续两次同类失败后必须重新探索上下文，而不是继续猜测修补。
+
+### 12.3 交付格式
+
+最终回复必须包含以下信息：
+
+```markdown
+**完成内容**
+- ...
+
+**验证结果**
+- `命令`: 结果
+
+**未验证项**
+- 无，或说明原因与风险
+```
+
+### 12.4 禁止表述
+
+- 未运行测试时禁止说“测试通过”。
+- 门控失败时禁止说“已完成”。
+- 工具缺失导致跳过时禁止说“检查通过”。
+- 只修改文档时禁止暗示代码行为已验证。
+
+---
+
+## 13. 快速启动检查清单
 
 首次使用本项目时，Agent 必须执行：
 
@@ -432,10 +500,13 @@ graphify .
 # 3. 检查门控系统
 bash scripts/gates/all.sh --dry-run
 
-# 4. 验证状态管理
+# 4. 运行脚手架自测
+bash scripts/tests/run.sh
+
+# 5. 验证状态管理
 touch .agent/state/test.json && rm .agent/state/test.json
 
-# 5. 确认技能安装
+# 6. 确认技能安装
 command -v graphify >/dev/null && echo "✅ graphify 已安装"
 test -f ~/.claude/skills/superpowers/installed.flag && echo "✅ superpowers 已安装"
 ```

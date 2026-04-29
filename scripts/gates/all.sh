@@ -20,6 +20,7 @@ echo ""
 PASSED=0
 FAILED=0
 SKIPPED=0
+STATE_FILE="$PROJECT_ROOT/.agent/state/current.json"
 
 # 门控列表（按顺序）
 GATES=("G1" "G2" "G3" "G4" "G5" "G6" "G7")
@@ -40,10 +41,18 @@ for GATE in "${GATES[@]}"; do
             echo "[$GATE] ✅ 通过"
             PASSED=$((PASSED+1))
 
-            # 更新状态
             mkdir -p "$PROJECT_ROOT/.agent/state"
-            jq --arg gate "$GATE" '.gates[$gate] = "passed"' "$PROJECT_ROOT/.agent/state/current.json" 2>/dev/null || \
-                echo "{\"gates\": {\"$GATE\": \"passed\"}}" > "$PROJECT_ROOT/.agent/state/current.json"
+            if command -v jq >/dev/null 2>&1; then
+                if [ ! -s "$STATE_FILE" ]; then
+                    echo '{"gates":{}}' > "$STATE_FILE"
+                fi
+                tmp_file="${STATE_FILE}.tmp"
+                jq --arg gate "$GATE" --arg ts "$(date -Iseconds)" \
+                    '.gates[$gate] = {"status":"passed","verified_at":$ts}' \
+                    "$STATE_FILE" > "$tmp_file" && mv "$tmp_file" "$STATE_FILE"
+            else
+                echo "{\"gates\": {\"$GATE\": {\"status\": \"passed\"}}}" > "$STATE_FILE"
+            fi
         else
             echo "[$GATE] ❌ 失败"
             FAILED=$((FAILED+1))
@@ -59,8 +68,14 @@ echo "========================================"
 echo "[GATES] 结果: $PASSED 通过, $FAILED 失败, $SKIPPED 跳过"
 echo "========================================"
 
-if [ $FAILED -eq 0 ]; then
+if [ "$DRY_RUN" == "true" ]; then
+    echo "[GATES] ℹ️ 干运行完成，未执行实际门控"
+    exit 0
+elif [ $FAILED -eq 0 ] && [ $SKIPPED -eq 0 ]; then
     echo "[GATES] ✅ 所有门控通过"
+    exit 0
+elif [ $FAILED -eq 0 ]; then
+    echo "[GATES] ⚠️ 无失败门控，但存在跳过项，不能声称全部通过"
     exit 0
 else
     echo "[GATES] ❌ 有门控未通过"

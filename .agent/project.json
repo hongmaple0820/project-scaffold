@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "stack": "auto",
+  "coverage_threshold": 80,
+  "stacks": {
+    "go": {
+      "detect": ["go.mod"],
+      "implementation_glob": "*.go",
+      "test_suffix": "_test.go",
+      "exclude_dirs": ["vendor", ".git", ".agent"],
+      "commands": {
+        "lint": "golangci-lint run --out-format=json > .agent/logs/lint.json",
+        "test": "go test ./... -race -json > .agent/logs/test.json",
+        "coverage": "go test -coverprofile=.agent/logs/coverage.out ./...",
+        "security": "gosec -fmt json -out .agent/logs/gosec.json ./... >/dev/null"
+      },
+      "required_tools": {
+        "lint": ["golangci-lint"],
+        "test": ["go"],
+        "coverage": ["go"],
+        "security": ["gosec", "jq"]
+      }
+    },
+    "node": {
+      "detect": ["package.json"],
+      "commands": {
+        "lint": "npm run lint",
+        "test": "npm test",
+        "coverage": "npm run coverage",
+        "security": "npm audit --audit-level=high"
+      },
+      "required_tools": {
+        "lint": ["npm"],
+        "test": ["npm"],
+        "coverage": ["npm"],
+        "security": ["npm"]
+      }
+    },
+    "python": {
+      "detect": ["pyproject.toml", "requirements.txt", "setup.py"],
+      "commands": {
+        "lint": "ruff check .",
+        "test": "pytest",
+        "coverage": "pytest --cov=. --cov-fail-under=80",
+        "security": "bandit -r ."
+      },
+      "required_tools": {
+        "lint": ["ruff"],
+        "test": ["pytest"],
+        "coverage": ["pytest"],
+        "security": ["bandit"]
+      }
+    }
+  }
+}
