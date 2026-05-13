@@ -1,0 +1,12 @@
+# 认知工作流状态文件示例
+# 实际运行时由 Claude 输出阶段标记时自动写入
+# 文件位置: .claude/session/.flow-state
+
+SKILL_SCAN=✓
+EXPLORE=✓
+PLAN=✓
+EXECUTE=⏳
+VERIFY=
+SETTLE=
+POLLUTION=
+LAZY=

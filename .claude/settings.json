@@ -133,7 +133,44 @@
     }
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "command": "bash .claude/hooks/session-start-reminder.sh",
+        "description": "认知工作流提醒（脚手架项目）",
+        "timeout": 5000
+      }
+    ],
     "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "bash .claude/hooks/gate-skill-scan.sh",
+        "description": "G1: 技能扫描门控",
+        "timeout": 3000
+      },
+      {
+        "matcher": "Write|Edit",
+        "command": "bash .claude/hooks/gate-execute-phase.sh",
+        "description": "G2: 执行阶段门控（检测代码文件）",
+        "timeout": 3000
+      },
+      {
+        "matcher": "",
+        "command": "bash .claude/hooks/gate-lazy-pre.sh",
+        "description": "G3: 懒惰模式阻断（暴力重试检测）",
+        "timeout": 3000
+      },
+      {
+        "matcher": "Write",
+        "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const i=JSON.parse(d);const c=i.tool_input?.content||'';const lines=c.split('\\n').length;if(lines>800){console.error('[BLOCKED] File exceeds 800 lines ('+lines+')');console.error('[ACTION] Split into smaller modules (SRP)');process.exit(2)}else{console.log('[PASS] '+lines+' lines')}process.stdout.write(d)}catch(e){process.stdout.write(d)}}\")",
+        "description": "Block oversized writes >800 lines",
+        "timeout": 5000
+      },
+      {
+        "matcher": "Write",
+        "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const i=JSON.parse(d);const p=i.tool_input?.file_path||'';if(p.match(/\\.env|secret|credential|password|\\.key|token/i)){console.error('[BLOCKED] Sensitive file: '+p);console.error('[ACTION] Use environment variables instead');process.exit(2)}process.stdout.write(d)}catch(e){process.stdout.write(d)}}\")",
+        "description": "Block sensitive file writes (R3 零硬编码密钥)",
+        "timeout": 5000
+      },
       {
         "matcher": "Write|Edit",
         "command": "bash scripts/hooks/check-dangerous-file.sh",
@@ -155,6 +192,18 @@
     ],
     "PostToolUse": [
       {
+        "matcher": "",
+        "command": "bash .claude/hooks/detect-lazy-post.sh",
+        "description": "G4: 懒惰模式检测（后置）",
+        "timeout": 3000
+      },
+      {
+        "matcher": "Write|Edit|Bash",
+        "command": "bash .claude/hooks/detect-context-pollution.sh",
+        "description": "G5: 上下文污染检测",
+        "timeout": 3000
+      },
+      {
         "matcher": "Write|Edit *.go",
         "command": "gofmt -w \"${CLAUDE_FILE_PATH}\" 2>/dev/null || true",
         "timeout": 3000,
@@ -169,10 +218,15 @@
     ],
     "Stop": [
       {
+        "command": "bash .claude/hooks/session-end-gate.sh",
+        "description": "G6: 会话结束门控（验证+污染检查）",
+        "timeout": 10000
+      },
+      {
         "matcher": "",
         "command": "bash scripts/gates/all.sh 2>&1 || { echo \"[STOP] 门控未完全通过，不可声称完成\"; exit 1; }",
         "timeout": 120000,
-        "description": "会话结束运行门控"
+        "description": "会话结束运行项目门控"
       }
     ]
   },
