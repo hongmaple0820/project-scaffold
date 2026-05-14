@@ -1,245 +1,147 @@
 # AGENTS.md
 
-## Agent 操作规则
+本文件定义 Agent 在项目脚手架中工作的规则。它面向所有由本脚手架派生出的项目，因此只写通用治理规则，不绑定具体语言或业务框架。
 
-本仓库是 Agent-First 工程化脚手架。任何 agent 在本仓库工作时必须遵守以下规则。
+## 工作哲学
 
----
+你是工程协作者，不是待命助手。默认把任务做成一个可评审、可验证、可继续维护的交付单元。
 
-## §0 核心元认知（不可逾越）
+| 情况 | 行动 |
+| --- | --- |
+| 可逆实现细节 | 直接判断并实现，做错再改 |
+| 任务链路中的必要后续 | 继续做完，不把“下一步要不要做”抛给用户 |
+| 风格或命名选择 | 先读现有文件，按项目既有模式处理 |
+| 真歧义或不可逆风险 | 停下来问清楚，并说明不能安全前进的原因 |
+| DB/权限/生产配置/破坏性操作 | 升级为 CRITICAL，必须人工确认并给出回滚路径 |
 
-### 0.1 认知诚实
-- 不确定时，输出 `[UNCERTAIN]` 并说明缺失什么
-- 未实际运行验证，绝不允许输出"通过"
-- 不编造未在代码中定义的调用关系
+最终回复采用工程交付口径：说明做了什么、为什么这样做、权衡了什么、验证了什么、还有什么风险。过程汇报要克制，只在阶段切换、长时间执行、风险暴露、阻塞或需要人工确认时同步。
 
-### 0.2 显性推理
-在采取任何非平凡动作前，在 `<think reasoning="effort">` 中展示：
-- 影响面分析
-- 抓主要矛盾
-- 权衡方案
-- 前置异常思考
+沟通全程中文，短句优先。优先用列表、表格、代码块和图表达复杂信息。可以少量使用状态符号，但不能用符号代替证据。
 
-### 0.3 Owner 意识
-- 做A + 检查B同类问题 + 确保不影响C
-- 一个bug进来，一类问题出去
-- 做超出用户要求的有价值工作时，标记 `[OWNER 🔥]`
+## 判断优先级
 
-### 0.4 反惰性警觉（强制）
+1. 完成标准、红线、安全和可回滚性。
+2. 当前项目已有风格、接口契约和目录边界。
+3. 用户明确、无歧义的目标和限制。
+4. 局部实现偏好和表达风格。
 
-**5 大懒惰模式——必须时刻自检**：
+如果必须取舍，先选择技术上正确且可验证的方案，并在交付说明里写清原因。
 
-| 模式 | 表现 | 反制 |
-|------|------|------|
-| 🔄 暴力重试 | 连续 3 次同命令失败 | Hook 阻断 + 必须换策略 |
-| 🤷 甩锅用户 | "建议手动"/"环境问题"/"需要更多信息" | 输出 `[SHOVELING]` → Hook 阻断 |
-| 🛌 工具闲置 | 有工具不调用 | 穷尽工具后才能放弃 |
-| 🎭 忙碌假象 | 修改同一行无新信息 | Hook 阻断 + 停下来换思路 |
-| 😴 被动等待 | 修完就停不泛化 | Stop Hook 阻断 + 必须泛化检查 |
-
-**甩锅前必须验证**：
-- 声称"环境问题" → 必须有环境验证证据
-- 声称"需要更多信息" → 必须先穷尽已有信息源
-- 未验证的归因 = 甩锅 → Hook 阻断
-
-### 0.5 技能优先意识
-
-**1% 规则**：如果某个已安装的技能有 1% 的可能与当前任务相关，必须调用它。
-
----
-
-## §1 任务分级
+## 任务分级
 
 | 级别 | 场景 | 行动 |
-|------|------|------|
-| **S级** | 改typo/加日志/≤30行 | 直接输出代码 |
-| **M级** | 新API/修Bug/30-200行 | 执行认知工作流 |
-| **L级** | 跨模块/架构/≥200行 | 工作流+人工确认点 |
+| --- | --- | --- |
+| S | typo、注释、日志、少量文档，通常不超过 30 行 | 直接做，运行最小验证 |
+| M | 小功能、Bug 修复、文档/脚本优化，约 30-200 行 | 走工作流：探索、规划、执行、验证、沉淀 |
+| L | 跨模块、架构、模板体系、超过 200 行 | 完整工作流，计划完成后人工确认 |
+| CRITICAL | 数据、权限、安全、生产配置、破坏性操作 | 人工确认、回滚方案、安全检查 |
 
----
+## Git 维护策略
 
-## §2 质量门控
+- 默认从作者 feature 分支开发，分支格式为 `<type>/<author>-<scope>-<task>-<MMDD>`。
+- 示例：`feature/maple-platform-tool-user-tool-release-0515`、`feature/maple-lms-kercheng-0514`。
+- `dev` 是开发集成分支，只有验证没有阻断问题后才允许推送或合并。
+- `master` / `main` 是受保护主干，Agent 不得自主提交、合并、打 tag、推送或重置。
+- 推送远程 `dev` 前必须先运行相关验证，并确认当前提交包含最新 `origin/dev`。
 
-| 门控 | 触发条件 | 验证方式 |
-|------|----------|----------|
-| **G1 技能扫描** | 会话开始 | 必须输出 `[SKILL SCAN]` |
-| **G2 探索完成** | Read ≥3 文件 | 必须输出 `[EXPLORE]` |
-| **G3 规划完成** | L级任务 | 必须输出 `[PLAN]` + 人工确认 |
-| **G4 TDD合规** | M/L级 | 测试文件先于实现文件 |
-| **G5 代码规范** | 任何修改 | `make lint` |
-| **G6 功能正确** | 任何修改 | `make test` + `make coverage` |
-| **G7 安全检查** | 涉及敏感代码 | 无硬编码密钥、无 SQL 拼接 |
+详见 [Git 工作流规范](docs/standards/common/GIT_STANDARDS.md)。
 
----
+## 标准工作流
 
-## §3 认知工作流（M/L级必须）
-
-### 3.1 强制机制
-
-**门控节点**：
-
-| 节点 | 类型 | 检查内容 | 拦截行为 |
-|------|------|----------|----------|
-| 会话开始 | P1提醒 | 输出技能清单提示 | 软提醒 |
-| Write/Edit 代码前 | **P0硬阻断** | SKILL_SCAN + EXPLORE + PLAN | `exit 2` |
-| 声称完成前 | **P0硬阻断** | VERIFY 标记 | `exit 2` |
-| 会话结束前 | **P0硬阻断** | 5 阶段全完成 + 无污染 | `exit 2` |
-
-### 3.2 输出规范（必须遵守）
-
-每个阶段完成时，输出结构化日志：
-
-```
-[阶段名] ✓ 检查项1 ✓ | 检查项2 ✓ | ...
+```text
+探索 -> 规划 -> 执行 -> 验证 -> 沉淀
 ```
 
-**完整示例**：
-```
-[SKILL SCAN] ✓ brainstorming ✓ | tdd ✓ | verification ✓
-[EXPLORE] ✓ CLAUDE.md ✓ | 图谱 ✓ | 技能 ✓ | 矛盾分析 ✓
-[PLAN] ✓ 影响面: A/B/C ✓ | 契约定义 ✓ | 无L级暂停
-[EXECUTE] ✓ TDD RED ✓ | GREEN ✓ | REFACTOR ✓
-[VERIFY] ✓ Lint ✓ | Test ✓ | Coverage 85% ✓ | Security ✓
-[SETTLE] ✓ 泛化 ✓ | 文档 ✓ | 经验 ✓
+推荐命令：
+
+```bash
+bash scripts/workflow/new-task.sh "task-slug" M
+bash scripts/workflow/explore.sh AGENTS.md CLAUDE.md README.md "主要矛盾"
+bash scripts/gates/all.sh --workflow
 ```
 
-### 3.3 五阶段详细步骤
+任务产物统一放在：
 
-#### Step 1：探索研究 📡
-
-```
-1. 知识锚定 → 读取 CLAUDE.md + README.md
-2. 技能扫描 → 检查 ~/.claude/skills/ + 项目技能配置
-3. 矛盾分析 → 抓主要矛盾
-4. 图谱检查 → graphify-out/GRAPH_REPORT.md（如有）
-5. 历史检查 → 检查相关日志和状态
+```text
+docs/worklog/tasks/<yyyy-mm-dd>-<task-slug>/
 ```
 
-**输出**: `[EXPLORE] ✓ 检查项 ✓ | ...`
+### 阶段要求
 
-#### Step 2：规划决策 📋
+| 阶段 | 必做动作 | 产物/门禁 |
+| --- | --- | --- |
+| 探索 | 读规则、读相关文件、识别主要矛盾 | `.agent/state/explore.json`，G1 |
+| 规划 | 明确范围、边界、验收标准、风险和回滚 | `plan.md`，G2 |
+| 执行 | 小步修改，优先保护既有行为 | 代码/文档/脚本变更，必要时 G3 |
+| 验证 | 实际运行相关命令，完整阅读输出 | G4-G7 或 `scripts/workflow/verify.ps1` |
+| 沉淀 | 更新文档、记录验证和剩余风险 | `summary.md`、`verification.md`、metrics |
 
-```
-1. 需求精炼 → 调用 brainstorming 技能
-2. 影响面推理 → 分析模块依赖
-3. 契约定义 → 功能边界 + 异常契约 + 回滚方案
-4. 工具选型 → 判断是否需要特定技能
-```
+## 质量门禁
 
-**输出**: `[PLAN] ✓ 检查项 ✓ | ...`
+| 门禁 | 目标 | 默认脚本 |
+| --- | --- | --- |
+| G1 | 探索不少于 3 个真实文件，且有主要矛盾 | `bash scripts/gates/G1-verify.sh` |
+| G2 | 计划包含范围/边界和验收标准 | `bash scripts/gates/G2-verify.sh` |
+| G3 | 技术栈支持时检查测试先行或测试覆盖姿态 | `bash scripts/gates/G3-verify.sh` |
+| G4 | 检查脚本语法和 Python helper | `bash scripts/gates/G4-verify.sh` |
+| G5 | 运行脚手架自检入口 | `bash scripts/gates/G5-verify.sh` |
+| G6 | 检查工作流指标文件 | `bash scripts/gates/G6-verify.sh` |
+| G7 | 技术栈支持时运行安全检查 | `bash scripts/gates/G7-verify.sh` |
 
-**⚠️ L级任务必须在此暂停询问："探索完毕，此为执行方案，是否确认？"**
+常用组合：
 
-#### Step 3：执行实施 🔨
-
-```
-1. TDD 闭环 → RED(先写测试) → GREEN(写实现) → REFACTOR
-2. 防御性编码 → 外部调用包裹异常处理
-3. 安全自检 → SQL注入？XSS？硬编码密钥？
-4. 代码规范 → make lint + make fmt
-```
-
-**输出**: `[EXECUTE] ✓ 检查项 ✓ | ...`
-
-#### Step 4：验证测试 ✅
-
-```
-1. 确定验证命令 → make lint / make test / make coverage
-2. 实际运行 → 必须执行
-3. 完整阅读输出 → 不要跳读
-4. 确认结果 → 与预期一致
-5. 声称完成 → 此时才能说完成
+```bash
+bash scripts/gates/all.sh --dry-run
+bash scripts/gates/all.sh --workflow
+bash scripts/gates/all.sh --quality
+bash scripts/gates/all.sh --all
 ```
 
-**输出**: `[VERIFY] ✓ 检查项 ✓ | ...`
+## 技术栈适配
 
-#### Step 5：沉淀优化 📈
+本脚手架通过 `.agent/project.json` 描述技术栈和门禁命令。派生项目时先确认这个文件，不要在门禁脚本里写死语言命令。
 
-```
-1. 泛化检查 → 同模块同类问题？
-2. 文档更新 → 更新 CLAUDE.md / README.md
-3. 经验提取 → 可复用知识写入技能文件
-```
+默认支持：
 
-**输出**: `[SETTLE] ✓ 检查项 ✓ | ...`
+| 技术栈 | 探测文件 | 典型命令 |
+| --- | --- | --- |
+| Go | `go.mod` | `golangci-lint`、`go test`、`gosec` |
+| Node | `package.json` | `npm run lint`、`npm test`、`npm audit` |
+| Python | `pyproject.toml`、`requirements.txt`、`setup.py` | `ruff`、`pytest`、`bandit` |
 
----
+如果目标项目已有高质量命令，优先复用已有命令，不发明第二套。
 
-## §4 绝对红线
+## 红线
 
-| 红线 | 定义 |
-|------|------|
-| **R1 零数据丢失** | Schema 变更必须有回滚 SQL |
-| **R2 零静默失败** | 禁止空 catch，异常必须显式处理 |
-| **R3 零硬编码密钥** | 敏感信息走环境变量 |
-| **R4 零幻觉** | 不确定标 `[UNCERTAIN]`，验证只能工具完成 |
-| **R5 零甩锅** | 归因前必须验证 |
-| **R6 零未审关键操作** | DB/权限/生产变更必须人工确认 |
+| 红线 | 规则 |
+| --- | --- |
+| R1 零数据丢失 | Schema 或迁移变更必须有回滚方案 |
+| R2 零静默失败 | 禁止空错误处理，异常必须显式处理 |
+| R3 零硬编码密钥 | 密钥、token、证书不得写入仓库 |
+| R4 零幻觉 | 不确定标 `[UNCERTAIN]`，验证只能来自工具 |
+| R5 零甩锅 | 归因环境前必须先验证环境 |
+| R6 零未审关键操作 | 数据、权限、生产配置、破坏性操作必须确认 |
 
----
+## 目录导航
 
-## §5 启动检查
+| 路径 | 用途 |
+| --- | --- |
+| `CLAUDE.md` | 面向 Claude Code 的可执行规则摘要 |
+| `README.md` | 脚手架使用说明 |
+| `.agent/project.json` | 技术栈和门禁命令配置 |
+| `docs/workflow/README.md` | 工作流说明 |
+| `docs/standards/` | 通用规范 |
+| `scripts/workflow/` | 新任务、探索、计划、恢复、自检 |
+| `scripts/gates/` | G1-G7 门禁 |
+| `scripts/preflight/` | 环境预检 |
+| `templates/` | 计划和 ADR 模板 |
 
-- 先读取 `CLAUDE.md`、`README.md` 和相关 `docs/standards/` 文件。
-- 修改前先定位现有结构、脚本和约定，不要凭记忆猜测。
-- 如果任务涉及代码行为，先找对应测试或验证命令。
+## 完成定义
 
-### 工具与验证
+只有同时满足以下条件，才能声称完成：
 
-- 优先使用仓库脚本：`bash scripts/validate-config.sh`、`bash scripts/gates/all.sh --dry-run`、`make gate`。
-- 声称完成前必须运行与变更相关的最小验证命令。
-- 如果工具缺失、脚本失败或环境不支持，必须在最终回复中列为"未验证项"。
-- 不得把跳过、不适用或工具缺失描述为"通过"。
-
-### 反幻觉与诚实交付
-
-- 不确定事实必须标注 `[UNCERTAIN]`。
-- 引用项目事实必须来自已读取文件、命令输出或测试结果。
-- 禁止编造文件、配置、命令输出、测试结果、外部依赖行为。
-- 最终回复必须列出完成内容、验证结果、未验证项。
-
-### 文件规范
-
-- Shell 脚本必须使用 LF 换行。
-- JSON 修改后必须能被解析。
-- 不要写入 `.env*`、密钥、证书、token、credential、password、private key 文件，除非用户明确要求且完成风险说明。
-
----
-
-## OVERVIEW
-
-Project scaffold for Agent-First engineering. Contains **机器可执行** CLAUDE.md format, quality gates (G1-G7), state management, and skill integration.
-
-## STRUCTURE
-
-```
-./
-├── .claude/hooks/           # Cognitive workflow enforcement hooks
-├── .claude/session/         # Flow state tracking
-├── scripts/hooks/           # Project-specific hooks (dangerous files, TDD, context)
-├── scripts/gates/           # Quality gates (G1-G7)
-├── scripts/redlines/        # Red line checks (R1-R3)
-├── scripts/preflight/       # Environment preflight checks
-├── scripts/checkpoint/      # State save/resume
-├── graphify-out/            # Knowledge graph output (optional)
-├── .agent/state/            # Project state management
-├── docs/standards/          # Standards documentation
-├── docs/skills/             # Skill manuals
-└── templates/               # Project templates
-```
-
-## WHERE TO LOOK
-
-| Task | Location | Notes |
-|------|----------|-------|
-| Quality gates | `scripts/gates/*.sh` | G1-G7 verification scripts |
-| Red line checks | `scripts/redlines/*.sh` | R1-R3 machine-checkable |
-| Hooks config | `.claude/settings.json` | PreToolUse/PostToolUse/Stop |
-| Flow state | `.claude/session/.flow-state` | Cognitive workflow tracking |
-| Commands | `Makefile` | dev/build/test/lint/gate/graphify |
-
-## CONVENTIONS
-
-- **Hooks**: LF line endings, exit 0=pass, exit 2=block
-- **Gates**: All gates must pass before claiming completion
-- **State**: `.flow-state` tracks SKILL_SCAN/EXPLORE/PLAN/EXECUTE/VERIFY/SETTLE
+- 改动范围和用户目标一致。
+- 相关验证命令已实际运行，失败项已说明。
+- 没有把工具缺失、跳过或不适用说成“通过”。
+- 未引入密钥、临时文件、无关重构或未说明的破坏性操作。
+- 最终回复列出完成内容、验证结果和剩余风险。

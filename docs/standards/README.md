@@ -1,83 +1,58 @@
 # 规范体系
 
-**定位**: 项目的"法律"，定义必须遵守的约定
+本目录是脚手架的规范入口。规范只写跨项目可复用的工程约束；业务项目的差异写入 `docs/standards/projects/`。
 
----
+## 分层
 
-## 规范分层
-
-```
-standards/
-├── common/         # 通用规范（所有项目复用）
+```text
+docs/standards/
+├── README.md
+├── common/
 │   ├── NAMING.md
 │   ├── API_STANDARDS.md
 │   ├── DATABASE_STANDARDS.md
 │   ├── GIT_STANDARDS.md
 │   ├── TEAM_COLLABORATION.md
 │   └── DOCUMENT_STANDARDS.md
-└── projects/       # 项目特定规范
-    └── <project-name>/
-        └── PROJECT_SPEC.md
+└── projects/
+    └── PROJECT_SPEC.md
 ```
 
----
+## 使用顺序
 
-## 快速导航
+1. 先读根目录 `AGENTS.md` 和 `CLAUDE.md`，确认任务等级、红线和门禁。
+2. 再读本目录的通用规范。
+3. 最后读目标项目的 `projects/<name>/PROJECT_SPEC.md` 或当前 `projects/PROJECT_SPEC.md`。
+4. 若项目约定和通用规范冲突，记录原因、影响和退出条件。
 
-### 第一层：强制规范
+## 通用规范
 
-在 [CLAUDE.md](../CLAUDE.md) 中定义：
-- 六条绝对红线
-- 任务分级标准
-- 门控要求
-
-### 第二层：通用规范
-
-| 规范 | 说明 | 查看 |
-|------|------|------|
-| **命名规范** | 代码、数据库、Git 命名约定 | [common/NAMING.md](common/NAMING.md) |
-| **API规范** | RESTful API 设计、错误码、响应格式 | [common/API_STANDARDS.md](common/API_STANDARDS.md) |
-| **数据库规范** | 表设计、索引、查询、迁移 | [common/DATABASE_STANDARDS.md](common/DATABASE_STANDARDS.md) |
-| **Git规范** | 分支模型、提交信息、PR流程 | [common/GIT_STANDARDS.md](common/GIT_STANDARDS.md) |
-| **协作规范** | 角色职责、沟通渠道、会议 | [common/TEAM_COLLABORATION.md](common/TEAM_COLLABORATION.md) |
-| **文档规范** | 文档编写、维护、评审 | [common/DOCUMENT_STANDARDS.md](common/DOCUMENT_STANDARDS.md) |
-
-### 第三层：项目特定
-
-- [projects/](projects/) - 当前项目的特定约定
-
----
+| 规范 | 说明 |
+| --- | --- |
+| [命名规范](common/NAMING.md) | 代码、数据库、Git 命名约定 |
+| [API 规范](common/API_STANDARDS.md) | REST API、错误码、响应格式 |
+| [数据库规范](common/DATABASE_STANDARDS.md) | 表设计、索引、查询、迁移 |
+| [Git 规范](common/GIT_STANDARDS.md) | 作者分支、dev 推送、master/main 保护、提交和发布流程 |
+| [协作规范](common/TEAM_COLLABORATION.md) | 角色职责、沟通、评审 |
+| [文档规范](common/DOCUMENT_STANDARDS.md) | 文档结构、更新、评审 |
 
 ## 规范级别
 
-| 级别 | 说明 | 违反后果 |
-|------|------|----------|
-| **MUST** | 必须遵守 | 阻断提交 |
-| **SHOULD** | 默认遵守 | PR评论 |
-| **MAY** | 可选 | 建议 |
-
----
-
-## 规范变更流程
-
-```
-提案 → 评审 → 影响评估 → 更新 → 通知
-```
-
-1. **提案**: 提交变更说明
-2. **评审**: 架构组/技术负责人评审
-3. **影响评估**: 哪些项目受影响
-4. **更新**: 修改文档并记录变更历史
-5. **通知**: 同步团队
-
----
+| 级别 | 含义 | 处理方式 |
+| --- | --- | --- |
+| MUST | 必须遵守 | 不满足则阻断 |
+| SHOULD | 默认遵守 | 偏离必须说明理由 |
+| MAY | 可选 | 按项目需要采用 |
 
 ## 新项目接入
 
-1. 直接使用 `common/` 下的通用规范
-2. 在 `projects/<name>/` 创建项目特定规范
-3. 只记录与通用规范的**差异**
+1. 复制脚手架。
+2. 修改 `.agent/project.json` 适配技术栈。
+3. 在 `docs/standards/projects/` 写项目差异。
+4. 运行 `make preflight` 和 `make verify`。
 
----
+## 变更原则
 
-**[← 返回文档中心](../README.md)**
+- 通用规范变更要考虑所有派生项目。
+- 项目规范只记录差异，不复制整套通用规范。
+- 规范变更要同步更新 README、工作流文档或模板中受影响的引用。

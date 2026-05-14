@@ -56,3 +56,6 @@ Thumbs.db
 
 # 项目特定
 .claude/settings.local.json
+
+# Agent local state
+.agent/

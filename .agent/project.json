@@ -18,7 +18,7 @@
         "lint": ["golangci-lint"],
         "test": ["go"],
         "coverage": ["go"],
-        "security": ["gosec", "jq"]
+        "security": ["gosec"]
       }
     },
     "node": {
