@@ -1,0 +1,823 @@
+{
+  "nodes": [
+    {
+      "id": "project_scaffold",
+      "label": "Project Scaffold v2.0",
+      "type": "concept",
+      "source_file": "README.md",
+      "description": "Agent-First engineering scaffold with machine-executable configs, quality gates, knowledge graph, and checkpoint recovery.",
+      "rationale": "Traditional project configs use vague instructions that agents cannot reliably execute. This scaffold makes every instruction machine-verifiable."
+    },
+    {
+      "id": "claude_md",
+      "label": "CLAUDE.md",
+      "type": "config",
+      "source_file": "CLAUDE.md",
+      "description": "Machine-executable AI guidance document defining commands, gates, skills, hooks, code rules, state management, and red lines.",
+      "rationale": "Acts as the single source of truth for agent behavior; every instruction includes verification commands so agents cannot hallucinate compliance."
+    },
+    {
+      "id": "agents_md",
+      "label": "AGENTS.md",
+      "type": "config",
+      "source_file": "AGENTS.md",
+      "description": "Agent operation rules covering meta-cognition, task tiers, quality gates, cognitive workflow, red lines, and startup checks.",
+      "rationale": "Ensures any agent working in the repository follows consistent cognitive and operational discipline."
+    },
+    {
+      "id": "cognitive_workflow",
+      "label": "Cognitive Workflow",
+      "type": "pattern",
+      "source_file": "docs/guides/DEVELOPMENT_WORKFLOW.md",
+      "description": "Five-phase development workflow: Explore, Plan, Execute, Verify, Settle.",
+      "rationale": "Provides structured thinking scaffolding so agents do not jump straight to coding without understanding context."
+    },
+    {
+      "id": "quality_gates",
+      "label": "Quality Gates (G1-G7)",
+      "type": "standard",
+      "source_file": "CLAUDE.md",
+      "description": "Seven machine-verifiable quality gates: G1 explore, G2 plan, G3 TDD, G4 lint, G5 test, G6 coverage >=80%, G7 security.",
+      "rationale": "Replaces subjective 'I checked' claims with scripts that return exit codes, eliminating hallucinated verification."
+    },
+    {
+      "id": "red_lines",
+      "label": "Absolute Red Lines (R1-R6)",
+      "type": "standard",
+      "source_file": "CLAUDE.md",
+      "description": "Six non-negotiable rules: zero data loss, zero silent failure, zero hardcoded secrets, zero hallucination, zero blame-shifting, zero unaudited critical ops.",
+      "rationale": "Hard safety boundaries that must never be crossed regardless of task urgency."
+    },
+    {
+      "id": "state_management",
+      "label": "State Management & Checkpoint Recovery",
+      "type": "pattern",
+      "source_file": "CLAUDE.md",
+      "description": "Automatic state saving at phase transitions with checkpoint/resume capability for session interruption recovery.",
+      "rationale": "Agent sessions can be interrupted; state management prevents losing progress and enables resuming from last checkpoint."
+    },
+    {
+      "id": "knowledge_graph",
+      "label": "Knowledge Graph (graphify)",
+      "type": "tool",
+      "source_file": "CLAUDE.md",
+      "description": "Code knowledge graph built with graphify for architecture understanding, dependency analysis, and impact assessment.",
+      "rationale": "Graph-based code understanding is more reliable than text search for discovering module relationships and change impact."
+    },
+    {
+      "id": "hooks_system",
+      "label": "Hooks System",
+      "type": "pattern",
+      "source_file": "CLAUDE.md",
+      "description": "Automated hooks: PreToolUse (dangerous file blocking, TDD compliance), PostToolUse (auto-format, vet), Stop (final gate check).",
+      "rationale": "Hooks enforce rules deterministically rather than relying on agent compliance, which can be inconsistent."
+    },
+    {
+      "id": "mcp_servers",
+      "label": "MCP Servers",
+      "type": "config",
+      "source_file": "CLAUDE.md",
+      "description": "Model Context Protocol servers: memory, filesystem, context7, fetch, sequential-thinking for enhanced agent capabilities.",
+      "rationale": "MCP servers provide agents with persistent memory, file access, documentation lookup, and structured reasoning."
+    },
+    {
+      "id": "task_tiers",
+      "label": "Task Tier Classification (S/M/L)",
+      "type": "concept",
+      "source_file": "AGENTS.md",
+      "description": "Three task tiers: S (<=30 lines, direct output), M (30-200 lines, cognitive workflow), L (>=200 lines, workflow + human confirmation).",
+      "rationale": "Not every change needs full cognitive workflow; tiering prevents over-engineering trivial tasks and under-engineering complex ones."
+    },
+    {
+      "id": "anti_laziness",
+      "label": "Anti-Laziness Mechanisms",
+      "type": "pattern",
+      "source_file": "AGENTS.md",
+      "description": "Five laziness patterns detected and countered: brute retry, blame-shifting, tool idleness, busywork illusion, passive waiting.",
+      "rationale": "AI agents have systematic failure modes that mimic laziness; explicit detection and countermeasures prevent degraded behavior."
+    },
+    {
+      "id": "agent_honesty",
+      "label": "Agent Honesty Protocol",
+      "type": "standard",
+      "source_file": "CLAUDE.md",
+      "description": "Anti-hallucination rules: mark uncertain facts with [UNCERTAIN], verify external claims with tools, never fabricate files or results.",
+      "rationale": "Agents can produce convincing but false claims; explicit honesty rules force distinguishing fact from inference."
+    },
+    {
+      "id": "naming_standard",
+      "label": "Naming Standards",
+      "type": "standard",
+      "source_file": "docs/standards/common/NAMING.md",
+      "description": "Naming conventions for code (language-specific), database (snake_case tables/fields), Git (type/description branches), files, and API paths.",
+      "rationale": "Consistent naming reduces cognitive load and prevents integration errors across teams."
+    },
+    {
+      "id": "api_standard",
+      "label": "API Standards",
+      "type": "standard",
+      "source_file": "docs/standards/common/API_STANDARDS.md",
+      "description": "RESTful API conventions: unified response format {code, msg, data}, error code segments (1000-4999), HTTP status codes, versioning.",
+      "rationale": "Unified API contract prevents client-side inconsistencies and simplifies error handling."
+    },
+    {
+      "id": "database_standard",
+      "label": "Database Standards",
+      "type": "standard",
+      "source_file": "docs/standards/common/DATABASE_STANDARDS.md",
+      "description": "Database design rules: required fields (id, created_at, updated_at), index guidelines, query anti-patterns, migration with UP/DOWN, security.",
+      "rationale": "Schema consistency and mandatory rollback scripts prevent data loss and enable safe migrations."
+    },
+    {
+      "id": "git_standard",
+      "label": "Git Standards",
+      "type": "standard",
+      "source_file": "docs/standards/common/GIT_STANDARDS.md",
+      "description": "Git conventions: branch model (main/develop/feature/fix/hotfix/release), conventional commits, PR template, semantic versioning.",
+      "rationale": "Standardized Git workflow prevents merge conflicts and ensures traceable change history."
+    },
+    {
+      "id": "team_collaboration",
+      "label": "Team Collaboration Standards",
+      "type": "standard",
+      "source_file": "docs/standards/common/TEAM_COLLABORATION.md",
+      "description": "Team norms: roles and responsibilities, communication channels with SLAs, meeting cadence, task granularity (Epic/Story/Task/Sub-task), knowledge sharing.",
+      "rationale": "Explicit collaboration norms prevent communication gaps and ensure knowledge is shared rather than siloed."
+    },
+    {
+      "id": "document_standard",
+      "label": "Document Standards",
+      "type": "standard",
+      "source_file": "docs/standards/common/DOCUMENT_STANDARDS.md",
+      "description": "Document conventions: Markdown format, version headers, file naming patterns, review process, status lifecycle (draft/review/published/archived).",
+      "rationale": "Consistent documentation format makes knowledge discoverable and maintainable across the project lifecycle."
+    },
+    {
+      "id": "project_spec",
+      "label": "Project-Specific Standards",
+      "type": "standard",
+      "source_file": "docs/standards/projects/PROJECT_SPEC.md",
+      "description": "Template for project-specific conventions that extend common standards: tech stack, naming overrides, error code allocation, cache strategy.",
+      "rationale": "Projects inherit common standards but need customization points for tech-stack-specific conventions."
+    },
+    {
+      "id": "standards_system",
+      "label": "Standards System",
+      "type": "architecture",
+      "source_file": "docs/standards/README.md",
+      "description": "Layered standards: common/ (all projects) and projects/ (project-specific), with MUST/SHOULD/MAY severity levels and change proposal workflow.",
+      "rationale": "Layered standards enable reuse across projects while allowing project-specific customization."
+    },
+    {
+      "id": "docs_center",
+      "label": "Documentation Center",
+      "type": "architecture",
+      "source_file": "docs/README.md",
+      "description": "Central documentation hub organizing standards, guides, skills, architecture, and plans with clear navigation.",
+      "rationale": "Solves the 'where to find what' problem by providing a single entry point to all project knowledge."
+    },
+    {
+      "id": "dev_workflow_guide",
+      "label": "Development Workflow Guide",
+      "type": "guide",
+      "source_file": "docs/guides/DEVELOPMENT_WORKFLOW.md",
+      "description": "Detailed operational manual for the five-phase cognitive workflow with specific actions, outputs, and gate checks per phase.",
+      "rationale": "The workflow in CLAUDE.md is concise; this guide provides the full operational detail needed for execution."
+    },
+    {
+      "id": "getting_started",
+      "label": "Getting Started Guide",
+      "type": "guide",
+      "source_file": "docs/guides/GETTING_STARTED.md",
+      "description": "5-minute quickstart: environment setup, project init, Claude Code config, first feature creation, and code submission.",
+      "rationale": "Reduces time-to-first-contribution by providing a concrete step-by-step onboarding path."
+    },
+    {
+      "id": "skills_manual",
+      "label": "Skills Manual",
+      "type": "guide",
+      "source_file": "docs/skills/README.md",
+      "description": "Skills catalog organized by domain: design patterns (DDD, clean arch, microservices), frontend, backend (RBAC, storage driver), DevOps.",
+      "rationale": "Skills solve 'how to do it' while standards solve 'what to do'; the manual provides domain-specific best practices."
+    },
+    {
+      "id": "architecture_overview",
+      "label": "Architecture Overview",
+      "type": "architecture",
+      "source_file": "docs/architecture/OVERVIEW.md",
+      "description": "Layered architecture template: presentation, business, data, infrastructure layers with NFR targets.",
+      "rationale": "Provides architectural skeleton that projects fill in; enforces thinking about layers before coding."
+    },
+    {
+      "id": "adr_template",
+      "label": "ADR Template",
+      "type": "template",
+      "source_file": "templates/adr/adr-template.md",
+      "description": "Architecture Decision Record template: background, decision, alternatives with pros/cons, rationale, impact, related decisions.",
+      "rationale": "Captures the 'why' behind architectural decisions so future developers understand context, not just outcomes."
+    },
+    {
+      "id": "plan_template",
+      "label": "Plan Template (plan.md)",
+      "type": "template",
+      "source_file": "templates/plan/plan.md",
+      "description": "Technical plan template: architecture design, data model, API design, exception handling, rollback plan, risk assessment.",
+      "rationale": "Forces structured thinking about implementation before coding begins."
+    },
+    {
+      "id": "spec_template",
+      "label": "Spec Template (spec.md)",
+      "type": "template",
+      "source_file": "templates/plan/spec.md",
+      "description": "Requirements specification template: background, goals, functional/non-functional requirements, user stories, acceptance criteria, edge cases.",
+      "rationale": "Separates 'what' from 'how' so requirements are validated before implementation planning."
+    },
+    {
+      "id": "tasks_template",
+      "label": "Tasks Template (tasks.md)",
+      "type": "template",
+      "source_file": "templates/plan/tasks.md",
+      "description": "Task breakdown template: task list with estimates and owners, dependency graph, milestones, completion checklist.",
+      "rationale": "Breaks plans into trackable units so progress is visible and dependencies are explicit."
+    },
+    {
+      "id": "config_optimization",
+      "label": "CONFIG_WEBSITE_OPTIMIZATION",
+      "type": "guide",
+      "source_file": "CONFIG_WEBSITE_OPTIMIZATION.md",
+      "description": "Optimization recommendations for Agent-First scaffold: machine-executable commands, gate verification scripts, state management, graphify integration, config layering, hooks, and red line detection.",
+      "rationale": "Distills practical lessons from building the scaffold into actionable improvement recommendations."
+    },
+    {
+      "id": "contributing",
+      "label": "Contributing Guidelines",
+      "type": "guide",
+      "source_file": "CONTRIBUTING.md",
+      "description": "Contribution workflow: fork, feature branch, cognitive workflow development, PR submission, conventional commits, code review.",
+      "rationale": "Ensures external contributors follow the same cognitive workflow and quality standards as core team."
+    },
+    {
+      "id": "skills_config",
+      "label": "Skills Configuration",
+      "type": "config",
+      "source_file": "CLAUDE.md",
+      "description": "Required skills (superpowers v2.1.0, graphify) and recommended skills (oh-my-claudecode) with install/verify/rollback commands.",
+      "rationale": "Skills are the primary capability multiplier; pinning versions ensures reproducible agent behavior."
+    },
+    {
+      "id": "workflow_state_machine",
+      "label": "Workflow State Machine",
+      "type": "pattern",
+      "source_file": "CLAUDE.md",
+      "description": "State machine with states idle/explore/plan/execute/verify/consolidate, each with entry/exit actions and gate requirements.",
+      "rationale": "Formal state machine prevents agents from skipping phases or claiming completion without passing required gates."
+    },
+    {
+      "id": "tdd_compliance",
+      "label": "TDD Compliance Check",
+      "type": "pattern",
+      "source_file": "CONFIG_WEBSITE_OPTIMIZATION.md",
+      "description": "Verifies test files are modified before implementation files using file mtime comparison and git log.",
+      "rationale": "TDD discipline cannot be verified by reading code; timestamp comparison provides machine-verifiable proof."
+    },
+    {
+      "id": "code_rules",
+      "label": "Code Rules (Regex-Verifiable)",
+      "type": "standard",
+      "source_file": "CLAUDE.md",
+      "description": "Machine-checkable code rules using regex patterns: R2 no empty error handling, R3 no hardcoded secrets, R4 context timeout for external calls.",
+      "rationale": "Vague rules like 'handle errors properly' are unenforceable; regex patterns make rules machine-verifiable."
+    },
+    {
+      "id": "config_layering",
+      "label": "Configuration Layering",
+      "type": "pattern",
+      "source_file": "CONFIG_WEBSITE_OPTIMIZATION.md",
+      "description": "Four-layer config: L1 machine-executable (commands/gates/redlines), L2 workflow (cognitive flow/skills), L3 project-specific (tech stack rules), L4 reference (patterns/security/performance).",
+      "rationale": "Progressive disclosure keeps the core config under 200 lines while allowing unlimited detail in collapsed sections."
+    }
+  ],
+  "edges": [
+    {
+      "source": "project_scaffold",
+      "target": "claude_md",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "CLAUDE.md is the primary machine-executable config for the scaffold"
+    },
+    {
+      "source": "project_scaffold",
+      "target": "agents_md",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "AGENTS.md defines agent operation rules for the scaffold"
+    },
+    {
+      "source": "claude_md",
+      "target": "quality_gates",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 3 defines the 7 quality gates G1-G7"
+    },
+    {
+      "source": "claude_md",
+      "target": "red_lines",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 10 defines R1-R6 red lines with detection commands"
+    },
+    {
+      "source": "claude_md",
+      "target": "hooks_system",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 8 defines PreToolUse, PostToolUse, and Stop hooks"
+    },
+    {
+      "source": "claude_md",
+      "target": "mcp_servers",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 5 defines MCP server configurations"
+    },
+    {
+      "source": "claude_md",
+      "target": "state_management",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 7 defines checkpoint/resume and state machine"
+    },
+    {
+      "source": "claude_md",
+      "target": "knowledge_graph",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 9 defines graphify integration"
+    },
+    {
+      "source": "claude_md",
+      "target": "skills_config",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 4 defines required and recommended skills"
+    },
+    {
+      "source": "claude_md",
+      "target": "code_rules",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 6 defines regex-verifiable code rules"
+    },
+    {
+      "source": "claude_md",
+      "target": "agent_honesty",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 12 defines anti-hallucination and honesty delivery protocol"
+    },
+    {
+      "source": "agents_md",
+      "target": "cognitive_workflow",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 3 defines the five-phase cognitive workflow with enforcement mechanisms"
+    },
+    {
+      "source": "agents_md",
+      "target": "task_tiers",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 1 defines S/M/L task tier classification"
+    },
+    {
+      "source": "agents_md",
+      "target": "anti_laziness",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 0.4 defines five laziness patterns and countermeasures"
+    },
+    {
+      "source": "agents_md",
+      "target": "quality_gates",
+      "relation": "references",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 2 references G1-G7 gates as verification requirements"
+    },
+    {
+      "source": "agents_md",
+      "target": "red_lines",
+      "relation": "references",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 4 references R1-R6 as absolute red lines"
+    },
+    {
+      "source": "cognitive_workflow",
+      "target": "quality_gates",
+      "relation": "requires",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Each workflow phase has associated gate checks"
+    },
+    {
+      "source": "cognitive_workflow",
+      "target": "dev_workflow_guide",
+      "relation": "implements",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "DEVELOPMENT_WORKFLOW.md is the detailed implementation guide for the cognitive workflow"
+    },
+    {
+      "source": "dev_workflow_guide",
+      "target": "cognitive_workflow",
+      "relation": "guides",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Provides operational detail for each of the five workflow phases"
+    },
+    {
+      "source": "standards_system",
+      "target": "naming_standard",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Naming standards are part of the common standards layer"
+    },
+    {
+      "source": "standards_system",
+      "target": "api_standard",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "API standards are part of the common standards layer"
+    },
+    {
+      "source": "standards_system",
+      "target": "database_standard",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Database standards are part of the common standards layer"
+    },
+    {
+      "source": "standards_system",
+      "target": "git_standard",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Git standards are part of the common standards layer"
+    },
+    {
+      "source": "standards_system",
+      "target": "team_collaboration",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Team collaboration standards are part of the common standards layer"
+    },
+    {
+      "source": "standards_system",
+      "target": "document_standard",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Document standards are part of the common standards layer"
+    },
+    {
+      "source": "standards_system",
+      "target": "project_spec",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Project-specific standards extend the common standards layer"
+    },
+    {
+      "source": "project_spec",
+      "target": "naming_standard",
+      "relation": "extends",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "PROJECT_SPEC explicitly inherits common naming standards"
+    },
+    {
+      "source": "project_spec",
+      "target": "api_standard",
+      "relation": "extends",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "PROJECT_SPEC explicitly inherits common API standards"
+    },
+    {
+      "source": "project_spec",
+      "target": "database_standard",
+      "relation": "extends",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "PROJECT_SPEC explicitly inherits common database standards"
+    },
+    {
+      "source": "project_spec",
+      "target": "git_standard",
+      "relation": "extends",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "PROJECT_SPEC explicitly inherits common Git standards"
+    },
+    {
+      "source": "project_spec",
+      "target": "team_collaboration",
+      "relation": "extends",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "PROJECT_SPEC explicitly inherits common team collaboration standards"
+    },
+    {
+      "source": "project_spec",
+      "target": "document_standard",
+      "relation": "extends",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "PROJECT_SPEC explicitly inherits common document standards"
+    },
+    {
+      "source": "docs_center",
+      "target": "standards_system",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Standards are a subdirectory of the docs center"
+    },
+    {
+      "source": "docs_center",
+      "target": "skills_manual",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Skills manual is a subdirectory of the docs center"
+    },
+    {
+      "source": "docs_center",
+      "target": "architecture_overview",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Architecture overview is a subdirectory of the docs center"
+    },
+    {
+      "source": "docs_center",
+      "target": "dev_workflow_guide",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Development workflow guide is under docs/guides/"
+    },
+    {
+      "source": "docs_center",
+      "target": "getting_started",
+      "relation": "part_of",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Getting started guide is under docs/guides/"
+    },
+    {
+      "source": "state_management",
+      "target": "workflow_state_machine",
+      "relation": "implements",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "State management implements the formal workflow state machine"
+    },
+    {
+      "source": "workflow_state_machine",
+      "target": "cognitive_workflow",
+      "relation": "implements",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "State machine formalizes the five cognitive workflow phases with entry/exit actions"
+    },
+    {
+      "source": "hooks_system",
+      "target": "quality_gates",
+      "relation": "requires",
+      "confidence_score": 0.9,
+      "evidence": "INFERRED",
+      "description": "Stop hook runs all gates; hooks enforce gate compliance"
+    },
+    {
+      "source": "hooks_system",
+      "target": "tdd_compliance",
+      "relation": "implements",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "PreToolUse hook checks TDD compliance by comparing file timestamps"
+    },
+    {
+      "source": "knowledge_graph",
+      "target": "cognitive_workflow",
+      "relation": "guides",
+      "confidence_score": 0.85,
+      "evidence": "INFERRED",
+      "description": "Knowledge graph is used during the Explore phase to understand dependencies and during Plan for impact analysis"
+    },
+    {
+      "source": "config_optimization",
+      "target": "project_scaffold",
+      "relation": "guides",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Optimization doc is based on building the scaffold and provides improvement recommendations"
+    },
+    {
+      "source": "config_optimization",
+      "target": "quality_gates",
+      "relation": "references",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Provides gate configuration YAML and G3 TDD verification script template"
+    },
+    {
+      "source": "config_optimization",
+      "target": "state_management",
+      "relation": "references",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Provides workflow.json structure and checkpoint/resume script templates"
+    },
+    {
+      "source": "config_optimization",
+      "target": "hooks_system",
+      "relation": "references",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Provides settings.json hooks configuration and dangerous file check script template"
+    },
+    {
+      "source": "config_optimization",
+      "target": "config_layering",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 6 defines four-layer config architecture"
+    },
+    {
+      "source": "config_optimization",
+      "target": "tdd_compliance",
+      "relation": "defines",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Section 2.2 defines TDD compliance verification using file mtime"
+    },
+    {
+      "source": "config_layering",
+      "target": "claude_md",
+      "relation": "guides",
+      "confidence_score": 0.9,
+      "evidence": "INFERRED",
+      "description": "CLAUDE.md follows the four-layer progressive disclosure pattern"
+    },
+    {
+      "source": "contributing",
+      "target": "cognitive_workflow",
+      "relation": "requires",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Contributing guidelines require following the cognitive workflow"
+    },
+    {
+      "source": "contributing",
+      "target": "quality_gates",
+      "relation": "requires",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "PR process requires passing all gates before merge"
+    },
+    {
+      "source": "contributing",
+      "target": "git_standard",
+      "relation": "references",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Contributing guidelines reference conventional commit format from Git standards"
+    },
+    {
+      "source": "getting_started",
+      "target": "claude_md",
+      "relation": "references",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Getting started guide directs reading CLAUDE.md for AI collaboration norms"
+    },
+    {
+      "source": "getting_started",
+      "target": "dev_workflow_guide",
+      "relation": "references",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Getting started guide links to DEVELOPMENT_WORKFLOW.md for full process"
+    },
+    {
+      "source": "getting_started",
+      "target": "standards_system",
+      "relation": "references",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "Getting started guide links to standards for coding conventions"
+    },
+    {
+      "source": "plan_template",
+      "target": "spec_template",
+      "relation": "requires",
+      "confidence_score": 0.9,
+      "evidence": "INFERRED",
+      "description": "Plan references requirements from spec; tasks reference plan"
+    },
+    {
+      "source": "tasks_template",
+      "target": "plan_template",
+      "relation": "requires",
+      "confidence_score": 0.9,
+      "evidence": "INFERRED",
+      "description": "Task breakdown is derived from the technical plan"
+    },
+    {
+      "source": "adr_template",
+      "target": "architecture_overview",
+      "relation": "references",
+      "confidence_score": 0.85,
+      "evidence": "INFERRED",
+      "description": "Architecture overview references decisions/ directory for ADRs"
+    },
+    {
+      "source": "skills_config",
+      "target": "knowledge_graph",
+      "relation": "requires",
+      "confidence_score": 1.0,
+      "evidence": "EXTRACTED",
+      "description": "graphify is listed as a required skill in skills configuration"
+    },
+    {
+      "source": "agent_honesty",
+      "target": "anti_laziness",
+      "relation": "similar_to",
+      "confidence_score": 0.75,
+      "evidence": "INFERRED",
+      "description": "Both address systematic agent failure modes: honesty prevents fabrication, anti-laziness prevents degraded behavior"
+    },
+    {
+      "source": "code_rules",
+      "target": "red_lines",
+      "relation": "implements",
+      "confidence_score": 0.9,
+      "evidence": "INFERRED",
+      "description": "Code rules R2/R3 are the regex-verifiable implementations of red lines R2/R3"
+    },
+    {
+      "source": "code_rules",
+      "target": "hooks_system",
+      "relation": "implements",
+      "confidence_score": 0.85,
+      "evidence": "INFERRED",
+      "description": "Hooks run code rules (go vet, grep patterns) as automated checks"
+    },
+    {
+      "source": "skills_manual",
+      "target": "cognitive_workflow",
+      "relation": "guides",
+      "confidence_score": 0.7,
+      "evidence": "INFERRED",
+      "description": "Skills provide domain-specific guidance used during workflow execution phases"
+    }
+  ],
+  "hyperedges": [
+    {
+      "nodes": ["claude_md", "agents_md", "cognitive_workflow", "quality_gates", "workflow_state_machine"],
+      "label": "Agent Execution Framework",
+      "description": "CLAUDE.md and AGENTS.md jointly define the cognitive workflow, which is formalized by the state machine and enforced by quality gates. These five nodes form the core execution framework that ensures agents follow structured discipline."
+    },
+    {
+      "nodes": ["standards_system", "naming_standard", "api_standard", "database_standard", "git_standard"],
+      "label": "Common Standards Layer",
+      "description": "The standards system organizes five common standards (naming, API, database, Git, collaboration, document) that all projects inherit. They form a cohesive layer of enforceable conventions."
+    },
+    {
+      "nodes": ["spec_template", "plan_template", "tasks_template", "cognitive_workflow"],
+      "label": "SDD Three-Layer Artifacts",
+      "description": "The three plan templates (spec, plan, tasks) map directly to the cognitive workflow phases (Explore produces spec, Plan produces plan.md, Execute tracks tasks.md). Together they form the Specification-Driven Development artifact chain."
+    }
+  ]
+}

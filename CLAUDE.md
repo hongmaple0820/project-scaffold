@@ -1,112 +1,54 @@
 # CLAUDE.md
 
-**agent**: claude-code  
-**format_version**: "2.0"  
-**type**: machine_executable  
-**project**: project-scaffold  
+**agent**: claude-code | **format_version**: "2.0" | **type**: machine_executable
 
 ---
 
-## 1. 预检要求（首次启动必执行）
+## 1. 预检（首次启动）
 
 ```bash
-# 运行预检脚本验证环境
 bash scripts/preflight/all.sh
 ```
 
-**预检内容**: Go版本、必需工具、MCP服务器、技能安装状态  
+**预检内容**: Go版本、必需工具、MCP服务器、技能安装状态
 **失败处理**: 脚本输出安装命令，按提示修复后重试
 
 ---
 
-## 2. 机器可执行命令
-
-### 2.1 开发命令
+## 2. 命令
 
 ```yaml
-dev:
-  cmd: go run .
-  verify: bash -c 'sleep 2 && curl -s http://localhost:8080/health | grep -q "ok"'
-  timeout: 30s
-  retry: 3
-  
-build:
-  cmd: go build -o bin/app .
-  verify: test -x bin/app && ./bin/app --version 2>/dev/null | grep -q "v"
-  timeout: 120s
-  
-test:
-  cmd: go test ./... -race -json > .agent/logs/test.json 2>&1
-  verify: bash scripts/gates/G5-verify.sh
-  timeout: 300s
-  
-lint:
-  cmd: golangci-lint run --out-format=json > .agent/logs/lint.json 2>&1
-  verify: bash scripts/gates/G4-verify.sh
-  timeout: 60s
-  
-coverage:
-  cmd: go test -coverprofile=.agent/logs/coverage.out ./...
-  verify: bash scripts/gates/G6-verify.sh
-  timeout: 120s
-```
-
-### 2.2 知识图谱命令
-
-```yaml
-graphify:
-  cmd: graphify .
-  verify: test -d graphify-out/
-  timeout: 300s
-  description: "构建代码知识图谱，用于架构分析"
-  
-graph-query:
-  cmd: graphify query
-  verify: true
-  description: "查询代码依赖关系"
-```
-
-### 2.3 项目管理命令
-
-```yaml
-gate:
-  cmd: bash scripts/gates/all.sh
-  verify: test $? -eq 0
-  timeout: 600s
-  
-plan:
-  cmd: bash scripts/init-plan.sh
-  verify: test -d "docs/plans/$(date +%Y-%m-%d)-${NAME}"
-  required_env: [NAME]
-  
-checkpoint:
-  cmd: bash scripts/checkpoint/save.sh
-  verify: test -f .agent/state/current.json
-  
-resume:
-  cmd: bash scripts/checkpoint/resume.sh
-  verify: jq -e '.current_phase' .agent/state/current.json
+dev:       { cmd: go run ., timeout: 30s }
+build:     { cmd: go build -o bin/app ., timeout: 120s }
+test:      { cmd: go test ./... -race, timeout: 300s }
+lint:      { cmd: golangci-lint run, timeout: 60s }
+coverage:  { cmd: go test -coverprofile=.agent/logs/coverage.out ./..., timeout: 120s }
+gate:      { cmd: bash scripts/gates/all.sh, timeout: 600s }
+plan:      { cmd: bash scripts/init-plan.sh, env: [NAME] }
+checkpoint:{ cmd: bash scripts/workflow/checkpoint.sh, env: [PHASE] }
+resume:    { cmd: bash scripts/workflow/resume.sh }
+graphify:  { cmd: graphify ., timeout: 300s }
 ```
 
 ---
 
 ## 3. 机器可验证门控
 
-| 门控 | 验证脚本 | 自动检查 | 失败回滚 |
-|------|----------|----------|----------|
-| **G1_explore** | `scripts/gates/G1-verify.sh` | 否 | 补充探索 |
-| **G2_plan** | `scripts/gates/G2-verify.sh` | 否 | 重写规划 |
-| **G3_tdd** | `scripts/gates/G3-verify.sh` | 是 | 补充测试 |
-| **G4_lint** | `scripts/gates/G4-verify.sh` | 是 | 自动修复 |
-| **G5_test** | `scripts/gates/G5-verify.sh` | 是 | 修复代码 |
-| **G6_coverage** | `scripts/gates/G6-verify.sh` | 是 | 补充测试 |
-| **G7_security** | `scripts/gates/G7-verify.sh` | 条件触发 | 修复安全问题 |
+| 门控 | 验证脚本 | 自动检查 | 产物 | 失败处理 |
+|------|----------|----------|------|---------|
+| G1 探索 | `bash scripts/gates/G1-verify.sh` | 否 | `.agent/state/explore.json` | 补充探索 |
+| G2 规划 | `bash scripts/gates/G2-verify.sh` | 否 | `docs/plans/YYYY-MM-DD-*/` | 重写规划 |
+| G3 TDD | `bash scripts/gates/G3-verify.sh` | 是 | `*_test.go` mtime | 补充测试 |
+| G4 Lint | `bash scripts/gates/G4-verify.sh` | 是 | lint exit 0 | 自动修复 |
+| G5 Test | `bash scripts/gates/G5-verify.sh` | 是 | test exit 0 | 修复代码 |
+| G6 Coverage | `bash scripts/gates/G6-verify.sh` | 是 | ≥80% | 补充测试 |
+| G7 Security | `bash scripts/gates/G7-verify.sh` | 条件 | gosec 无 HIGH | 修复漏洞 |
 
----
+**门控检查真实产物，不检查 AI 声称。** 每个 Gate 验证对应脚本的输出文件是否存在且有效。
 
-## 3.1 技术栈适配配置
+### 3.1 技术栈适配
 
-门控 G4-G7 从 `.agent/project.json` 读取技术栈和命令，不应在脚本中硬编码项目命令。
+门控 G4-G7 从 `.agent/project.json` 读取命令，不硬编码：
 
 ```json
 {
@@ -116,112 +58,21 @@ resume:
     "go": {
       "detect": ["go.mod"],
       "commands": {
-        "lint": "golangci-lint run --out-format=json > .agent/logs/lint.json",
-        "test": "go test ./... -race -json > .agent/logs/test.json",
+        "lint": "golangci-lint run",
+        "test": "go test ./... -race",
         "coverage": "go test -coverprofile=.agent/logs/coverage.out ./...",
-        "security": "gosec -fmt json -out .agent/logs/gosec.json ./... >/dev/null"
+        "security": "gosec ./..."
       }
     }
   }
 }
 ```
 
-生成真实项目后，Agent 必须先检查 `.agent/project.json` 是否匹配当前技术栈；不匹配时先修配置，再运行门控。
+生成真实项目后，先检查 `.agent/project.json` 是否匹配当前技术栈；不匹配时先修配置。
 
 ---
 
-## 4. 技能清单（命令+验证+版本）
-
-### 4.1 必需技能
-
-```yaml
-superpowers:
-  version: "2.1.0"
-  install: |
-    git clone --depth 1 --branch v2.1.0 \
-      https://github.com/obra/superpowers.git \
-      ~/.claude/skills/superpowers 2>/dev/null || true
-    touch ~/.claude/skills/superpowers/installed.flag
-  verify: test -f ~/.claude/skills/superpowers/installed.flag
-  rollback: rm -rf ~/.claude/skills/superpowers
-  
-graphify:
-  version: "latest"
-  install: |
-    pip install graphifyy 2>/dev/null || pip3 install graphifyy
-    graphify install
-  verify: command -v graphify >/dev/null 2>&1
-  rollback: pip uninstall -y graphifyy
-  description: "代码知识图谱，用于架构理解和依赖分析"
-```
-
-### 4.2 推荐技能
-
-```yaml
-oh-my-claudecode:
-  version: "latest"
-  install: |
-    npm install -g oh-my-claude-sisyphus 2>/dev/null || true
-    omc setup
-  verify: command -v omc >/dev/null 2>&1
-  rollback: npm uninstall -g oh-my-claude-sisyphus
-```
-
-### 4.3 内置Agent
-
-```yaml
-go-reviewer:
-  type: builtin
-  trigger: after_file_write *.go
-  
-security-reviewer:
-  type: builtin
-  trigger: before_commit
-  
-doc-updater:
-  type: builtin
-  trigger: on_demand
-```
-
----
-
-## 5. MCP服务器（完整配置）
-
-```json
-{
-  "memory": {
-    "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-memory"],
-    "verify": "test -S /tmp/mcp-memory.sock || true"
-  },
-  "filesystem": {
-    "command": "npx",
-    "args": ["-y", "@anthropic/mcp-filesystem", "."],
-    "verify": "true"
-  },
-  "context7": {
-    "command": "npx",
-    "args": ["-y", "@upstash/context7-mcp"],
-    "verify": "curl -s http://localhost:3000/health 2>/dev/null | grep -q ok || true"
-  },
-  "fetch": {
-    "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-fetch"],
-    "verify": "true"
-  },
-  "sequential-thinking": {
-    "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-    "verify": "true"
-  }
-}
-```
-
----
-
-## 6. 代码规则（正则可验证）
-
-### 6.1 Go语言规则
+## 4. 代码规则（正则可验证）
 
 ```yaml
 R2_no_empty_error:
@@ -231,7 +82,7 @@ R2_no_empty_error:
   message: "禁止空的 error 处理块"
   fix: "添加日志或返回错误"
   auto_check: go vet ./...
-  
+
 R3_no_hardcoded_secret:
   severity: enforced
   language: go
@@ -239,7 +90,7 @@ R3_no_hardcoded_secret:
   message: "禁止硬编码密钥"
   fix: "使用 os.Getenv() 或配置中心"
   auto_check: grep -rE '(password|secret|token)\s*=\s*"[^"]+"' --include="*.go" .
-  
+
 R4_context_timeout:
   severity: recommended
   language: go
@@ -250,45 +101,103 @@ R4_context_timeout:
 
 ---
 
-## 7. 状态管理与断点恢复
+## 5. 认知工作流（M/L 级必须遵循）
 
-### 7.1 自动保存点
-
-```yaml
-checkpoint:
-  dir: .agent/state/
-  auto_save: true
-  triggers:
-    - phase_change
-    - gate_pass
-    - every_10_minutes
-    
-  fields:
-    - current_phase: string
-    - completed_gates: []string
-    - open_tasks: []string
-    - last_action: string
-    - timestamp: iso8601
-    - files_modified: []string
+```
+探索 → 规划(🛑L级确认) → 执行(TDD) → 验证(工具) → 沉淀(泛化)
 ```
 
-### 7.2 恢复流程
+### 5.1 任务分级
 
+- **S级**（≤30行/typo）：直接做
+- **M级**（30-200行/2-5文件）：走工作流
+- **L级**（≥200行/跨模块/架构）：完整流程 + **人工确认后再执行**
+
+**模式**: SANDBOX(原型) → STANDARD(默认) → CRITICAL(生产)
+**自动升级**: auth/payment→STANDARD | DROP/ALTER→CRITICAL | .env/secret→阻断
+
+### 5.2 Step 1: 探索
+
+**禁止上来就写代码。必须先摸清上下文。**
+
+```
+1. 读 CLAUDE.md → 了解项目约定
+2. 读知识图谱 → 了解架构骨架（若有 graphify-out/GRAPH_REPORT.md）
+3. 扫相关代码 → 理解现有实现
+4. 矛盾分析 → 识别主要矛盾
+```
+
+**完成探索后，运行自动化脚本记录产物：**
 ```bash
-# 检测状态
-if [ -f .agent/state/current.json ]; then
-  PHASE=$(jq -r '.current_phase' .agent/state/current.json)
-  echo "[RESUME] 检测到之前的状态: $PHASE"
-  
-  # 显示上下文
-  jq '.open_tasks | join(", ")' .agent/state/current.json
-  
-  # 询问继续方式
-  # Agent根据上下文决定：继续/重置/审查
-fi
+# 记录探索结果（自动写入 .agent/state/explore.json）
+bash scripts/workflow/explore.sh "file1.go" "file2.go" "main contradiction"
 ```
 
-### 7.3 状态机定义
+### 5.3 Step 2: 规划
+
+**基于探索结果制定方案，不可凭空规划。**
+
+```
+1. 影响面推理 → 此变更影响哪些模块？依赖方有哪些？
+2. 契约定义 → 功能边界 + 异常契约（至少3种）+ 回滚方案
+3. M级: 输出 Mini-Spec（需求+边界+验收标准）
+4. L级: 采用 SDD 三层产物（spec.md + plan.md + tasks.md）
+```
+
+**完成规划后，运行自动化脚本创建产物：**
+```bash
+# 创建计划目录（自动创建 docs/plans/YYYY-MM-DD-{name}/）
+bash scripts/workflow/plan.sh "feature-name"
+```
+
+**⚠️ L级任务必须在此暂停！输出方案，询问"是否确认？"，未经确认禁止进入 Step 3。**
+
+### 5.4 Step 3: 执行
+
+**契约确认后，严格按方案编码。**
+
+```
+1. TDD 闭环（CRITICAL必须，STANDARD推荐）
+   RED: 先写测试 → GREEN: 写主逻辑 → REFACTOR: 重构
+2. 防御性编码 → 所有外部调用必须包裹错误处理
+3. 安全自检 → SQL注入？XSS？越权？敏感数据泄露？
+```
+
+**每个阶段切换时，保存检查点：**
+```bash
+# 保存当前状态（自动写入 .agent/state/current.json）
+bash scripts/workflow/checkpoint.sh execute
+```
+
+### 5.5 Step 4: 验证
+
+**验证只能由工具完成，不可脑补。**
+
+```
+1. 声称完成前，必须过 5 步门控：
+   ① 确定验证命令 ② 实际运行 ③ 完整阅读输出 ④ 确认结果 ⑤ 此时才能声称完成
+2. 代码修改后立即运行 lint + 类型检查
+3. 运行单元测试，覆盖 Happy Path 和异常路径
+```
+
+**运行门控验证：**
+```bash
+# 运行全部门控（G3-G7）
+bash scripts/gates/all.sh
+```
+
+### 5.6 Step 5: 沉淀
+
+**代码写完不等于交付，必须闭环。**
+
+```
+1. 泛化检查 → 修了一个 bug？同模块有没有同类问题？
+2. 文档更新 → 踩坑经验追加到项目知识文档
+3. 图谱更新 → 若使用 graphify，运行 graphify . --update
+4. 经验提取 → 将可复用的调试知识提取为技能文件
+```
+
+### 5.7 状态机
 
 ```yaml
 workflow_states:
@@ -296,228 +205,161 @@ workflow_states:
     entry: []
     exit: [checkpoint]
     next: [explore]
-    
+
   explore:
-    entry: [load_graphify]
-    exit: [save_explored_files]
+    entry: [load_graphify, read_claude_md]
+    exit: [bash scripts/workflow/explore.sh]
     gate: G1
     next: [plan]
-    
+
   plan:
     entry: [load_requirements]
-    exit: [save_plan]
+    exit: [bash scripts/workflow/plan.sh]
     gate: G2
-    human_confirm: true
+    human_confirm: true  # L级必须暂停确认
     next: [execute]
-    
+
   execute:
     entry: [load_tdd_state]
-    exit: [save_test_results]
+    exit: [bash scripts/workflow/checkpoint.sh execute]
     gate: G3
     next: [verify]
-    
+
   verify:
     entry: [run_lint, run_test]
-    exit: [save_coverage]
+    exit: [bash scripts/gates/all.sh]
     gates: [G4, G5, G6]
     next: [consolidate]
-    
+
   consolidate:
     entry: [generalize_check]
-    exit: [update_skills, update_docs]
+    exit: [update_docs, update_graphify]
     next: [idle]
 ```
 
 ---
 
-## 8. Hooks（自动化触发）
+## 6. 状态管理与断点恢复
 
-### 8.1 PreToolUse
+```bash
+# 保存当前状态
+bash scripts/workflow/checkpoint.sh {phase}
 
-```yaml
-block_dangerous_files:
-  trigger: Write|Edit
-  condition: bash scripts/hooks/check-dangerous-file.sh
-  action: block
-  message: "危险文件修改需人工确认"
-  
-check_tdd_compliance:
-  trigger: Write *.go
-  condition: bash scripts/hooks/check-tdd.sh
-  action: warn
-  message: "实现文件缺少对应测试"
-  
-verify_context_usage:
-  trigger: Write *.go
-  condition: bash scripts/hooks/check-context.sh
-  action: warn
-  message: "外部调用建议添加 context"
+# 恢复上次状态
+bash scripts/workflow/resume.sh
+
+# 查看状态
+cat .agent/state/current.json
 ```
 
-### 8.2 PostToolUse
-
-```yaml
-auto_format:
-  trigger: Write|Edit *.go
-  action: gofmt -w "$FILEPATH"
-  
-auto_vet:
-  trigger: Write|Edit *.go
-  action: go vet "$FILEPATH" 2>&1
-  
-update_graphify:
-  trigger: Write|Edit *.go
-  condition: file_count_changed 10
-  action: graphify . --incremental
+状态格式：
+```json
+{
+  "timestamp": "ISO8601",
+  "phase": "execute",
+  "completed_gates": ["G1", "G2", "G3"],
+  "open_tasks": ["实现Login接口"],
+  "files_modified": ["internal/auth/login.go"]
+}
 ```
 
-### 8.3 Stop
-
-```yaml
-final_gate_check:
-  trigger: session_end
-  action: bash scripts/gates/all.sh
-  fail_action: warn "门控未完全通过，不可声称完成"
-```
+**断点恢复**：会话中断时，运行 `resume.sh` 自动检测上次状态，询问继续/重置/审查。
 
 ---
 
-## 9. 知识图谱集成
+## 7. 技能清单
 
-### 9.1 构建图谱
-
-```bash
-# 项目初始化时
-graphify .
-
-# 增量更新（文件变更时）
-graphify . --update
-```
-
-### 9.2 使用场景
-
-| 场景 | 命令 | 用途 |
-|------|------|------|
-| 探索阶段 | `graphify query "依赖关系"` | 理解模块依赖 |
-| 规划阶段 | `graphify query "影响分析"` | 评估变更影响 |
-| 重构阶段 | `graphify query "循环依赖"` | 识别架构问题 |
-| 审查阶段 | `graphify visual` | 生成架构图 |
-
-### 9.3 图谱缓存
+### 7.1 必需技能
 
 ```yaml
+superpowers:
+  version: "2.1.0"
+  install: |
+    git clone --depth 1 --branch v2.1.0 \
+      https://github.com/obra/superpowers.git \
+      ~/.claude/skills/superpowers 2>/dev/null || true
+  verify: test -f ~/.claude/skills/superpowers/installed.flag
+  provides: brainstorming, writing-plans, tdd-guide, systematic-debugging
+
 graphify:
-  output_dir: graphify-out/
-  cache_ttl: 3600  # 秒
-  incremental: true
-  auto_update: true
+  version: "latest"
+  install: pip install graphifyy && graphify install
+  verify: command -v graphify >/dev/null 2>&1
+  provides: 知识图谱构建、依赖分析、架构可视化
+```
+
+### 7.2 推荐技能
+
+```yaml
+oh-my-claudecode:
+  install: npm install -g oh-my-claude-sisyphus && omc setup
+  provides: 多Agent编排、任务并行、自动规划
+```
+
+### 7.3 内置 Agent
+
+```yaml
+go-reviewer:       { trigger: after_file_write *.go }
+security-reviewer:  { trigger: before_commit }
+doc-updater:        { trigger: on_demand }
 ```
 
 ---
 
-## 10. 绝对红线（机器可检测）
+## 8. MCP 服务器
 
-| 红线 | 检测命令 | 阻断级别 |
-|------|----------|----------|
-| **R1** 零数据丢失 | `bash scripts/redlines/R1-check.sh` | block_commit |
-| **R2** 零静默失败 | `bash scripts/redlines/R2-check.sh` | block_commit |
-| **R3** 零硬编码密钥 | `bash scripts/redlines/R3-check.sh` | block_commit |
-| **R4** 零幻觉 | 人工标注 `[UNCERTAIN]` | review_required |
-| **R5** 零甩锅 | 代码审查 | review_required |
-
----
-
-## 11. 分层规范索引
-
-### 第一层（强制）
-- 本文件的命令、门控、红线
-- 验证只能工具完成
-
-### 第二层（推荐）
-- [docs/standards/common/](docs/standards/common/)
-
-### 第三层（项目特定）
-- [docs/standards/projects/PROJECT_SPEC.md](docs/standards/projects/PROJECT_SPEC.md)
-
-### 第四层（技能参考）
-- [docs/skills/](docs/skills/)
-
----
-
-## 12. Agent 诚实交付协议
-
-Agent 在最终回复中必须明确区分事实、推断和未验证项，禁止把未执行的检查描述为已完成。
-
-### 12.1 反幻觉规则
-
-- 不确定的事实必须标注 `[UNCERTAIN]`，并说明需要哪个工具或来源验证。
-- 外部版本、API、依赖行为、线上状态必须通过工具确认；无法确认时不得给确定结论。
-- 引用项目事实时必须来自已读取文件、命令输出或测试结果。
-- 不得编造文件、函数、配置、测试结果、命令输出。
-
-### 12.2 反懒惰规则
-
-- 修改代码前必须先定位相关文件和现有约定。
-- 声称完成前必须运行与变更相关的最小验证命令。
-- 验证失败不得降级为“建议用户自行验证”，除非明确说明失败原因和剩余风险。
-- 连续两次同类失败后必须重新探索上下文，而不是继续猜测修补。
-
-### 12.3 交付格式
-
-最终回复必须包含以下信息：
-
-```markdown
-**完成内容**
-- ...
-
-**验证结果**
-- `命令`: 结果
-
-**未验证项**
-- 无，或说明原因与风险
+```json
+{
+  "memory":            { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-memory"] },
+  "filesystem":        { "command": "npx", "args": ["-y", "@anthropic/mcp-filesystem", "."] },
+  "context7":          { "command": "npx", "args": ["-y", "@upstash/context7-mcp"] },
+  "fetch":             { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-fetch"] },
+  "sequential-thinking":{ "command": "npx", "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"] }
+}
 ```
 
-### 12.4 禁止表述
+---
 
-- 未运行测试时禁止说“测试通过”。
-- 门控失败时禁止说“已完成”。
-- 工具缺失导致跳过时禁止说“检查通过”。
-- 只修改文档时禁止暗示代码行为已验证。
+## 9. Hooks
+
+**PreToolUse**:
+- 危险文件拦截（.env/secret/credential）→ 阻断
+- TDD 合规提醒（实现缺少测试时警告）→ 提醒
+- 工作流前置检查（写 .go 前自动检查探索产物）→ 阻断或通过
+
+**PostToolUse**:
+- gofmt 自动格式化
+
+**Stop**:
+- 检查未提交的 .go 改动，提醒 git commit
 
 ---
 
-## 13. 快速启动检查清单
+## 10. 红线
 
-首次使用本项目时，Agent 必须执行：
-
-```bash
-# 1. 预检环境
-bash scripts/preflight/all.sh
-
-# 2. 构建知识图谱
-graphify .
-
-# 3. 检查门控系统
-bash scripts/gates/all.sh --dry-run
-
-# 4. 运行脚手架自测
-bash scripts/tests/run.sh
-
-# 5. 验证状态管理
-touch .agent/state/test.json && rm .agent/state/test.json
-
-# 6. 确认技能安装
-command -v graphify >/dev/null && echo "✅ graphify 已安装"
-test -f ~/.claude/skills/superpowers/installed.flag && echo "✅ superpowers 已安装"
-```
-
-全部通过后方可开始任务。
+| 红线 | 检测 | 级别 |
+|------|------|------|
+| R1 零数据丢失 | `bash scripts/redlines/R1-check.sh` | block |
+| R2 零静默失败 | `bash scripts/redlines/R2-check.sh` | block |
+| R3 零硬编码密钥 | `bash scripts/redlines/R3-check.sh` | block |
+| R4 零幻觉 | 标注 `[UNCERTAIN]` | review |
+| R5 零甩锅 | 归因前必须验证 | review |
+| R6 零未审操作 | Hook 拦截 | confirm |
 
 ---
 
-**配置验证**: `bash scripts/validate-config.sh`  
-**状态查看**: `cat .agent/state/current.json`  
-**帮助**: `make help`
+## 11. 规范索引
+
+| 文档 | 路径 |
+|------|------|
+| 通用规范 | [docs/standards/common/](docs/standards/common/) |
+| 项目规范 | [docs/standards/projects/PROJECT_SPEC.md](docs/standards/projects/PROJECT_SPEC.md) |
+| 架构 | [docs/architecture/OVERVIEW.md](docs/architecture/OVERVIEW.md) |
+| 开发流程 | [docs/guides/DEVELOPMENT_WORKFLOW.md](docs/guides/DEVELOPMENT_WORKFLOW.md) |
+| 技能安装 | [docs/skills/INSTALL.md](docs/skills/INSTALL.md) |
+
+---
+
+**验证**: `bash scripts/validate-config.sh` | **状态**: `cat .agent/state/current.json`
 
 <!-- MACHINE_EXECUTABLE: true -->
-<!-- VALIDATED: false -->
