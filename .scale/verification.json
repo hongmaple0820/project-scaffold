@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "defaultProfile": "default",
+  "profiles": {
+    "default": {
+      "commands": {},
+      "services": []
+    }
+  },
+  "services": [],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tmp",
+    "vendor"
+  ],
+  "policy": {
+    "mode": "standard",
+    "optionalToolsWarnOnly": true,
+    "artifactGate": "warn",
+    "artifactGateLevels": [
+      "M",
+      "L",
+      "CRITICAL"
+    ]
+  }
+}

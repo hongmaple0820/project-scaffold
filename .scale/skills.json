@@ -1,0 +1,242 @@
+{
+  "version": 1,
+  "policy": {
+    "mode": "warn",
+    "enforceLevels": [
+      "M",
+      "L",
+      "CRITICAL"
+    ],
+    "requireSkillPlan": true
+  },
+  "domains": {
+    "ui": {
+      "detect": {
+        "files": [
+          "src/**/*.tsx",
+          "src/**/*.jsx",
+          "app/**/*.tsx",
+          "pages/**/*.tsx",
+          "components/**/*.tsx",
+          "**/*.css",
+          "**/*.scss"
+        ],
+        "keywords": [
+          "ui",
+          "ux",
+          "frontend",
+          "component",
+          "page",
+          "layout",
+          "responsive",
+          "visual",
+          "界面",
+          "页面",
+          "交互",
+          "视觉",
+          "前端"
+        ]
+      },
+      "recommendedSkills": [
+        "ui-ux-pro-max",
+        "frontend-design",
+        "design-review"
+      ],
+      "requiredArtifacts": [
+        "skill-plan.md",
+        "mini-prd.md",
+        "ui-spec.md",
+        "visual-review.md"
+      ],
+      "requiredVerification": [
+        "screenshot",
+        "responsive-check"
+      ]
+    },
+    "e2e": {
+      "detect": {
+        "files": [
+          "tests/e2e/**",
+          "e2e/**",
+          "playwright.config.*"
+        ],
+        "keywords": [
+          "e2e",
+          "browser",
+          "playwright",
+          "end-to-end",
+          "端到端",
+          "浏览器"
+        ]
+      },
+      "recommendedSkills": [
+        "playwright",
+        "playwright-interactive"
+      ],
+      "requiredArtifacts": [
+        "skill-plan.md",
+        "e2e-plan.md"
+      ],
+      "requiredVerification": [
+        "browser-run"
+      ]
+    },
+    "api": {
+      "detect": {
+        "files": [
+          "**/api/**",
+          "**/routes/**",
+          "**/controller/**",
+          "**/*.api",
+          "**/*.proto"
+        ],
+        "keywords": [
+          "api",
+          "endpoint",
+          "route",
+          "handler",
+          "接口",
+          "路由"
+        ]
+      },
+      "recommendedSkills": [
+        "tdd-guide",
+        "code-review"
+      ],
+      "requiredArtifacts": [
+        "skill-plan.md",
+        "mini-prd.md",
+        "api-contract.md"
+      ],
+      "requiredVerification": [
+        "contract-check"
+      ]
+    },
+    "db": {
+      "detect": {
+        "files": [
+          "**/migration/**",
+          "**/migrations/**",
+          "**/*.sql",
+          "**/schema.*",
+          "**/model/**"
+        ],
+        "keywords": [
+          "database",
+          "db",
+          "migration",
+          "schema",
+          "sql",
+          "数据表",
+          "数据库",
+          "迁移"
+        ]
+      },
+      "requiredSkills": [
+        "security-review"
+      ],
+      "recommendedSkills": [
+        "systematic-debugging"
+      ],
+      "requiredArtifacts": [
+        "skill-plan.md",
+        "db-change-plan.md",
+        "security-review.md"
+      ],
+      "requiredVerification": [
+        "rollback-plan",
+        "migration-test"
+      ]
+    },
+    "security": {
+      "detect": {
+        "files": [
+          "**/auth/**",
+          "**/permission/**",
+          "**/security/**",
+          "**/middleware/**"
+        ],
+        "keywords": [
+          "auth",
+          "permission",
+          "tenant",
+          "token",
+          "credential",
+          "secret",
+          "rbac",
+          "鉴权",
+          "权限",
+          "租户",
+          "密钥"
+        ]
+      },
+      "requiredSkills": [
+        "security-review"
+      ],
+      "recommendedSkills": [
+        "code-review"
+      ],
+      "requiredArtifacts": [
+        "skill-plan.md",
+        "security-review.md"
+      ],
+      "requiredVerification": [
+        "threat-model",
+        "rollback-plan"
+      ],
+      "blockLevels": [
+        "CRITICAL"
+      ]
+    },
+    "docs": {
+      "detect": {
+        "files": [
+          "docs/**",
+          "**/*.md"
+        ],
+        "keywords": [
+          "docs",
+          "documentation",
+          "readme",
+          "文档"
+        ]
+      },
+      "recommendedSkills": [
+        "workflow-guide"
+      ],
+      "requiredArtifacts": [
+        "skill-plan.md"
+      ]
+    },
+    "release": {
+      "detect": {
+        "files": [
+          "CHANGELOG.md",
+          "package.json",
+          ".github/workflows/**"
+        ],
+        "keywords": [
+          "release",
+          "ship",
+          "publish",
+          "deploy",
+          "发版",
+          "发布",
+          "部署"
+        ]
+      },
+      "recommendedSkills": [
+        "verification",
+        "code-review"
+      ],
+      "requiredArtifacts": [
+        "skill-plan.md",
+        "review.md",
+        "summary.md"
+      ],
+      "requiredVerification": [
+        "preflight"
+      ]
+    }
+  }
+}

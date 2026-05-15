@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "scalePackage": "@hongmaple0820/scale-engine",
+  "scaleVersion": "0.13.0",
+  "pack": "project-scaffold",
+  "packVersion": 1,
+  "generatedAt": "2026-05-15T04:50:47.783Z",
+  "files": [
+    {
+      "path": "docs/workflow/templates/skill-plan.md",
+      "sha256": "22f18e550836650e3094fcde0c4b270bd43a35bcec83a7ef20b419d9662ce007",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/ui-spec.md",
+      "sha256": "328022424df35d7a221ff18fb5c04840c74f327deabf1d49f7a7e739fe06290c",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/visual-review.md",
+      "sha256": "7ebf7765969a7cf36b46aeb4d9f1c04f5513cefdd2e57256c1badc83722b00cc",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/api-contract.md",
+      "sha256": "a9091cc5f6d7b8178589dcff2253afa366d188903b175dd5c69dbc6c955bace0",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/security-review.md",
+      "sha256": "542bb035a0e45dc954056d95652952717ec34765debe0de3649246fb6e1290a8",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/db-change-plan.md",
+      "sha256": "9e76ec7d3efae5374373bc1ad11c94da74ff59927b3778a1fed557dba0c51458",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/e2e-plan.md",
+      "sha256": "e77779e7f0f61610c9d1ef594a53565599d0777f2c6c12a9c6507f82b6fbfb26",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/github-actions-scale-preflight.yml",
+      "sha256": "b1eb1c4918c3ee63543356e2f23511afd6053f1c7ec227d9e8522ae2a19fb70c",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/pre-push-scale-preflight.sh",
+      "sha256": "3b3a8e45ab3ac8774e54fbcbd5b44cddbf1df06a74aa671f535289b9629a3f7c",
+      "owned": true
+    },
+    {
+      "path": ".scale/verification.json",
+      "sha256": "5f8d402ff1b32fd1d53eb557274d775f6a884040cd79dc36b047faa64261ec7c",
+      "owned": true
+    },
+    {
+      "path": ".scale/skills.json",
+      "sha256": "cc387c1548a21ad2638c63b481fa826f00152e726847c65bb8ed335070e38460",
+      "owned": true
+    }
+  ]
+}

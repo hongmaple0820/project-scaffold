@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "pre-exec": [
+      {
+        "matcher": "",
+        "command": "scale gate pre-tool Bash --args-json \"$ARGS\" --session-id \"$SESSION_ID\""
+      }
+    ],
+    "post-exec": [
+      {
+        "matcher": "",
+        "command": "scale gate post-tool Bash --exit-code \"$EXIT_CODE\" --session-id \"$SESSION_ID\""
+      }
+    ]
+  }
+}
