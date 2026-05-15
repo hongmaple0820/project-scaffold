@@ -1,5 +1,21 @@
 # project-scaffold
 
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors)](https://github.com/sponsors/hongmaple0820)
+[![SCALE Engine](https://img.shields.io/badge/Powered%20by-SCALE%20Engine-2563eb)](https://github.com/hongmaple0820/scale-engine)
+[![npm](https://img.shields.io/badge/npm-%40hongmaple0820%2Fscale--engine-cb3837?logo=npm)](https://www.npmjs.com/package/@hongmaple0820/scale-engine)
+
+## 社区与赞助
+
+这个脚手架沉淀自 SCALE Engine 的 agent 工程治理实践，用于把可执行工作流、质量门禁、任务产物和项目规范快速复制到新项目。
+
+- GitHub 社区: [hongmaple0820/scale-engine](https://github.com/hongmaple0820/scale-engine)
+- Gitee 镜像: [hongmaple/scale-engine](https://gitee.com/hongmaple/scale-engine)
+- npm 包: [@hongmaple0820/scale-engine](https://www.npmjs.com/package/@hongmaple0820/scale-engine)
+- 打赏支持: [GitHub Sponsors](https://github.com/sponsors/hongmaple0820)
+- 社区文档: [docs/COMMUNITY.md](docs/COMMUNITY.md)
+
+如果这套脚手架帮你节省了项目治理、Agent 工作流和质量门禁搭建时间，欢迎 Star、反馈 issue，或通过 GitHub Sponsors 打赏支持持续维护。
+
 通用工程化脚手架，用来给新项目复制一套可执行的 Agent 工作流、规范入口、质量门禁和任务记录结构。
 
 本仓库不是业务项目模板本身，而是治理基线。派生到 Go、Node、Python、Java、前端或其他项目时，保留通用工作流，按目标技术栈改 `.agent/project.json` 和验证命令。
