@@ -1,16 +1,15 @@
 # project-scaffold
 
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors)](https://github.com/sponsors/hongmaple0820)
-[![SCALE Engine](https://img.shields.io/badge/Powered%20by-SCALE%20Engine-2563eb)](https://github.com/hongmaple0820/scale-engine)
+[![Project Scaffold](https://img.shields.io/badge/GitHub-project--scaffold-2563eb?logo=github)](https://github.com/hongmaple0820/project-scaffold)
 [![npm](https://img.shields.io/badge/npm-%40hongmaple0820%2Fscale--engine-cb3837?logo=npm)](https://www.npmjs.com/package/@hongmaple0820/scale-engine)
 
 ## 社区与赞助
 
-这个脚手架沉淀自 SCALE Engine 的 agent 工程治理实践，用于把可执行工作流、质量门禁、任务产物和项目规范快速复制到新项目。
+project-scaffold 是工程化工作流实践脚手架，用于把可执行工作流、质量门禁、任务产物和项目规范快速复制到新项目。
 
-- GitHub 社区: [hongmaple0820/scale-engine](https://github.com/hongmaple0820/scale-engine)
-- Gitee 镜像: [hongmaple/scale-engine](https://gitee.com/hongmaple/scale-engine)
-- npm 包: [@hongmaple0820/scale-engine](https://www.npmjs.com/package/@hongmaple0820/scale-engine)
+- GitHub 仓库: [hongmaple0820/project-scaffold](https://github.com/hongmaple0820/project-scaffold)
+- 相关工具: [@hongmaple0820/scale-engine](https://www.npmjs.com/package/@hongmaple0820/scale-engine)
 - 打赏支持: [GitHub Sponsors](https://github.com/sponsors/hongmaple0820)
 - 社区文档: [docs/COMMUNITY.md](docs/COMMUNITY.md)
 

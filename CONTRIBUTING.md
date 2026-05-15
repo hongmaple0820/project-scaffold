@@ -6,11 +6,10 @@
 
 ## 社区与支持
 
-欢迎通过社区渠道参与 SCALE Engine 和 project-scaffold 的改进：
+欢迎通过社区渠道参与 project-scaffold 的改进：
 
-- GitHub: [hongmaple0820/scale-engine](https://github.com/hongmaple0820/scale-engine)
-- Gitee: [hongmaple/scale-engine](https://gitee.com/hongmaple/scale-engine)
-- npm: [@hongmaple0820/scale-engine](https://www.npmjs.com/package/@hongmaple0820/scale-engine)
+- GitHub: [hongmaple0820/project-scaffold](https://github.com/hongmaple0820/project-scaffold)
+- 相关工具: [@hongmaple0820/scale-engine](https://www.npmjs.com/package/@hongmaple0820/scale-engine)
 - 社区文档: [docs/COMMUNITY.md](docs/COMMUNITY.md)
 
 如果这个脚手架帮助你更快建立工程治理、Agent 工作流或质量门禁，可以通过 [GitHub Sponsors](https://github.com/sponsors/hongmaple0820) 打赏支持维护。
