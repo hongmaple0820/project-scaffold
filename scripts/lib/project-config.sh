@@ -22,7 +22,7 @@ require_project_config() {
 configured_stack() {
     require_project_config
     if command -v jq >/dev/null 2>&1; then
-        jq -r '.stack // "auto"' "$PROJECT_CONFIG_FILE"
+        jq -r '.stack // "auto"' "$PROJECT_CONFIG_FILE" | tr -d '\r'
     else
         python3 - "$PROJECT_CONFIG_FILE" <<'PY'
 import json, sys
@@ -65,8 +65,8 @@ PY
                 echo "$stack"
                 return 0
             fi
-        done < <(jq -r --arg stack "$stack" '.stacks[$stack].detect[]?' "$PROJECT_CONFIG_FILE")
-    done < <(jq -r '.stacks | keys[]' "$PROJECT_CONFIG_FILE")
+        done < <(jq -r --arg stack "$stack" '.stacks[$stack].detect[]?' "$PROJECT_CONFIG_FILE" | tr -d '\r')
+    done < <(jq -r '.stacks | keys[]' "$PROJECT_CONFIG_FILE" | tr -d '\r')
 
     echo "none"
 }
@@ -91,7 +91,7 @@ gate_command() {
     local gate="$2"
     require_project_config
     if command -v jq >/dev/null 2>&1; then
-        jq -r --arg stack "$stack" --arg gate "$gate" '.stacks[$stack].commands[$gate] // empty' "$PROJECT_CONFIG_FILE"
+        jq -r --arg stack "$stack" --arg gate "$gate" '.stacks[$stack].commands[$gate] // empty' "$PROJECT_CONFIG_FILE" | tr -d '\r'
     else
         python3 - "$PROJECT_CONFIG_FILE" "$stack" "$gate" <<'PY'
 import json, sys
@@ -105,7 +105,7 @@ PY
 coverage_threshold() {
     require_project_config
     if command -v jq >/dev/null 2>&1; then
-        jq -r '.coverage_threshold // 80' "$PROJECT_CONFIG_FILE"
+        jq -r '.coverage_threshold // 80' "$PROJECT_CONFIG_FILE" | tr -d '\r'
     else
         python3 - "$PROJECT_CONFIG_FILE" <<'PY'
 import json, sys
@@ -121,7 +121,7 @@ required_tools() {
     local gate="$2"
     require_project_config
     if command -v jq >/dev/null 2>&1; then
-        jq -r --arg stack "$stack" --arg gate "$gate" '(.stacks[$stack].required_tools[$gate] // [])[]' "$PROJECT_CONFIG_FILE"
+        jq -r --arg stack "$stack" --arg gate "$gate" '(.stacks[$stack].required_tools[$gate] // [])[]' "$PROJECT_CONFIG_FILE" | tr -d '\r'
     else
         python3 - "$PROJECT_CONFIG_FILE" "$stack" "$gate" <<'PY'
 import json, sys

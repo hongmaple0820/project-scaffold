@@ -31,8 +31,8 @@ gh auth login
 git clone <repo> my-project
 cd my-project
 
-# 2. 初始化
-make init
+# 2. 预检脚手架
+make preflight
 
 # 3. 安装依赖（技术栈特定）
 # 示例: go mod download
@@ -83,16 +83,21 @@ make lint
 ## 5. 创建第一个功能
 
 ```bash
-# 1. 创建计划
-make plan NAME=my-first-feature
+# 1. 创建任务产物
+make new-task NAME=my-first-feature LEVEL=M
 
 # 2. 编辑文档
-# docs/plans/YYYY-MM-DD-my-first-feature/
-#   ├── spec.md
+# docs/worklog/tasks/YYYY-MM-DD-my-first-feature/
+#   ├── explore.md
+#   ├── mini-prd.md
 #   ├── plan.md
-#   └── tasks.md
+#   ├── verification.md
+#   ├── review.md
+#   └── summary.md
 
-# 3. 按照认知工作流执行...
+# 3. 记录探索并运行工作流门控
+make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='主要矛盾'
+make gate-workflow
 
 # 4. 检查门控
 make gate
@@ -112,7 +117,7 @@ git add .
 git commit -m "feat: add my first feature"
 
 # 3. 推送
-git push origin feature/my-first-feature
+git push origin feature/maple/codex-my-first-feature-0515
 
 # 4. 创建 PR
 gh pr create --title "[feat] My first feature" --body "..."

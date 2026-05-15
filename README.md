@@ -60,28 +60,39 @@ docs/worklog/tasks/<yyyy-mm-dd>-<task-slug>/
 
 ## Git 维护策略
 
-分支必须带作者名，标准格式：
+分支必须带人类负责人和 Agent 平台，标准格式：
 
 ```text
-<type>/<author>-<scope>-<task>-<MMDD>
+<type>/<human-author>/<agent-platform>-<scope>-<task>-<MMDD>
 ```
 
 示例：
 
 ```bash
-feature/maple-platform-tool-user-tool-release-0515
-feature/maple-lms-kercheng-0514
-docs/maple-scaffold-git-workflow-0515
+feature/maple/codex-platform-tool-user-tool-release-0515
+fix/maple/claude-auth-token-refresh-0515
+docs/maple/codex-scaffold-git-workflow-0515
 ```
 
 关键规则：
 
 - 默认在 feature/fix/docs/chore 分支开发。
+- 人类负责人和 Agent 平台必须都出现在分支名中。
+- 协同开发时先看 `git status --short`，不得覆盖人类未提交改动。
 - 验证没有阻断问题后，才允许推送或合并到远程 `dev`。
 - `master` / `main` 不能自主操作，必须等待明确指令。
 - 推送 `origin/dev` 前必须确认当前提交包含最新 `origin/dev`。
 
 详见 [Git 工作流规范](docs/standards/common/GIT_STANDARDS.md)。
+
+## 文档资产策略
+
+- 文档按模块维护：通用规范、项目差异、架构、工作流、任务记录和经验沉淀分目录归档。
+- 总入口只做导航和红线，细节放到对应模块文档。
+- 新增或修改模块时，同步更新相关索引、上下游说明、版本号和变更记录。
+- 文档冲突解决后必须检查相对链接，避免入口指向不存在的文件。
+
+详见 [文档规范](docs/standards/common/DOCUMENT_STANDARDS.md)。
 
 ## 工作流
 
@@ -113,7 +124,16 @@ bash scripts/gates/all.sh --quality
 bash scripts/gates/all.sh --all
 ```
 
-PowerShell 自检入口：
+Profile/service 验证入口：
+
+```bash
+bash scripts/workflow/verify.sh --list
+bash scripts/workflow/verify.sh --profile scaffold
+bash scripts/workflow/verify.sh --profile default
+bash scripts/workflow/verify.sh --service service-name
+```
+
+PowerShell 包装入口：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
@@ -125,8 +145,19 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
 
 ```json
 {
-  "stack": "auto",
-  "coverage_threshold": 80
+  "profiles": {
+    "default": {
+      "services": ["api"],
+      "checks": ["lint", "test", "build"]
+    }
+  },
+  "services": {
+    "api": {
+      "path": "services/api",
+      "stack": "go",
+      "required": true
+    }
+  }
 }
 ```
 
@@ -146,11 +177,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
 make help
 make preflight
 make new-task NAME=task-slug LEVEL=M
+make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='主要矛盾'
+make checkpoint PHASE=execute
 make resume
 make gate-workflow
 make gate-quality
 make gate
 make verify
+make verify-list
 make validate
 ```
 

@@ -32,6 +32,7 @@ workflow_gate: { cmd: "bash scripts/gates/all.sh --workflow" }
 quality_gate:  { cmd: "bash scripts/gates/all.sh --quality" }
 all_gates:     { cmd: "bash scripts/gates/all.sh --all" }
 verify:        { cmd: "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1" }
+verify_sh:     { cmd: "bash scripts/workflow/verify.sh --profile scaffold" }
 resume:        { cmd: "bash scripts/workflow/resume.sh" }
 validate:      { cmd: "bash scripts/validate-config.sh" }
 ```
@@ -41,9 +42,11 @@ Makefile 等价入口：
 ```bash
 make preflight
 make new-task NAME=task-slug LEVEL=M
+make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='主要矛盾'
 make gate-workflow
 make gate-quality
 make verify
+make verify-list
 make validate
 ```
 
@@ -68,12 +71,20 @@ make validate
 
 Git 规则：
 
-- 分支必须带作者名，格式为 `<type>/<author>-<scope>-<task>-<MMDD>`。
-- 示例：`feature/maple-platform-tool-user-tool-release-0515`、`feature/maple-lms-kercheng-0514`。
+- 分支必须带人类负责人和 Agent 平台，格式为 `<type>/<human-author>/<agent-platform>-<scope>-<task>-<MMDD>`。
+- 示例：`feature/maple/codex-platform-tool-user-tool-release-0515`、`fix/maple/claude-auth-token-refresh-0515`。
+- 看到人类未提交改动时，隔离处理，不覆盖、不重排、不顺手格式化。
 - 开发默认在 feature/fix/docs/chore 分支完成。
 - 只有验证通过后才允许推送或合并到远程 `dev`。
 - `master` / `main` 不能自主操作，必须等待明确指令。
 - 详细规范见 `docs/standards/common/GIT_STANDARDS.md`。
+
+文档规则：
+
+- 文档按模块维护，入口文档只放导航和红线。
+- 新增模块、接口、表结构、配置、前端页面或工作流时，同步更新对应模块文档。
+- 文档冲突要同时处理正文、索引、链接、版本号和变更记录。
+- 详细规范见 `docs/standards/common/DOCUMENT_STANDARDS.md`。
 
 ### 4.1 探索
 
@@ -94,8 +105,9 @@ bash scripts/gates/G1-verify.sh
 - Risks / 风险
 - Rollback / 回滚方案
 
+编辑 `new-task` 创建的 `docs/worklog/tasks/<task>/plan.md`，不得保留 `TODO` 或 `待填写`。
+
 ```bash
-bash scripts/workflow/plan.sh "task-slug"
 bash scripts/gates/G2-verify.sh
 ```
 
@@ -111,7 +123,7 @@ L/CRITICAL 任务在规划后暂停，等待人工确认。
 
 ```bash
 bash scripts/gates/all.sh --dry-run
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
+bash scripts/workflow/verify.sh --profile scaffold
 ```
 
 ### 4.5 沉淀
@@ -140,12 +152,23 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
 
 ## 6. 技术栈适配
 
-`.agent/project.json` 是技术栈适配入口。派生项目后先更新它：
+`.agent/project.json` 是 verification profile、service matrix 和技术栈适配入口。派生项目后先更新它：
 
 ```json
 {
-  "stack": "auto",
-  "coverage_threshold": 80
+  "profiles": {
+    "default": {
+      "services": ["api"],
+      "checks": ["lint", "test", "build"]
+    }
+  },
+  "services": {
+    "api": {
+      "path": "services/api",
+      "stack": "go",
+      "required": true
+    }
+  }
 }
 ```
 

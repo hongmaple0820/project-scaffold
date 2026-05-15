@@ -91,13 +91,15 @@ uk_users_email
 ### 3.1 分支名
 
 ```
-类型/描述
+<type>/<human-author>/<agent-platform>-<scope>-<task>-<MMDD>
 
-feature/user-auth
-fix/login-timeout
-hotfix/security-patch
-release/v1.2.0
+feature/maple/codex-user-auth-0515
+fix/maple/claude-login-timeout-0515
+hotfix/maple/codex-security-patch-0515
+release/maple/human-v1-2-0-0515
 ```
+
+详细规则见 [Git 工作流规范](GIT_STANDARDS.md)。
 
 ### 3.2 提交信息
 

@@ -78,8 +78,16 @@ def checkpoint(args: list[str]) -> int:
     state_path, root, phase = Path(args[0]), Path(args[1]), args[2]
     data = load(state_path) or default_state("ad-hoc-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"), "M")
     try:
-        result = subprocess.run(["git", "diff", "--name-only"], cwd=root, text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-        files = [line for line in result.stdout.splitlines() if line]
+        result = subprocess.run(["git", "status", "--short"], cwd=root, text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        files = []
+        for line in result.stdout.splitlines():
+            if len(line) < 4:
+                continue
+            path = line[3:].strip()
+            if " -> " in path:
+                path = path.split(" -> ", 1)[1]
+            if path:
+                files.append(path)
     except Exception:
         files = []
     data["phase"] = phase

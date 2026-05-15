@@ -14,7 +14,10 @@ docs/
 ├── guides/         # 指南（推荐遵循）
 ├── skills/         # 技能（参考学习）
 ├── architecture/   # 架构（关键决策）
-└── plans/          # 计划（按日期组织）
+├── workflow/       # Agent/人类协同工作流
+├── modules/        # 派生项目的模块文档
+├── adr/            # 架构决策记录
+└── worklog/        # 任务产物和指标
 ```
 
 ---
@@ -58,6 +61,14 @@ docs/
 | [architecture/OVERVIEW.md](architecture/OVERVIEW.md) | 架构总览 |
 | [architecture/decisions/](architecture/decisions/) | 架构决策记录(ADR) |
 
+### 工作流 Workflow
+
+| 文档 | 内容 |
+|------|------|
+| [workflow/README.md](workflow/README.md) | Agent 工作流、任务产物、门禁和 verification profile |
+| [workflow/SCALE_INIT_GOVERNANCE_TEMPLATE.md](workflow/SCALE_INIT_GOVERNANCE_TEMPLATE.md) | `scale init` 应生成的治理资产清单 |
+| [worklog/metrics.md](worklog/metrics.md) | M/L 任务指标和复盘数据 |
+
 ---
 
 ## 文档规范
@@ -81,10 +92,11 @@ docs/
 
 | 变更类型 | 需更新文档 |
 |----------|------------|
-| 新增功能 | plans/ + CHANGELOG |
-| 修改接口 | standards/API + guides/ |
-| 重构代码 | skills/ + architecture/ |
-| 修复Bug | CHANGELOG + guides/TROUBLESHOOTING |
+| 新增功能 | `worklog/tasks/` + 对应 `modules/<module>/` + 必要 ADR |
+| 修改接口 | `modules/<module>/api.md` + `standards/common/API_STANDARDS.md` |
+| 重构代码 | `architecture/` + 对应模块文档 |
+| 修复Bug | `worklog/tasks/` + 故障复盘或排障指南 |
+| 工作流变更 | `workflow/README.md` + `AGENTS.md` / `CLAUDE.md` + 相关脚本 |
 
 ---
 

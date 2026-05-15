@@ -26,5 +26,9 @@ for gate in "${GATES[@]}"; do
   if [ "$DRY_RUN" = true ]; then echo "  exists"; continue; fi
   if ! bash "$script"; then FAILED=$((FAILED+1)); fi
 done
+if [ "$DRY_RUN" = true ]; then
+  echo "[GATE] dry-run completed; gates were not executed"
+  exit 0
+fi
 if [ "$FAILED" -gt 0 ]; then echo "[GATE] failed: $FAILED"; exit 1; fi
 echo "[GATE] passed"

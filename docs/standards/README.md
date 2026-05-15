@@ -33,8 +33,8 @@ docs/standards/
 | [API 规范](common/API_STANDARDS.md) | REST API、错误码、响应格式 |
 | [数据库规范](common/DATABASE_STANDARDS.md) | 表设计、索引、查询、迁移 |
 | [Git 规范](common/GIT_STANDARDS.md) | 作者分支、dev 推送、master/main 保护、提交和发布流程 |
-| [协作规范](common/TEAM_COLLABORATION.md) | 角色职责、沟通、评审 |
-| [文档规范](common/DOCUMENT_STANDARDS.md) | 文档结构、更新、评审 |
+| [协作规范](common/TEAM_COLLABORATION.md) | 角色职责、沟通、评审、人机协同边界 |
+| [文档规范](common/DOCUMENT_STANDARDS.md) | 模块化文档资产、关联关系、版本、冲突和更新维护 |
 
 ## 规范级别
 

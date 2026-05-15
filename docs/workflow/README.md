@@ -1,6 +1,8 @@
 # Agent Workflow
 
-本目录定义脚手架的通用工作流。所有派生项目共享同一套阶段和任务产物；语言、框架和构建工具差异只放在 `.agent/project.json` 与 G3-G7 门禁中。
+本目录定义脚手架的通用工作流。所有派生项目共享同一套阶段和任务产物；语言、框架、服务矩阵和构建工具差异只放在 `.agent/project.json`、`scripts/workflow/verify.sh` 与 G3-G7 门禁中。
+
+`scale init` 生成项目时应落地的治理资产见 [SCALE_INIT_GOVERNANCE_TEMPLATE.md](SCALE_INIT_GOVERNANCE_TEMPLATE.md)。
 
 ## 任务等级
 
@@ -54,17 +56,20 @@ G1 要求：
 ## 规划
 
 ```bash
-bash scripts/workflow/plan.sh "task-slug"
+# 编辑 new-task 创建的 docs/worklog/tasks/<task>/plan.md
 bash scripts/gates/G2-verify.sh
 ```
 
-G2 要求 `plan.md` 至少包含：
+G2 要求 `plan.md` 至少包含有效内容，不能只保留模板占位：
 
 - Scope / 范围
 - Boundary / 边界
 - Acceptance Criteria / 验收标准
+- Risks / 风险
+- Rollback / 回滚方案
+- Verification / 验证
 
-建议同时写清风险、回滚方案和验证命令。
+面向用户的新 API、UI 流程、权限、删除、恢复、分享、上传等功能，还要填写 `mini-prd.md`。
 
 ## 执行
 
@@ -82,6 +87,7 @@ bash scripts/workflow/checkpoint.sh execute
 bash scripts/gates/all.sh --dry-run
 bash scripts/gates/all.sh --workflow
 bash scripts/gates/all.sh --quality
+bash scripts/workflow/verify.sh --profile scaffold
 ```
 
 推送或合并到远程 `dev` 前，必须完成相关验证。`master` / `main` 只在用户明确指令下操作，详见 [Git 工作流规范](../standards/common/GIT_STANDARDS.md)。
@@ -90,6 +96,14 @@ PowerShell 自检：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
+```
+
+Profile/service matrix：
+
+```bash
+bash scripts/workflow/verify.sh --list
+bash scripts/workflow/verify.sh --profile default
+bash scripts/workflow/verify.sh --service service-name
 ```
 
 门禁分组：
@@ -106,7 +120,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
 bash scripts/workflow/resume.sh
 ```
 
-该命令会显示当前任务、等级、阶段、产物目录、已探索文件、主要矛盾和已完成门禁。
+该命令会显示当前任务、等级、阶段、产物目录、已探索文件、主要矛盾和已完成门禁，并给出下一步建议。
 
 ## 沉淀
 

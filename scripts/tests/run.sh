@@ -100,8 +100,8 @@ test_dry_run_is_honest() {
 
     (cd "$fixture" && bash scripts/gates/all.sh --dry-run >/tmp/scaffold-dry-run.log 2>&1)
 
-    grep -q "干运行完成，未执行实际门控" /tmp/scaffold-dry-run.log
-    ! grep -q "所有门控通过" /tmp/scaffold-dry-run.log
+    grep -q "dry-run completed; gates were not executed" /tmp/scaffold-dry-run.log
+    ! grep -q "\[GATE\] passed" /tmp/scaffold-dry-run.log
 }
 
 test_g3_blocks_go_without_tests() {
@@ -153,19 +153,27 @@ EOF
 }
 
 test_node_stack_uses_configured_lint_command() {
+    if ! command -v jq >/dev/null 2>&1; then
+        skip "node service matrix test requires jq"
+        return 0
+    fi
+
     local fixture="$TEST_ROOT/node-configured-lint"
     copy_fixture "$fixture"
-    cat > "$fixture/package.json" <<'EOF'
+    mkdir -p "$fixture/web"
+    cat > "$fixture/web/package.json" <<'EOF'
 {"scripts":{"lint":"echo lint-ok"}}
 EOF
-    jq '.stack = "node" | .stacks.node.commands.lint = "echo node-lint-ok > .agent/logs/node-lint.txt" | .stacks.node.required_tools.lint = []' \
+    jq '.profiles.default.services = ["web"] |
+        .profiles.default.checks = ["lint"] |
+        .services.web = {"path":"web","stack":"node","required":true,"commands":{"lint":"echo node-lint-ok"},"required_tools":{"lint":[]}}' \
         "$fixture/.agent/project.json" > "$fixture/.agent/project.json.tmp"
     mv "$fixture/.agent/project.json.tmp" "$fixture/.agent/project.json"
 
-    (cd "$fixture" && bash scripts/gates/G4-verify.sh >/tmp/scaffold-node-lint.log 2>&1)
+    (cd "$fixture" && bash scripts/workflow/verify.sh --profile default >/tmp/scaffold-node-lint.log 2>&1)
 
-    grep -q "lint 命令通过" /tmp/scaffold-node-lint.log
-    grep -q "node-lint-ok" "$fixture/.agent/logs/node-lint.txt"
+    grep -q "run web/lint" /tmp/scaffold-node-lint.log
+    grep -q "node-lint-ok" "$fixture/.agent/logs/web/lint.log"
 }
 
 echo "========================================"

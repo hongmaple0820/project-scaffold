@@ -76,7 +76,25 @@ echo ""
 
 # 检查换行格式
 echo "[CHECK] Shell脚本换行..."
-CRLF_FILES=$(find "$PROJECT_ROOT" -path "$PROJECT_ROOT/.git" -prune -o -name "*.sh" -type f -print0 | xargs -0 grep -Il $'\r' 2>/dev/null || true)
+CRLF_FILES=$(python3 - "$PROJECT_ROOT" <<'PY'
+from __future__ import annotations
+import os
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+for base in [root / "scripts", root / ".claude" / "hooks"]:
+    if not base.exists():
+        continue
+    for path in base.rglob("*.sh"):
+        try:
+            data = path.read_bytes()
+        except OSError:
+            continue
+        if b"\r\n" in data:
+            print(path)
+PY
+)
 if [ -n "$CRLF_FILES" ]; then
     echo "[ERROR] Shell脚本包含CRLF换行:"
     echo "$CRLF_FILES"

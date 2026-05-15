@@ -14,52 +14,15 @@ TASK_DIR="$PROJECT_ROOT/docs/worklog/tasks/$TASK_ID"
 STATE_DIR="$PROJECT_ROOT/.agent/state"
 STATE_FILE="$STATE_DIR/current.json"
 PY_STATE="$PROJECT_ROOT/scripts/lib/workflow_state.py"
+TEMPLATE_DIR="$PROJECT_ROOT/docs/workflow/templates"
 mkdir -p "$TASK_DIR" "$STATE_DIR"
 for file in explore.md mini-prd.md plan.md verification.md review.md summary.md; do
   target="$TASK_DIR/$file"
   if [ ! -f "$target" ]; then
-    if [ "$file" = "plan.md" ]; then
-      cat > "$target" << EOF
-# plan - $TASK_ID
-
-Date: $DATE
-Level: $LEVEL
-
-## Scope / 范围
-
-- 待填写。
-
-## Boundary / 边界
-
-- 待填写。
-
-## Acceptance Criteria / 验收标准
-
-- 待填写。
-
-## Risks / 风险
-
-- 待填写。
-
-## Rollback / 回滚方案
-
-- 待填写。
-
-## Verification / 验证
-
-- 待填写。
-
-EOF
+    if [ -f "$TEMPLATE_DIR/$file" ]; then
+      sed "s/{{TASK_ID}}/$TASK_ID/g; s/{{DATE}}/$DATE/g; s/{{LEVEL}}/$LEVEL/g; s/{{TASK_SLUG}}/$NAME/g" "$TEMPLATE_DIR/$file" > "$target"
     else
-      cat > "$target" << EOF
-# ${file%.md} - $TASK_ID
-
-Date: $DATE
-Level: $LEVEL
-
-## Notes
-
-EOF
+      printf '# %s - %s\n\nDate: %s\nLevel: %s\n\n## Notes\n\n- TODO\n' "${file%.md}" "$TASK_ID" "$DATE" "$LEVEL" > "$target"
     fi
   fi
 done

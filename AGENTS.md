@@ -38,13 +38,24 @@
 
 ## Git 维护策略
 
-- 默认从作者 feature 分支开发，分支格式为 `<type>/<author>-<scope>-<task>-<MMDD>`。
-- 示例：`feature/maple-platform-tool-user-tool-release-0515`、`feature/maple-lms-kercheng-0514`。
+- 默认从作者分支开发，分支格式为 `<type>/<human-author>/<agent-platform>-<scope>-<task>-<MMDD>`。
+- 示例：`feature/maple/codex-platform-tool-user-tool-release-0515`、`fix/maple/claude-auth-token-refresh-0515`。
+- 人类负责人和 Agent 平台都必须出现在分支名中。
+- 发现人类未提交改动时，先隔离工作区，不覆盖、不重排、不顺手清理。
 - `dev` 是开发集成分支，只有验证没有阻断问题后才允许推送或合并。
 - `master` / `main` 是受保护主干，Agent 不得自主提交、合并、打 tag、推送或重置。
 - 推送远程 `dev` 前必须先运行相关验证，并确认当前提交包含最新 `origin/dev`。
 
 详见 [Git 工作流规范](docs/standards/common/GIT_STANDARDS.md)。
+
+## 文档资产维护
+
+- 文档按模块归档：通用规范、项目差异、架构、工作流、任务记录和经验沉淀各放各处。
+- 新增模块、接口、表结构、配置、前端页面或工作流时，必须同步更新对应文档和索引。
+- 一个事实只保留一个主来源，其他文档用链接引用，避免复制后版本漂移。
+- 文档冲突要合并双方意图，并检查入口索引、相对链接、版本号和变更记录。
+
+详见 [文档规范](docs/standards/common/DOCUMENT_STANDARDS.md)。
 
 ## 标准工作流
 
@@ -73,7 +84,7 @@ docs/worklog/tasks/<yyyy-mm-dd>-<task-slug>/
 | 探索 | 读规则、读相关文件、识别主要矛盾 | `.agent/state/explore.json`，G1 |
 | 规划 | 明确范围、边界、验收标准、风险和回滚 | `plan.md`，G2 |
 | 执行 | 小步修改，优先保护既有行为 | 代码/文档/脚本变更，必要时 G3 |
-| 验证 | 实际运行相关命令，完整阅读输出 | G4-G7 或 `scripts/workflow/verify.ps1` |
+| 验证 | 实际运行相关命令，完整阅读输出 | G4-G7 或 `scripts/workflow/verify.sh` |
 | 沉淀 | 更新文档、记录验证和剩余风险 | `summary.md`、`verification.md`、metrics |
 
 ## 质量门禁
@@ -99,7 +110,7 @@ bash scripts/gates/all.sh --all
 
 ## 技术栈适配
 
-本脚手架通过 `.agent/project.json` 描述技术栈和门禁命令。派生项目时先确认这个文件，不要在门禁脚本里写死语言命令。
+本脚手架通过 `.agent/project.json` 描述 verification profile、service matrix、技术栈和门禁命令。派生项目时先确认这个文件，不要在门禁脚本里写死语言命令。
 
 默认支持：
 
@@ -108,6 +119,15 @@ bash scripts/gates/all.sh --all
 | Go | `go.mod` | `golangci-lint`、`go test`、`gosec` |
 | Node | `package.json` | `npm run lint`、`npm test`、`npm audit` |
 | Python | `pyproject.toml`、`requirements.txt`、`setup.py` | `ruff`、`pytest`、`bandit` |
+
+常用入口：
+
+```bash
+bash scripts/workflow/verify.sh --list
+bash scripts/workflow/verify.sh --profile scaffold
+bash scripts/workflow/verify.sh --profile default
+bash scripts/workflow/verify.sh --service service-name
+```
 
 如果目标项目已有高质量命令，优先复用已有命令，不发明第二套。
 
@@ -131,7 +151,7 @@ bash scripts/gates/all.sh --all
 | `.agent/project.json` | 技术栈和门禁命令配置 |
 | `docs/workflow/README.md` | 工作流说明 |
 | `docs/standards/` | 通用规范 |
-| `scripts/workflow/` | 新任务、探索、计划、恢复、自检 |
+| `scripts/workflow/` | 新任务、探索、检查点、恢复、自检和 profile 验证 |
 | `scripts/gates/` | G1-G7 门禁 |
 | `scripts/preflight/` | 环境预检 |
 | `templates/` | 计划和 ADR 模板 |

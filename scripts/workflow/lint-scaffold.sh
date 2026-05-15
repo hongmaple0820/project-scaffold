@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+echo "== scaffold syntax check =="
+
 SCRIPTS=(
   "$ROOT/scripts/gates/all.sh"
   "$ROOT/scripts/gates/G1-verify.sh"
@@ -21,8 +25,11 @@ SCRIPTS=(
   "$ROOT/scripts/workflow/lint-scaffold.sh"
   "$ROOT/scripts/workflow/verify.sh"
 )
+
 for script in "${SCRIPTS[@]}"; do
   bash -n "$script"
 done
+
 python3 -m py_compile "$ROOT/scripts/lib/workflow_state.py"
-echo "[G4] scaffold scripts passed"
+
+echo "[LINT] scaffold scripts OK"

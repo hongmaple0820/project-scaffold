@@ -49,13 +49,14 @@
    - 回滚方案
 
 ### 输出
-- `docs/plans/YYYY-MM-DD-feature/spec.md` - 需求
-- `docs/plans/YYYY-MM-DD-feature/plan.md` - 方案
-- `docs/plans/YYYY-MM-DD-feature/tasks.md` - 任务
+- `docs/worklog/tasks/YYYY-MM-DD-feature/mini-prd.md` - 用户侧需求和验收
+- `docs/worklog/tasks/YYYY-MM-DD-feature/plan.md` - 方案、边界、风险和回滚
+- `docs/worklog/tasks/YYYY-MM-DD-feature/verification.md` - 验证命令和结果
+- `docs/worklog/tasks/YYYY-MM-DD-feature/review.md` - 评审和剩余风险
 
 ### 门控 G2
-- [ ] 文档已创建
-- [ ] 含边界+异常+回滚
+- [ ] `plan.md` 已填写，且不保留 TODO/待填写
+- [ ] 含范围、边界、验收、风险、回滚和验证
 - [ ] **L级：人工确认通过**
 
 ---
@@ -112,15 +113,17 @@ make test
 ### 门控检查
 
 ```bash
-make gate
+make gate-workflow
+make gate-quality
+make verify PROFILE=default
 ```
 
 | 门控 | 检查项 |
 |------|--------|
-| G4 | `make lint` 通过 |
-| G5 | `make test` 通过 |
-| G6 | 覆盖率 ≥80% |
-| G7 | 安全扫描无高危 |
+| G4 | 脚本语法和 Python helper 通过 |
+| G5 | 脚手架自检通过 |
+| G6 | metrics 和 M/L 任务产物存在 |
+| G7 | 技术栈安全扫描无高危 |
 
 ### 验证原则
 1. 工具验证，不脑补
@@ -145,23 +148,25 @@ make gate
 - [ ] 有无 AI 生成痕迹？
 
 ### 文档更新
-- [ ] 踩坑经验 → `docs/skills/`
-- [ ] 架构决策 → `docs/architecture/decisions/`
-- [ ] 可复用模式 → 技能文档
+- [ ] 任务证据 → `docs/worklog/tasks/`
+- [ ] 模块长期文档 → `docs/modules/<module>/`
+- [ ] 架构决策 → `docs/adr/`
+- [ ] 可复用模式 → `docs/skills/`
 
 ---
 
 ## 快捷命令
 
 ```bash
-# 创建计划
-make plan NAME=feature-x
+# 创建任务
+make new-task NAME=feature-x LEVEL=M
+make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='主要矛盾'
 
 # 运行门控
 make gate
 
-# 查看任务
-make task
+# 查看任务状态
+make resume
 ```
 
 ---
