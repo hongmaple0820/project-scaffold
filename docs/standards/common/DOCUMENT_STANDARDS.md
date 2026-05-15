@@ -142,7 +142,7 @@ docs/
 
 使用相对路径:
 ```markdown
-[数据库规范](../standards/DATABASE_STANDARDS.md)
+[数据库规范](DATABASE_STANDARDS.md)
 ```
 
 ### 6.2 外部链接
