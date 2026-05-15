@@ -1,6 +1,6 @@
 # Git 工作流规范
 
-**版本**: v2.0
+**版本**: v2.1
 **适用范围**: 所有由本脚手架派生的项目
 
 本规范定义分支命名、提交、验证、推送、dev 集成和 master/main 保护策略。默认目标是：每一次推送都可追溯、可验证、可回滚。
@@ -26,6 +26,25 @@
 - `dev` 是日常集成目标，但不是随手推送目标；只有验证没有问题才允许推到远程 `dev`。
 
 ## 2. 分支命名
+
+### 2.0 人类与 Agent 协同分支
+
+分支名必须能看出“谁负责、做哪个模块、做什么、何时创建”。人类主导和 Agent 主导可以使用不同前缀，但都必须保持可追溯。
+
+| 场景 | 推荐格式 | 示例 |
+| --- | --- | --- |
+| 人类主导功能 | `feature/<author>-<scope>-<task>-<MMDD>` | `feature/maple-lms-kercheng-0514` |
+| 人类主导修复 | `fix/<author>-<scope>-<task>-<MMDD>` | `fix/maple-auth-token-refresh-0515` |
+| 文档或规范 | `docs/<author>-<scope>-<task>-<MMDD>` | `docs/maple-scaffold-doc-governance-0515` |
+| Agent 独立工作 | `codex/<scope>-<task>-<MMDD>` | `codex/scaffold-doc-governance-0515` |
+| Agent 辅助人类分支 | 保留人类作者名，并在提交/PR 中说明 Agent 平台 | `feature/maple-platform-tool-user-tool-release-0515` |
+
+协同规则：
+
+- 人类已有未提交改动默认归人类所有，Agent 不得覆盖、格式化或顺手清理。
+- Agent 开始前必须查看 `git status --short` 和当前分支；若存在无关脏改，必须隔离到新分支或独立 worktree。
+- 同一分支只承载一个交付目标。功能、修复、文档、格式化和依赖升级不得混在一个提交里。
+- PR/MR 或最终报告必须写清人类负责人、Agent 平台、验证命令、未验证项和回滚方式。
 
 ### 2.1 标准格式
 
@@ -307,7 +326,43 @@ git push origin HEAD:dev
 
 `reset --hard`、`push --force`、删除远程分支属于高风险操作，必须人工确认。
 
-## 9. 快速检查清单
+## 9. 冲突解决规范
+
+### 9.1 冲突预防
+
+- 开发前先 `git fetch origin`，从最新集成分支创建工作分支。
+- 修改共享文件前先确认最近变更：`git log --oneline -- <file>`。
+- 大文档按模块拆分，避免多人同时编辑一个长文件。
+- Agent 发现同一文件有人类未提交改动时，只能追加必要内容，不能重排全文件或统一格式化。
+
+### 9.2 冲突处理
+
+```bash
+git status --short
+git fetch origin
+git merge origin/dev
+# 或按团队要求使用 rebase
+```
+
+出现冲突时：
+
+- 先读冲突两侧意图，不得直接使用 `--ours` 或 `--theirs` 覆盖。
+- 代码冲突要保留正确行为并补充/重跑相关测试。
+- 文档冲突要同时维护正文、索引、链接、版本号和变更记录。
+- 解决后必须运行本次任务相关验证，并在提交说明或 PR 中注明冲突文件和处理原则。
+- 若冲突涉及业务取舍、权限、生产配置、数据库迁移或无法判断的人类改动，停止并请负责人确认。
+
+### 9.3 禁止操作
+
+```bash
+git checkout -- <human-owned-file>
+git reset --hard
+git push --force origin dev
+```
+
+以上操作会丢失或重写他人工作，必须有明确人工指令和回滚说明才允许执行。
+
+## 10. 快速检查清单
 
 推 feature 前：
 

@@ -40,11 +40,22 @@
 
 - 默认从作者 feature 分支开发，分支格式为 `<type>/<author>-<scope>-<task>-<MMDD>`。
 - 示例：`feature/maple-platform-tool-user-tool-release-0515`、`feature/maple-lms-kercheng-0514`。
+- Agent 独立工作可使用 `codex/<scope>-<task>-<MMDD>`；人类主导分支必须保留人类作者名。
+- 发现人类未提交改动时，先隔离工作区，不覆盖、不重排、不顺手清理。
 - `dev` 是开发集成分支，只有验证没有阻断问题后才允许推送或合并。
 - `master` / `main` 是受保护主干，Agent 不得自主提交、合并、打 tag、推送或重置。
 - 推送远程 `dev` 前必须先运行相关验证，并确认当前提交包含最新 `origin/dev`。
 
 详见 [Git 工作流规范](docs/standards/common/GIT_STANDARDS.md)。
+
+## 文档资产维护
+
+- 文档按模块归档：通用规范、项目差异、架构、工作流、任务记录和经验沉淀各放各处。
+- 新增模块、接口、表结构、配置、前端页面或工作流时，必须同步更新对应文档和索引。
+- 一个事实只保留一个主来源，其他文档用链接引用，避免复制后版本漂移。
+- 文档冲突要合并双方意图，并检查入口索引、相对链接、版本号和变更记录。
+
+详见 [文档规范](docs/standards/common/DOCUMENT_STANDARDS.md)。
 
 ## 标准工作流
 

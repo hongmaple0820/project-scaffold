@@ -77,11 +77,22 @@ docs/maple-scaffold-git-workflow-0515
 关键规则：
 
 - 默认在 feature/fix/docs/chore 分支开发。
+- 人类主导分支必须带作者名；Agent 独立工作可使用 `codex/<scope>-<task>-<MMDD>`。
+- 协同开发时先看 `git status --short`，不得覆盖人类未提交改动。
 - 验证没有阻断问题后，才允许推送或合并到远程 `dev`。
 - `master` / `main` 不能自主操作，必须等待明确指令。
 - 推送 `origin/dev` 前必须确认当前提交包含最新 `origin/dev`。
 
 详见 [Git 工作流规范](docs/standards/common/GIT_STANDARDS.md)。
+
+## 文档资产策略
+
+- 文档按模块维护：通用规范、项目差异、架构、工作流、任务记录和经验沉淀分目录归档。
+- 总入口只做导航和红线，细节放到对应模块文档。
+- 新增或修改模块时，同步更新相关索引、上下游说明、版本号和变更记录。
+- 文档冲突解决后必须检查相对链接，避免入口指向不存在的文件。
+
+详见 [文档规范](docs/standards/common/DOCUMENT_STANDARDS.md)。
 
 ## 工作流
 

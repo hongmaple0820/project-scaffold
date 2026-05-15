@@ -70,10 +70,19 @@ Git 规则：
 
 - 分支必须带作者名，格式为 `<type>/<author>-<scope>-<task>-<MMDD>`。
 - 示例：`feature/maple-platform-tool-user-tool-release-0515`、`feature/maple-lms-kercheng-0514`。
+- Agent 独立任务可使用 `codex/<scope>-<task>-<MMDD>`；人类主导分支保留人类作者名。
+- 看到人类未提交改动时，隔离处理，不覆盖、不重排、不顺手格式化。
 - 开发默认在 feature/fix/docs/chore 分支完成。
 - 只有验证通过后才允许推送或合并到远程 `dev`。
 - `master` / `main` 不能自主操作，必须等待明确指令。
 - 详细规范见 `docs/standards/common/GIT_STANDARDS.md`。
+
+文档规则：
+
+- 文档按模块维护，入口文档只放导航和红线。
+- 新增模块、接口、表结构、配置、前端页面或工作流时，同步更新对应模块文档。
+- 文档冲突要同时处理正文、索引、链接、版本号和变更记录。
+- 详细规范见 `docs/standards/common/DOCUMENT_STANDARDS.md`。
 
 ### 4.1 探索
 
