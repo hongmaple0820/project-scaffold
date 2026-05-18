@@ -1,0 +1,12 @@
+# SCALE Engine — Codex CLI config
+# See: https://github.com/openai/codex
+
+[model]
+default = "o4-mini"
+
+[approval]
+# SCALE hooks handle safety gates
+auto_approve = ["scale *"]
+
+[environment]
+SCALE_AGENT = "codex"

@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "scalePackage": "@hongmaple0820/scale-engine",
+  "scaleVersion": "0.18.0",
+  "pack": "project-scaffold",
+  "packVersion": 2,
+  "generatedAt": "2026-05-18T09:19:43.858Z",
+  "files": [
+    {
+      "path": "docs/workflow/templates/skill-plan.md",
+      "sha256": "22f18e550836650e3094fcde0c4b270bd43a35bcec83a7ef20b419d9662ce007",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/ui-spec.md",
+      "sha256": "328022424df35d7a221ff18fb5c04840c74f327deabf1d49f7a7e739fe06290c",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/visual-review.md",
+      "sha256": "7ebf7765969a7cf36b46aeb4d9f1c04f5513cefdd2e57256c1badc83722b00cc",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/api-contract.md",
+      "sha256": "a9091cc5f6d7b8178589dcff2253afa366d188903b175dd5c69dbc6c955bace0",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/security-review.md",
+      "sha256": "542bb035a0e45dc954056d95652952717ec34765debe0de3649246fb6e1290a8",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/db-change-plan.md",
+      "sha256": "9e76ec7d3efae5374373bc1ad11c94da74ff59927b3778a1fed557dba0c51458",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/e2e-plan.md",
+      "sha256": "e77779e7f0f61610c9d1ef594a53565599d0777f2c6c12a9c6507f82b6fbfb26",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/github-actions-scale-preflight.yml",
+      "sha256": "b1eb1c4918c3ee63543356e2f23511afd6053f1c7ec227d9e8522ae2a19fb70c",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/pre-push-scale-preflight.sh",
+      "sha256": "3b3a8e45ab3ac8774e54fbcbd5b44cddbf1df06a74aa671f535289b9629a3f7c",
+      "owned": true
+    },
+    {
+      "path": ".scale/verification.json",
+      "sha256": "5f8d402ff1b32fd1d53eb557274d775f6a884040cd79dc36b047faa64261ec7c",
+      "owned": true
+    },
+    {
+      "path": ".scale/skills.json",
+      "sha256": "cc387c1548a21ad2638c63b481fa826f00152e726847c65bb8ed335070e38460",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/skill-evidence.md",
+      "sha256": "fa697a67437bae8b3372d620cfab4e64daff7a693a0603327389da362cf805d7",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/docs-impact.md",
+      "sha256": "a4ff6c98539b71ff7f6df2cce8253b9073c6c134ee2ee9d1e1fc34b819b961a0",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/resource-impact.md",
+      "sha256": "af37cb2d4d97cfe46243269225732dfc10180dd6eb1e58b3085abb6ee0e3cc5f",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/standards-impact.md",
+      "sha256": "eed804359ca45b0b7d4436b305ea44f9872bccaa3c6e4fcf3dfbf0b1f422545f",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/templates/architecture-review.md",
+      "sha256": "819390550452c3bb65e5eff2fee44d3d5767a3f4e164fd64cdb10420fd3f40aa",
+      "owned": true
+    },
+    {
+      "path": ".scale/tools.json",
+      "sha256": "f204f9ef206a7b0f25b2064661bd0d5ff25980b36c0f9bda0bb973af206074ad",
+      "owned": true
+    },
+    {
+      "path": ".scale/resource-policy.json",
+      "sha256": "b6c58862d0e51b73681fa77022dd24a8c0d6686b401b607c773091f3dedb92db",
+      "owned": true
+    },
+    {
+      "path": ".scale/assets.json",
+      "sha256": "a8174f5941573d1acd5d5df5dee4bca235701e21c29685694d143512d3247acf",
+      "owned": true
+    },
+    {
+      "path": ".scale/engineering-standards.json",
+      "sha256": "dd8a8bc0f0594f31ba9fd71120e73d4c78db84b7603aab50bdaf875401d78ad9",
+      "owned": true
+    },
+    {
+      "path": ".scale/engineering-standards-baseline.json",
+      "sha256": "14b1ebdb505038b5eba18297b4e76ae1185cd60c98a6f131001633498bed2cf7",
+      "owned": true
+    },
+    {
+      "path": ".scale/frameworks.json",
+      "sha256": "78158a49e9c1331e0222e6efa1bb3744c5fe2bdb043da66a5238855f433756cc",
+      "owned": true
+    },
+    {
+      "path": "scripts/workflow/new-task.ps1",
+      "sha256": "617e499fafb8b42d334e87b711295546090a3a9a80df0090bdfad784b57422ac",
+      "owned": true
+    },
+    {
+      "path": "scripts/workflow/explore.ps1",
+      "sha256": "003011a09d8f4821488067a9c3749ac215ba4721a7d44d89c01d989a91bdd7bd",
+      "owned": true
+    },
+    {
+      "path": "scripts/workflow/resume.ps1",
+      "sha256": "cac1b35d8de0490b1e3d32eb01ec7fec881ca304b624ef032ec7c64a0858d2ed",
+      "owned": true
+    },
+    {
+      "path": "scripts/gates/all.ps1",
+      "sha256": "1a5b6a9f254d2112715a0aebde0dc53d9563d55994400b2a126d870fd0405e73",
+      "owned": true
+    },
+    {
+      "path": ".scale/output-policy.json",
+      "sha256": "c51b6f0b4ecc570f0b8a7738a1a3b0013cc76fb99dfb121c8ee9f51e7fa7c3bb",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/README.md",
+      "sha256": "2882d77eaaf2162ead34fe8e9aba7db2a8f8843e8fb6a2d5bbcc9b37cdabc0c5",
+      "owned": true
+    }
+  ]
+}
