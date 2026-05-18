@@ -127,6 +127,11 @@ EOF
 }
 
 test_g7_blocks_missing_gosec() {
+    if ! command -v python3 >/dev/null 2>&1; then
+        skip "G7 missing tool test requires python3"
+        return 0
+    fi
+
     local fixture="$TEST_ROOT/g7-missing-gosec"
     copy_fixture "$fixture"
     cat > "$fixture/go.mod" <<'EOF'
@@ -134,8 +139,18 @@ module example.com/scaffold-test
 
 go 1.22
 EOF
-    jq '.stacks.go.required_tools.security = ["__missing_gosec_for_scaffold_test__", "jq"]' \
-        "$fixture/.agent/project.json" > "$fixture/.agent/project.json.tmp"
+    python3 - "$fixture/.agent/project.json" "$fixture/.agent/project.json.tmp" <<'PY'
+import json
+import sys
+
+source, target = sys.argv[1], sys.argv[2]
+with open(source, encoding="utf-8") as f:
+    data = json.load(f)
+data["stacks"]["go"]["required_tools"]["security"] = ["__missing_gosec_for_scaffold_test__"]
+with open(target, "w", encoding="utf-8") as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+    f.write("\n")
+PY
     mv "$fixture/.agent/project.json.tmp" "$fixture/.agent/project.json"
 
     local log_file="$fixture/.agent/logs/scaffold-g7.log"
