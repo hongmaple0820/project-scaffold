@@ -1,10 +1,10 @@
 {
   "version": 1,
   "scalePackage": "@hongmaple0820/scale-engine",
-  "scaleVersion": "0.0.0-dev",
+  "scaleVersion": "0.18.0",
   "pack": "project-scaffold",
   "packVersion": 2,
-  "generatedAt": "2026-05-18T07:12:31.763Z",
+  "generatedAt": "2026-05-18T09:19:43.858Z",
   "files": [
     {
       "path": "docs/workflow/templates/skill-plan.md",
@@ -134,6 +134,16 @@
     {
       "path": "scripts/gates/all.ps1",
       "sha256": "1a5b6a9f254d2112715a0aebde0dc53d9563d55994400b2a126d870fd0405e73",
+      "owned": true
+    },
+    {
+      "path": ".scale/output-policy.json",
+      "sha256": "c51b6f0b4ecc570f0b8a7738a1a3b0013cc76fb99dfb121c8ee9f51e7fa7c3bb",
+      "owned": true
+    },
+    {
+      "path": "docs/workflow/README.md",
+      "sha256": "2882d77eaaf2162ead34fe8e9aba7db2a8f8843e8fb6a2d5bbcc9b37cdabc0c5",
       "owned": true
     }
   ]

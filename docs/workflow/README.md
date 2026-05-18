@@ -1,133 +1,95 @@
-# Agent Workflow
+# Project Scaffold 工作流治理
 
-本目录定义脚手架的通用工作流。所有派生项目共享同一套阶段和任务产物；语言、框架、服务矩阵和构建工具差异只放在 `.agent/project.json`、`scripts/workflow/verify.sh` 与 G3-G7 门禁中。
+本仓库是工程化工作流实践脚手架，负责沉淀可复制到业务项目的通用治理模板。脚手架只维护通用机制，业务项目差异放在各自的 `.scale/verification.json`、`.scale/resource-policy.json` 和项目文档中。
 
-`scale init` 生成项目时应落地的治理资产见 [SCALE_INIT_GOVERNANCE_TEMPLATE.md](SCALE_INIT_GOVERNANCE_TEMPLATE.md)。
+## 适用边界
 
-## 任务等级
+- 通用流程：任务分级、探索、计划、执行、验证、评审、沉淀。
+- 通用产物：Mini-PRD、计划、验证、Review、Summary、HTML artifact。
+- 通用工具治理：skills、MCP、浏览器、桌面自动化、外部 CLI 的证据记录。
+- 不在脚手架中写死某个业务项目的端口、服务路径、数据库、账号或私有环境。
 
-| 等级 | 场景 | 要求 |
+## 任务分级
+
+| Level | 场景 | 要求 |
 | --- | --- | --- |
-| S | typo、注释、少量文档或日志 | 直接修改，运行最小验证 |
-| M | 小功能、Bug、脚本或规范优化 | 记录探索、计划、验证和总结 |
+| S | typo、注释、小范围文档或日志 | 最小验证即可 |
+| M | bug、小功能、脚本或规范优化 | 记录探索、计划、验证、评审和总结 |
 | L | 跨模块、架构、模板体系 | 完整计划，执行前人工确认 |
-| CRITICAL | 数据、权限、安全、生产配置、破坏性操作 | 人工确认、回滚方案、安全检查 |
+| CRITICAL | 数据、权限、安全、生产配置、破坏性操作 | 人工确认、回滚方案、安全评审、完整验证 |
 
-## 标准流程
-
-```text
-探索 -> 规划 -> 执行 -> 验证 -> 沉淀
-```
-
-## 创建任务
-
-```bash
-bash scripts/workflow/new-task.sh "task-slug" M
-```
-
-生成目录：
+## 标准任务目录
 
 ```text
 docs/worklog/tasks/<yyyy-mm-dd>-<task-slug>/
-├── explore.md
-├── mini-prd.md
-├── plan.md
-├── verification.md
-├── review.md
-└── summary.md
+|-- explore.md
+|-- mini-prd.md
+|-- plan.md
+|-- verification.md
+|-- review.md
+|-- summary.md
+|-- artifact-manifest.json
+`-- artifacts/
+    |-- index.html
+    `-- release-report.html
 ```
 
-同时更新 `.agent/state/current.json`。
-
-## 探索
-
-探索要记录真实文件和主要矛盾：
+## 常用入口
 
 ```bash
-bash scripts/workflow/explore.sh AGENTS.md CLAUDE.md README.md "主要矛盾"
-bash scripts/gates/G1-verify.sh
+make new-task NAME=example LEVEL=M
+make explore FILES="AGENTS.md CLAUDE.md README.md" MSG="workflow adaptation"
+make gate-workflow
+make gate-quality
+make verify PROFILE=scaffold
 ```
 
-G1 要求：
-
-- 至少 3 个真实文件。
-- `main_contradiction` 非空。
-
-## 规划
+也可以直接使用 SCALE CLI：
 
 ```bash
-# 编辑 new-task 创建的 docs/worklog/tasks/<task>/plan.md
-bash scripts/gates/G2-verify.sh
+scale preflight --service all
+scale artifact render --task-id <task-dir> --type release-report
+scale artifact doctor --task-id <task-dir>
+scale assets doctor --json
+scale standards doctor --changed --json
 ```
 
-G2 要求 `plan.md` 至少包含有效内容，不能只保留模板占位：
+## HTML Artifact
 
-- Scope / 范围
-- Boundary / 边界
-- Acceptance Criteria / 验收标准
-- Risks / 风险
-- Rollback / 回滚方案
-- Verification / 验证
+Markdown 是可维护源文件，HTML 是给人类审阅、对比和签收的派生视图。
 
-面向用户的新 API、UI 流程、权限、删除、恢复、分享、上传等功能，还要填写 `mini-prd.md`。
+默认类型：
 
-## 执行
+- `plan-comparison`: 方案对比。
+- `implementation-plan`: 实施方案。
+- `code-review`: 代码评审摘要。
+- `status-report`: 进度状态报告。
+- `incident-report`: 故障复盘。
+- `release-report`: 发布签收报告。
 
-执行阶段按计划小步修改。阶段切换时保存检查点：
+HTML artifact 必须可追溯到源 Markdown，并通过 `scale artifact doctor` 检查远程脚本、远程样式和疑似密钥。
 
-```bash
-bash scripts/workflow/checkpoint.sh execute
-```
+## 资源治理
 
-不要覆盖用户已有改动。不要把脚手架通用逻辑写成某个业务项目专用逻辑。
+脚手架必须避免把生成物、临时报告和长期规范混在一起。
 
-## 验证
+- 长期维护：标准、模板、README、ADR、可复用脚本。
+- 任务证据：worklog、验证记录、review、summary，按需提交。
+- 临时产物：截图、视频、coverage、E2E report、运行日志、一次性脚本，默认不提交。
+- 最终事实：任务结束后沉淀到长期维护文档，不让大量中间方案污染主文档。
 
-```bash
-bash scripts/gates/all.sh --dry-run
-bash scripts/gates/all.sh --workflow
-bash scripts/gates/all.sh --quality
-bash scripts/workflow/verify.sh --profile scaffold
-```
+## 工具和 Skills
 
-推送或合并到远程 `dev` 前，必须完成相关验证。`master` / `main` 只在用户明确指令下操作，详见 [Git 工作流规范](../standards/common/GIT_STANDARDS.md)。
+Agent 需要主动选择工具，但必须记录证据：
 
-PowerShell 自检：
+- UI/UX: `frontend-design`、`ui-ux-pro-max`、awesome-design-md 思路。
+- 浏览器/E2E: Playwright、Agent Browser、web-access、Chrome DevTools MCP。
+- 端侧/桌面: CUA/computer-use，必须有边界和人工确认。
+- 外部 CLI: Codex、Claude Code、Gemini CLI、OpenCode 等必须记录版本、命令和输出摘要。
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
-```
+## 提交规则
 
-Profile/service matrix：
-
-```bash
-bash scripts/workflow/verify.sh --list
-bash scripts/workflow/verify.sh --profile default
-bash scripts/workflow/verify.sh --service service-name
-```
-
-门禁分组：
-
-| 分组 | 内容 |
-| --- | --- |
-| `--workflow` | G1、G2 |
-| `--quality` | G3、G4、G5、G6、G7 |
-| `--all` | G1-G7 |
-
-## 恢复
-
-```bash
-bash scripts/workflow/resume.sh
-```
-
-该命令会显示当前任务、等级、阶段、产物目录、已探索文件、主要矛盾和已完成门禁，并给出下一步建议。
-
-## 沉淀
-
-任务收尾时更新：
-
-- `verification.md`：实际运行的命令和结果。
-- `summary.md`：完成内容、取舍、风险。
-- `docs/worklog/metrics.md`：任务指标行。
-
-未运行的验证必须写成“未验证”，不能写成“通过”。
+- 不使用 `git add .` 提交脚手架治理变更。
+- 不把业务项目专用逻辑写进脚手架通用脚本。
+- 合并到 `master/main` 或推远端前，必须明确运行过相关验证。
+- 未运行的验证必须写成“未验证”，不能写成“通过”。
