@@ -1,7 +1,15 @@
-.PHONY: help preflight new-task explore checkpoint gate gate-workflow gate-quality resume status lint-scaffold verify verify-list validate test-scaffold
+.PHONY: help preflight new-task explore checkpoint gate gate-workflow gate-quality resume status lint-scaffold verify verify-list validate test-scaffold scale-version scale-mode scale-context scale-codegraph scale-eval scale-radar scale-dashboard scale-smoke
+SCALE ?= scale
+TASK ?= workflow scaffold adaptation
+FILES ?= AGENTS.md,CLAUDE.md,README.md
+LEVEL ?= M
+PHASE ?= plan
+SERVICES ?=
+
 help:
 	@echo "make preflight | make new-task NAME=x LEVEL=M | make explore FILES='...' MSG='...'"
 	@echo "make checkpoint PHASE=execute | make gate | make verify PROFILE=scaffold | make validate"
+	@echo "make scale-smoke TASK='...' FILES='AGENTS.md,README.md'"
 gate:
 	bash scripts/gates/all.sh --all
 gate-workflow:
@@ -31,3 +39,24 @@ preflight:
 	bash scripts/preflight/all.sh
 test-scaffold:
 	bash scripts/tests/run.sh
+scale-version:
+	$(SCALE) --version
+scale-mode:
+	$(SCALE) governance mode --task "$(TASK)" --files "$(FILES)"
+scale-context:
+	$(SCALE) context budget --dir .
+scale-codegraph:
+	$(SCALE) codegraph status --dir .
+scale-eval:
+	$(SCALE) eval run --dir .
+scale-radar:
+	$(SCALE) skill radar --dir . --task "$(TASK)" --phase "$(PHASE)" --level "$(LEVEL)" --files "$(FILES)" --services "$(SERVICES)"
+scale-dashboard:
+	$(SCALE) artifact dashboard --dir . --lang zh
+scale-smoke:
+	$(SCALE) --version
+	$(SCALE) governance mode --task "$(TASK)" --files "$(FILES)"
+	$(SCALE) context budget --dir .
+	$(SCALE) codegraph status --dir .
+	$(SCALE) eval run --dir .
+	$(SCALE) artifact dashboard --dir . --lang zh

@@ -5,3 +5,10 @@ checkpoints/
 evidence/
 state/
 hooks/*.sh
+evals/runs/
+memory/
+reports/
+resource-reports/
+reviews/
+tmp/
+vectors/

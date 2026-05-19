@@ -1,40 +1,28 @@
 # 规范体系
 
-本目录是脚手架的规范入口。规范只写跨项目可复用的工程约束；业务项目的差异写入 `docs/standards/projects/`。
+本目录保存跨项目可复用的工程规范。业务项目差异应写入 `docs/standards/projects/`，不要复制整套通用规范造成漂移。
 
 ## 分层
 
 ```text
 docs/standards/
-├── README.md
-├── common/
-│   ├── NAMING.md
-│   ├── API_STANDARDS.md
-│   ├── DATABASE_STANDARDS.md
-│   ├── GIT_STANDARDS.md
-│   ├── TEAM_COLLABORATION.md
-│   └── DOCUMENT_STANDARDS.md
-└── projects/
-    └── PROJECT_SPEC.md
+|-- README.md
+|-- common/
+|   |-- GIT_STANDARDS.md
+|   |-- DOCUMENT_STANDARDS.md
+|   |-- TEAM_COLLABORATION.md
+|   |-- SECURITY_SENSITIVE_DATA.md
+|   `-- ...
+`-- projects/
+    `-- <project>/
 ```
 
 ## 使用顺序
 
-1. 先读根目录 `AGENTS.md` 和 `CLAUDE.md`，确认任务等级、红线和门禁。
-2. 再读本目录的通用规范。
-3. 最后读目标项目的 `projects/<name>/PROJECT_SPEC.md` 或当前 `projects/PROJECT_SPEC.md`。
-4. 若项目约定和通用规范冲突，记录原因、影响和退出条件。
-
-## 通用规范
-
-| 规范 | 说明 |
-| --- | --- |
-| [命名规范](common/NAMING.md) | 代码、数据库、Git 命名约定 |
-| [API 规范](common/API_STANDARDS.md) | REST API、错误码、响应格式 |
-| [数据库规范](common/DATABASE_STANDARDS.md) | 表设计、索引、查询、迁移 |
-| [Git 规范](common/GIT_STANDARDS.md) | 作者分支、dev 推送、master/main 保护、提交和发布流程 |
-| [协作规范](common/TEAM_COLLABORATION.md) | 角色职责、沟通、评审、人机协同边界 |
-| [文档规范](common/DOCUMENT_STANDARDS.md) | 模块化文档资产、关联关系、版本、冲突和更新维护 |
+1. 读根目录 `AGENTS.md` 和 `CLAUDE.md`，确认任务等级、红线和验证要求。
+2. 读本目录通用规范。
+3. 读目标项目的 `projects/<project>/` 差异规范。
+4. 如项目规范和通用规范冲突，记录原因、影响和退出条件。
 
 ## 规范级别
 
@@ -44,15 +32,17 @@ docs/standards/
 | SHOULD | 默认遵守 | 偏离必须说明理由 |
 | MAY | 可选 | 按项目需要采用 |
 
-## 新项目接入
+## 维护规则
 
-1. 复制脚手架。
-2. 修改 `.agent/project.json` 适配技术栈。
-3. 在 `docs/standards/projects/` 写项目差异。
-4. 运行 `make preflight` 和 `make verify`。
+- 一个事实只保留一个主来源，其他文档链接引用。
+- 架构、接口、配置、服务矩阵、验证命令变化时，同步更新规范索引。
+- 冲突解决后检查相对链接、版本说明和上下游模块关系。
+- 临时测试报告、截图和探索草稿不进入长期规范。
 
-## 变更原则
+## SCALE v0.20 相关规范
 
-- 通用规范变更要考虑所有派生项目。
-- 项目规范只记录差异，不复制整套通用规范。
-- 规范变更要同步更新 README、工作流文档或模板中受影响的引用。
+- `scale governance mode` 用于判断治理强度，不替代人工风险判断。
+- `scale skill radar` 用于工具推荐和证据要求，不自动安装未知第三方工具。
+- `scale context budget` 用于控制 token 成本，避免把生成报告和历史草稿塞进上下文。
+- `scale eval run` 用于评估工作流效果，失败案例应进入复盘，而不是被删除。
+- `scale artifact dashboard` 用于人类审阅，源事实仍以 Markdown、代码和命令证据为准。

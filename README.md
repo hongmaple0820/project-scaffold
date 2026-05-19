@@ -1,65 +1,62 @@
 # project-scaffold
 
-[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors)](https://github.com/sponsors/hongmaple0820)
-[![Project Scaffold](https://img.shields.io/badge/GitHub-project--scaffold-2563eb?logo=github)](https://github.com/hongmaple0820/project-scaffold)
-[![npm](https://img.shields.io/badge/npm-%40hongmaple0820%2Fscale--engine-cb3837?logo=npm)](https://www.npmjs.com/package/@hongmaple0820/scale-engine)
+project-scaffold 是工程化工作流实践脚手架，用来把 SCALE Engine 的治理基线复制到新项目：任务分级、探索记录、计划/验证/评审产物、服务矩阵、资源治理、Agent 协作规范和发布前证据检查。
 
-## 社区与赞助
-
-project-scaffold 是工程化工作流实践脚手架，用于把可执行工作流、质量门禁、任务产物和项目规范快速复制到新项目。
-
-- GitHub 仓库: [hongmaple0820/project-scaffold](https://github.com/hongmaple0820/project-scaffold)
-- 相关工具: [@hongmaple0820/scale-engine](https://www.npmjs.com/package/@hongmaple0820/scale-engine)
-- 打赏支持: [GitHub Sponsors](https://github.com/sponsors/hongmaple0820)
-- 社区文档: [docs/COMMUNITY.md](docs/COMMUNITY.md)
-
-如果这套脚手架帮你节省了项目治理、Agent 工作流和质量门禁搭建时间，欢迎 Star、反馈 issue，或通过 GitHub Sponsors 打赏支持持续维护。
-
-通用工程化脚手架，用来给新项目复制一套可执行的 Agent 工作流、规范入口、质量门禁和任务记录结构。
-
-本仓库不是业务项目模板本身，而是治理基线。派生到 Go、Node、Python、Java、前端或其他项目时，保留通用工作流，按目标技术栈改 `.agent/project.json` 和验证命令。
+它不是业务代码模板，而是项目治理模板。业务项目接入后，应保留通用工作流，再按自己的语言、服务和部署方式调整 `.agent/project.json`、`.scale/verification.json` 和项目文档。
 
 ## 快速开始
 
 ```bash
-# 1. 环境预检
 make preflight
-
-# 2. 创建任务
 make new-task NAME=feature-slug LEVEL=M
-
-# 3. 记录探索
-bash scripts/workflow/explore.sh AGENTS.md CLAUDE.md README.md "主要矛盾"
-
-# 4. 跑工作流门禁
+make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='workflow adaptation'
 make gate-workflow
-
-# 5. 跑脚手架自检
-make verify
+make verify PROFILE=scaffold
 ```
 
-任务产物会写入：
+## SCALE v0.20 能力入口
 
-```text
-docs/worklog/tasks/<yyyy-mm-dd>-<task-slug>/
+```bash
+make scale-smoke TASK='为 Go 服务接入工作流' FILES='AGENTS.md,README.md'
+make scale-mode TASK='修复登录权限校验' FILES='src/auth.ts,tests/auth.test.ts'
+make scale-radar TASK='设计上传页面 UI' PHASE=plan LEVEL=M FILES='src/pages/upload.tsx'
+make scale-dashboard
 ```
 
-## 仓库内容
+Windows PowerShell 用户可直接运行：
 
-| 区域 | 路径 | 用途 |
-| --- | --- | --- |
-| Agent 规则 | `AGENTS.md`、`CLAUDE.md` | 工作方式、门禁、红线、完成定义 |
-| 工作流脚本 | `scripts/workflow/` | 新任务、探索记录、计划、恢复、自检 |
-| 门禁脚本 | `scripts/gates/` | G1-G7 质量门禁 |
-| 技术栈配置 | `.agent/project.json` | 不同语言的 lint/test/coverage/security 命令 |
-| 规范文档 | `docs/standards/` | 通用命名、API、数据库、Git、协作、文档规范 |
-| 工作流文档 | `docs/workflow/README.md` | 五阶段工作流和门禁说明 |
-| 任务记录 | `docs/worklog/` | 任务过程、验证记录、指标 |
-| 模板 | `templates/` | 计划和 ADR 模板 |
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/scale-smoke.ps1 -Task "为 Go 服务接入工作流" -Files "AGENTS.md,README.md"
+```
 
-## Git 维护策略
+这些命令用于演示和复制：
 
-分支必须带人类负责人和 Agent 平台，标准格式：
+- `governance mode`：按任务描述和文件风险自动升级治理强度。
+- `context budget`：报告 Always/on-demand/evidence/archive/generated 上下文成本。
+- `codegraph status`：优先使用 CodeGraph/Graphify，缺失时显式回退到本地扫描。
+- `eval run`：运行工作流基线评测，保留失败复盘数据。
+- `skill radar`：按任务阶段推荐 skills、MCP、浏览器、桌面自动化和外部 CLI，并输出置信度、安全等级和证据要求。
+- `artifact dashboard`：生成本地 HTML 治理看板，方便人类审阅。
+
+## 目录职责
+
+| 路径 | 职责 |
+| --- | --- |
+| `AGENTS.md` | Agent 通用协作规则和红线 |
+| `CLAUDE.md` | Claude Code 兼容入口，链接回通用规则 |
+| `CONTEXT.md` | 低 token 领域词汇和禁止误解项 |
+| `docs/CONTEXT-MAP.md` | 模块、文档和更新触发关系 |
+| `.agent/project.json` | service matrix、verification profile 和语言命令 |
+| `.scale/` | SCALE 运行策略、评测基线、代码智能配置和本地证据 |
+| `scripts/workflow/` | new-task、explore、resume、verify 等工作流命令 |
+| `scripts/gates/` | G1-G7 门禁 |
+| `docs/workflow/` | 工作流说明 |
+| `docs/standards/` | 跨项目工程规范 |
+| `docs/worklog/` | 任务产物、验证记录和指标 |
+
+## Git 分支规范
+
+默认格式：
 
 ```text
 <type>/<human-author>/<agent-platform>-<scope>-<task>-<MMDD>
@@ -67,158 +64,32 @@ docs/worklog/tasks/<yyyy-mm-dd>-<task-slug>/
 
 示例：
 
-```bash
-feature/maple/codex-platform-tool-user-tool-release-0515
-fix/maple/claude-auth-token-refresh-0515
-docs/maple/codex-scaffold-git-workflow-0515
-```
-
-关键规则：
-
-- 默认在 feature/fix/docs/chore 分支开发。
-- 人类负责人和 Agent 平台必须都出现在分支名中。
-- 协同开发时先看 `git status --short`，不得覆盖人类未提交改动。
-- 验证没有阻断问题后，才允许推送或合并到远程 `dev`。
-- `master` / `main` 不能自主操作，必须等待明确指令。
-- 推送 `origin/dev` 前必须确认当前提交包含最新 `origin/dev`。
-
-详见 [Git 工作流规范](docs/standards/common/GIT_STANDARDS.md)。
-
-## 文档资产策略
-
-- 文档按模块维护：通用规范、项目差异、架构、工作流、任务记录和经验沉淀分目录归档。
-- 总入口只做导航和红线，细节放到对应模块文档。
-- 新增或修改模块时，同步更新相关索引、上下游说明、版本号和变更记录。
-- 文档冲突解决后必须检查相对链接，避免入口指向不存在的文件。
-
-详见 [文档规范](docs/standards/common/DOCUMENT_STANDARDS.md)。
-
-## 工作流
-
 ```text
-探索 -> 规划 -> 执行 -> 验证 -> 沉淀
+feature/maple/codex-workflow-service-matrix-0519
+fix/maple/claude-auth-token-refresh-0519
+docs/maple/codex-scaffold-readme-0519
 ```
 
-| 阶段 | 关键动作 | 产物 |
-| --- | --- | --- |
-| 探索 | 读规则、读相关文件、识别主要矛盾 | `.agent/state/explore.json` |
-| 规划 | 明确范围、边界、验收标准、风险、回滚 | `plan.md` |
-| 执行 | 小步修改，保护既有行为 | 代码/文档/脚本 |
-| 验证 | 实际运行相关命令 | `verification.md` |
-| 沉淀 | 更新总结和指标 | `summary.md`、`metrics.md` |
+规则：
 
-## 门禁命令
+- `feature/`、`fix/`、`docs/`、`chore/` 用于人类和 Agent 协作分支。
+- `main/master` 不直接操作，除非用户明确要求。
+- 合并前必须有真实验证命令和输出摘要。
+- 不使用 `git add .` 混入临时文件、生成报告或本地配置。
 
-```bash
-# 检查脚本是否存在
-bash scripts/gates/all.sh --dry-run
+## 文档和资源治理
 
-# 检查探索和计划
-bash scripts/gates/all.sh --workflow
+- 长期维护：README、AGENTS、CLAUDE、标准、ADR、可复用脚本。
+- 任务证据：worklog、verification、review、summary，按需提交。
+- 临时产物：截图、视频、coverage、E2E report、运行日志、一次性脚本，默认不提交。
+- 最终事实：任务结束后沉淀到长期文档，删除或忽略中间方案，避免历史版本污染。
 
-# 检查脚本、技术栈命令和安全门禁
-bash scripts/gates/all.sh --quality
+## 完成定义
 
-# 全部门禁
-bash scripts/gates/all.sh --all
-```
+只有同时满足以下条件，Agent 才能声明完成：
 
-Profile/service 验证入口：
-
-```bash
-bash scripts/workflow/verify.sh --list
-bash scripts/workflow/verify.sh --profile scaffold
-bash scripts/workflow/verify.sh --profile default
-bash scripts/workflow/verify.sh --service service-name
-```
-
-PowerShell 包装入口：
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
-```
-
-## 技术栈适配
-
-派生项目后，先改 `.agent/project.json`：
-
-```json
-{
-  "profiles": {
-    "default": {
-      "services": ["api"],
-      "checks": ["lint", "test", "build"]
-    }
-  },
-  "services": {
-    "api": {
-      "path": "services/api",
-      "stack": "go",
-      "required": true
-    }
-  }
-}
-```
-
-默认支持：
-
-| 技术栈 | 探测文件 | 命令来源 |
-| --- | --- | --- |
-| Go | `go.mod` | `golangci-lint`、`go test`、`gosec` |
-| Node | `package.json` | `npm run lint`、`npm test`、`npm audit` |
-| Python | `pyproject.toml`、`requirements.txt`、`setup.py` | `ruff`、`pytest`、`bandit` |
-
-原则：G1/G2 是通用工作流；G3-G7 按语言差异化。目标项目已有命令时，优先复用已有命令。
-
-## 常用 Make 命令
-
-```bash
-make help
-make preflight
-make new-task NAME=task-slug LEVEL=M
-make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='主要矛盾'
-make checkpoint PHASE=execute
-make resume
-make gate-workflow
-make gate-quality
-make gate
-make verify
-make verify-list
-make validate
-```
-
-## 目录结构
-
-```text
-project-scaffold/
-├── AGENTS.md
-├── CLAUDE.md
-├── README.md
-├── Makefile
-├── .agent/
-│   └── project.json
-├── .claude/
-│   ├── settings.json
-│   └── workflow.json
-├── docs/
-│   ├── standards/
-│   ├── workflow/
-│   └── worklog/
-├── scripts/
-│   ├── gates/
-│   ├── lib/
-│   ├── preflight/
-│   └── workflow/
-└── templates/
-```
-
-## 完成标准
-
-- 已按任务等级运行必要工作流。
-- 相关门禁或自检命令实际运行。
-- 失败、跳过、不适用和工具缺失都如实记录。
-- 没有引入密钥、临时文件或业务项目专属假设。
-
-## 贡献
-
-参见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+- 改动范围和用户目标一致。
+- 相关验证已实际运行，失败项已说明。
+- 没有把跳过、缺工具或 dry-run 说成通过。
+- 文档、服务矩阵和工作流入口没有互相矛盾。
+- 最终回复包含完成内容、验证结果和剩余风险。

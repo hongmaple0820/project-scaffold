@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "providers": [
+    {
+      "id": "codegraph",
+      "type": "external-cli",
+      "enabled": true,
+      "command": "codegraph",
+      "capabilities": [
+        "symbols",
+        "callers",
+        "callees",
+        "impact",
+        "context"
+      ]
+    },
+    {
+      "id": "graphify",
+      "type": "artifact",
+      "enabled": true,
+      "manifest": "graphify-out/GRAPH_REPORT.md",
+      "capabilities": [
+        "summary",
+        "module-map",
+        "context"
+      ]
+    }
+  ],
+  "fallback": {
+    "enabled": true,
+    "tools": [
+      "internal-scan",
+      "rg",
+      "read"
+    ]
+  }
+}
