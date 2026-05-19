@@ -59,3 +59,7 @@ Thumbs.db
 
 # Agent local state
 .agent/
+.scale/evals/runs/
+.scale/memory/
+.scale/reports/
+graphify-out/
