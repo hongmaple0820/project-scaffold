@@ -59,6 +59,21 @@ Thumbs.db
 
 # Agent local state
 .agent/
+.claude/worktrees/
+.claude/tmp/
+.claude/local/
+.codex/worktrees/
+.codex/tmp/
+.codex-tmp/
+.cursor/tmp/
+.continue/
+.aider*
+.gemini/tmp/
+.omc/
+.roo/tmp/
+.cline/tmp/
+.windsurf/
+.playwright-mcp/
 .scale/evals/runs/
 .scale/memory/
 .scale/reports/

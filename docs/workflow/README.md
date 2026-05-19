@@ -1,6 +1,23 @@
 # Project Scaffold 工作流
 
-本目录说明 project-scaffold 派生项目应如何使用 SCALE 工作流。目标是让 Agent 协作可验证、可审计、可恢复，而不是制造额外流程负担。
+本文是工作流维护说明，面向要维护脚本、门禁、验证 profile 和升级路径的人。第一次接触项目时，先读根目录 [README.md](../../README.md) 和 [快速开始](../guides/GETTING_STARTED.md)；日常开发按 [开发工作流指南](../guides/DEVELOPMENT_WORKFLOW.md) 执行。
+
+这套工作流的目标是让 Agent 协作可验证、可审计、可恢复，而不是制造额外流程负担。
+
+## 学习路径
+
+1. 先理解闭环：探索、规划、执行、验证、沉淀。
+2. 再跑一遍最小任务：`make preflight`、`make new-task`、`make explore`、`make gate-workflow`。
+3. 再了解门禁：G1/G2 约束任务产物，G4-G7 约束脚本、验证和风险。
+4. 最后维护升级路径：`bootstrap-scale` 和 `workflow-upgrade-*`。
+
+常见误区：
+
+- 把 `preflight` 当成业务测试通过。
+- 把 `dry-run` 当成完整验证。
+- 为了省事使用 `git add .`。
+- 直接运行 `workflow-upgrade-apply` 覆盖本地适配。
+- 把 Agent 本地 worktree、缓存、日志和截图提交进仓库。
 
 ## 标准路径
 
@@ -118,3 +135,5 @@ feature/fix/docs/chore/codex -> dev -> main/master -> tag/package publish
 - 可按任务提交：worklog、verification、review、summary。
 - 默认不提交：截图、视频、coverage、playwright report、临时脚本、运行日志、生成 HTML。
 - 需要保留的生成 HTML 必须能追溯到源 Markdown 或任务证据。
+- Agent 平台本地状态不提交，根 `.gitignore` 应覆盖 `.claude/worktrees/`、`.codex/worktrees/`、`.codex-tmp/`、`.cursor/tmp/`、`.continue/`、`.aider*`、`.gemini/tmp/`、`.omc/`、`.roo/tmp/`、`.cline/tmp/`、`.windsurf/`、`.playwright-mcp/`。
+- 不要粗暴忽略所有协作配置目录；稳定团队规则如 `AGENTS.md`、`CLAUDE.md`、`.cursor/rules/`、团队共享的 `.claude/settings.json` 和 `.scale/governance.lock.json` 可以提交。
