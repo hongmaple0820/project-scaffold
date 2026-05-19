@@ -22,6 +22,9 @@ make new-task NAME=feature-slug LEVEL=M
 make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='workflow adaptation'
 make gate-workflow
 make verify PROFILE=scaffold
+make bootstrap-scale
+make workflow-upgrade-check
+make workflow-upgrade-plan
 ```
 
 ## SCALE v0.21.2 能力入口
@@ -32,6 +35,8 @@ make scale-mode TASK='修复登录权限校验' FILES='src/auth.ts,tests/auth.te
 make scale-radar TASK='设计上传页面 UI' PHASE=plan LEVEL=M FILES='src/pages/upload.tsx'
 make scale-dashboard
 ```
+
+SCALE 安装和升级优先走本地封装：`make bootstrap-scale` 检查 locked 版本，`make bootstrap-scale-install` 安装 locked 版本，`make bootstrap-scale-latest` 安装最新版。工作流升级使用 `make workflow-upgrade-check` 检查 drift，`make workflow-upgrade-plan` 生成非破坏性计划，人工确认后再运行 `make workflow-upgrade-apply`，需要回滚时使用 `make workflow-upgrade-rollback`。升级后运行 `make workflow-upgrade-verify` 或 `make preflight`。
 
 Windows PowerShell 用户可直接运行：
 

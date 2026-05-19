@@ -57,6 +57,21 @@ make scale-eval
 make scale-dashboard
 ```
 
+## 工作流升级
+
+派生项目不需要依赖 Agent 手工复制工作流文件。优先使用仓库本地入口：
+
+```bash
+make workflow-upgrade-check
+make workflow-upgrade-plan
+make workflow-upgrade-apply
+make workflow-upgrade-verify
+```
+
+如果本机没有 SCALE 或版本不一致，先运行 `make bootstrap-scale` 检查，使用 `make bootstrap-scale-install` 安装 locked 版本，或使用 `make bootstrap-scale-latest` 显式安装最新版。
+
+`workflow-upgrade-check` 和 `workflow-upgrade-plan` 是默认入口；`workflow-upgrade-apply` 只能在检查计划后使用。遇到 `manual-review` 时保留本地项目语义，人工或 Agent 审阅差异后再处理。
+
 Windows PowerShell：
 
 ```powershell

@@ -23,9 +23,12 @@ make new-task NAME=task-slug LEVEL=M
 make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='main contradiction'
 make gate-workflow
 make verify PROFILE=scaffold
+make bootstrap-scale
+make workflow-upgrade-check
+make workflow-upgrade-plan
 ```
 
-SCALE v0.21.1 能力：
+SCALE v0.21.2 能力：
 
 ```bash
 make scale-mode TASK='...' FILES='...'
@@ -35,6 +38,8 @@ make scale-codegraph
 make scale-eval
 make scale-dashboard
 ```
+
+SCALE 安装检查使用 `make bootstrap-scale`；工作流升级使用 `make workflow-upgrade-check` / `make workflow-upgrade-plan`，审阅计划后再执行 `make workflow-upgrade-apply`。
 
 ## 任务分级
 

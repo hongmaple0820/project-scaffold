@@ -27,4 +27,4 @@ Invoke-Scale @("codegraph", "status", "--dir", ".")
 Invoke-Scale @("eval", "run", "--dir", ".")
 Invoke-Scale @("artifact", "dashboard", "--dir", ".", "--lang", "zh")
 
-Write-Host "[OK] SCALE v0.21.1 smoke completed"
+Write-Host "[OK] SCALE v0.21.2 smoke completed"

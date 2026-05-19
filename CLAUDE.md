@@ -19,6 +19,9 @@ make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='main contradiction'
 make gate-workflow
 make verify PROFILE=scaffold
 make scale-smoke TASK='workflow scaffold adaptation' FILES='AGENTS.md,README.md'
+make bootstrap-scale
+make workflow-upgrade-check
+make workflow-upgrade-plan
 ```
 
 PowerShell:

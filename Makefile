@@ -1,5 +1,6 @@
-.PHONY: help preflight new-task explore checkpoint gate gate-workflow gate-quality resume status lint-scaffold verify verify-list validate test-scaffold scale-version scale-mode scale-context scale-codegraph scale-eval scale-radar scale-dashboard scale-smoke
+.PHONY: help preflight new-task explore checkpoint gate gate-workflow gate-quality resume status lint-scaffold verify verify-list validate test-scaffold bootstrap-scale bootstrap-scale-install bootstrap-scale-latest workflow-upgrade-check workflow-upgrade-plan workflow-upgrade-apply workflow-upgrade-rollback workflow-upgrade-verify scale-version scale-mode scale-context scale-codegraph scale-eval scale-radar scale-dashboard scale-smoke
 SCALE ?= scale
+SCALE_VERSION ?= locked
 TASK ?= workflow scaffold adaptation
 FILES ?= AGENTS.md,CLAUDE.md,README.md
 LEVEL ?= M
@@ -10,6 +11,8 @@ help:
 	@echo "make preflight | make new-task NAME=x LEVEL=M | make explore FILES='...' MSG='...'"
 	@echo "make checkpoint PHASE=execute | make gate | make verify PROFILE=scaffold | make validate"
 	@echo "make scale-smoke TASK='...' FILES='AGENTS.md,README.md'"
+	@echo "make bootstrap-scale | make bootstrap-scale-install | make bootstrap-scale-latest"
+	@echo "make workflow-upgrade-check | make workflow-upgrade-plan | make workflow-upgrade-apply | make workflow-upgrade-verify"
 gate:
 	bash scripts/gates/all.sh --all
 gate-workflow:
@@ -39,6 +42,22 @@ preflight:
 	bash scripts/preflight/all.sh
 test-scaffold:
 	bash scripts/tests/run.sh
+bootstrap-scale:
+	powershell -NoProfile -ExecutionPolicy Bypass -File scripts/bootstrap-scale.ps1 -Version "$(or $(SCALE_VERSION),locked)"
+bootstrap-scale-install:
+	powershell -NoProfile -ExecutionPolicy Bypass -File scripts/bootstrap-scale.ps1 -Version "$(or $(SCALE_VERSION),locked)" -AutoInstall
+bootstrap-scale-latest:
+	powershell -NoProfile -ExecutionPolicy Bypass -File scripts/bootstrap-scale.ps1 -Version latest -AutoInstall
+workflow-upgrade-check:
+	$(SCALE) upgrade check --dir .
+workflow-upgrade-plan:
+	$(SCALE) upgrade plan --dir . --html
+workflow-upgrade-apply:
+	$(SCALE) upgrade apply --dir . --confirm
+workflow-upgrade-rollback:
+	$(SCALE) upgrade rollback --dir .
+workflow-upgrade-verify:
+	$(SCALE) preflight --dir . --service all --preflight-profile quick
 scale-version:
 	$(SCALE) --version
 scale-mode:
