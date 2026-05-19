@@ -46,7 +46,7 @@ PowerShell：
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
 ```
 
-## SCALE v0.21.1 扩展
+## SCALE v0.21.2 扩展
 
 ```bash
 make scale-mode TASK='修复权限校验' FILES='src/auth.ts,tests/auth.test.ts'
@@ -70,6 +70,22 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/scale-smoke
 - Skill Radar 只给推荐和证据要求，不自动安装第三方工具。
 - CodeGraph/Graphify 不可用时允许回退，但必须说明回退。
 - HTML dashboard 是审阅视图，Markdown 和源代码仍是可维护事实来源。
+
+## GitLab Flow 与工作树策略
+
+脚手架默认生成 GitLab Flow 变体，并把当前仓库策略写入 `.scale/workspace.json`。
+
+```text
+feature/fix/docs/chore/codex -> dev -> main/master -> tag/package publish
+```
+
+规则：
+
+- `dev` 是集成分支，只接收已验证变更，不在 `dev` 直接做 governed commit。
+- `main` 或 `master` 是生产基线，只有用户明确要求发布或修复生产时才操作。
+- `release/*` 只在 `dev` 已包含本次不发布内容时使用；它必须从生产基线拉出，再 cherry-pick 本次发布提交。
+- `hotfix/*` 默认先在 `dev` 修复；紧急生产修复再 cherry-pick 到生产基线，打 tag 后同步回 `dev`。
+- 工作树收口前运行 `scale workspace finish --dir .` 或同等检查，确认分支角色、未推送提交、未清理 worktree 和未记录验证项。
 
 ## 验证 profile
 

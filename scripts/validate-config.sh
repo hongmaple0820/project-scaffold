@@ -18,6 +18,7 @@ REQUIRED_FILES=(
     "CLAUDE.md"
     "README.md"
     "Makefile"
+    ".scale/workspace.json"
     ".agent/project.json"
     ".claude/settings.json"
     ".claude/workflow.json"
@@ -59,7 +60,7 @@ echo ""
 # 检查JSON有效性
 echo "[CHECK] JSON文件..."
 if command -v jq &>/dev/null; then
-    for json in "$PROJECT_ROOT/.claude"/*.json "$PROJECT_ROOT/.agent"/*.json; do
+    for json in "$PROJECT_ROOT/.scale/workspace.json" "$PROJECT_ROOT/.claude"/*.json "$PROJECT_ROOT/.agent"/*.json; do
         if [ -f "$json" ]; then
             if jq empty "$json" 2>/dev/null; then
                 echo "[OK] ${json#$PROJECT_ROOT/}"

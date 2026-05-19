@@ -24,7 +24,7 @@ make gate-workflow
 make verify PROFILE=scaffold
 ```
 
-## SCALE v0.21.1 能力入口
+## SCALE v0.21.2 能力入口
 
 ```bash
 make scale-smoke TASK='为 Go 服务接入工作流' FILES='AGENTS.md,README.md'
@@ -66,6 +66,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/scale-smoke
 
 ## Git 分支规范
 
+本仓库已显式配置 `.scale/workspace.json`：
+
+- `dev` 是验证后的集成分支。
+- `main` 是脚手架生产基线；派生项目如果使用 `master`，在自己的 `.scale/workspace.json` 中改 `productionBranch`。
+- 日常开发从 `dev` 派生 `feature/*`、`fix/*`、`docs/*`、`chore/*` 或 `codex/*`。
+- 只有当 `dev` 混入本次不发布的内容时，才从生产基线拉 `release/*`，并 cherry-pick 本次要发布的提交。
+- 热修复默认先修 `dev`，再 cherry-pick 到生产基线、打 tag，并同步回 `dev`。
+
 默认格式：
 ```text
 <type>/<human-author>/<agent-platform>-<scope>-<task>-<MMDD>
@@ -80,7 +88,7 @@ docs/maple/codex-scaffold-readme-0519
 
 规则：
 - `feature/`、`fix/`、`docs/`、`chore/` 用于人类和 Agent 协作分支。
-- `main/master` 不直接操作，除非用户明确要求。
+- `main/master` 和 `dev` 都是受保护分支，不直接做 governed commit。
 - 合并前必须有真实验证命令和输出摘要。
 - 不使用 `git add .` 混入临时文件、生成报告或本地配置。
 
