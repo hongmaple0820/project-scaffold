@@ -1,26 +1,20 @@
-# 社区与赞助
+# 社区与推广
 
-project-scaffold 是工程化工作流实践脚手架，目标是让新项目快速获得可执行工作流、质量门禁、任务产物和工程规范。
+project-scaffold 是工程化工作流实践脚手架，用来把 SCALE Engine 的治理基线复制到新项目。社区入口统一维护在这里，方便脚手架、派生项目和推广材料复用。
 
-## 社区入口
+## 链接
 
-- GitHub: [hongmaple0820/project-scaffold](https://github.com/hongmaple0820/project-scaffold)
-- 相关工具: [@hongmaple0820/scale-engine](https://www.npmjs.com/package/@hongmaple0820/scale-engine)
+| 平台 | 链接 | 说明 |
+|------|------|------|
+| 🌐 **官网** | [https://scale-os.vercel.app](https://scale-os.vercel.app) | 在线配置器 + 完整文档 |
+| 📦 **GitHub** | [https://github.com/hongmaple0820/scale-os](https://github.com/hongmaple0820/scale-os) | 源码 + Issues + PR |
+| 🔧 **Gitee** | [https://gitee.com/hongmaple/scale-engine](https://gitee.com/hongmaple/scale-engine) | 国内镜像 |
+| 📦 **npm** | [https://www.npmjs.com/package/@hongmaple0820/scale-engine](https://www.npmjs.com/package/@hongmaple0820/scale-engine) | 包下载 |
+| 🧰 **项目脚手架** | [https://github.com/hongmaple0820/project-scaffold](https://github.com/hongmaple0820/project-scaffold) | 工程化工作流实践脚手架 |
 
-## 支持方式
+## 参与方式
 
-- Star 项目，帮助更多开发者发现这套工作流。
-- 提交 issue，反馈脚手架、Agent 工作流、质量门禁或模板问题。
-- 贡献 PR，补充跨语言项目治理模板。
-- 通过 [GitHub Sponsors](https://github.com/sponsors/hongmaple0820) 打赏支持持续维护。
-
-## 推荐文案
-
-如果你在派生项目中保留社区入口，可以使用下面这段简短文案：
-
-```markdown
-本项目工程治理脚手架基于 project-scaffold。
-
-- GitHub: https://github.com/hongmaple0820/project-scaffold
-- Sponsor: https://github.com/sponsors/hongmaple0820
-```
+- Star / Watch 项目，关注脚手架和治理模板更新。
+- 通过 GitHub Issues 反馈模板、Agent 工作流、质量门禁或项目适配问题。
+- 通过 PR 贡献跨语言模板、验证脚本、资源治理规则或示例项目。
+- 国内用户可通过 Gitee 镜像查看 SCALE Engine 相关更新。
