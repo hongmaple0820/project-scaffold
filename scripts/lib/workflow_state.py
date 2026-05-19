@@ -34,6 +34,9 @@ def default_state(task_id: str = "", level: str = "M") -> dict:
         "level": level,
         "phase": "explore",
         "artifacts_dir": "",
+        "runtime_contract": "",
+        "reality_check": "",
+        "resource_cleanup": "",
         "explored_files": [],
         "file_count": 0,
         "main_contradiction": "",
@@ -48,6 +51,9 @@ def init(args: list[str]) -> int:
     state_path, task_id, level, artifacts_dir = Path(args[0]), args[1], args[2], args[3]
     data = default_state(task_id, level)
     data["artifacts_dir"] = artifacts_dir
+    data["runtime_contract"] = str(Path(artifacts_dir) / "runtime.md")
+    data["reality_check"] = str(Path(artifacts_dir) / "reality-check.md")
+    data["resource_cleanup"] = str(Path(artifacts_dir) / "resource-cleanup.md")
     save(state_path, data)
     return 0
 

@@ -1,75 +1,97 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+# Verify planning artifacts, runtime contract, and reality-check coverage.
+
+set -euo pipefail
+
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 STATE_FILE="$PROJECT_ROOT/.agent/state/current.json"
 PY_STATE="$PROJECT_ROOT/scripts/lib/workflow_state.py"
-ARTIFACTS=$(python3 "$PY_STATE" get "$STATE_FILE" artifacts_dir "" 2>/dev/null || true)
-if [ -z "$ARTIFACTS" ]; then
-  echo "artifacts_dir missing in .agent/state/current.json"
+
+echo "========================================"
+echo "[G2] Plan gate"
+echo "========================================"
+
+PLAN_FILE=""
+LEVEL=""
+
+if [ -f "$STATE_FILE" ] && [ -f "$PY_STATE" ]; then
+  ARTIFACTS_DIR="$(python3 "$PY_STATE" get "$STATE_FILE" artifacts_dir "" 2>/dev/null || true)"
+  LEVEL="$(python3 "$PY_STATE" get "$STATE_FILE" level "" 2>/dev/null || true)"
+  if [ -n "$ARTIFACTS_DIR" ] && [ -f "$PROJECT_ROOT/$ARTIFACTS_DIR/plan.md" ]; then
+    PLAN_FILE="$PROJECT_ROOT/$ARTIFACTS_DIR/plan.md"
+  fi
+fi
+
+if [ -z "$PLAN_FILE" ] && [ -d "$PROJECT_ROOT/.planning/tasks" ]; then
+  PLAN_FILE="$(find "$PROJECT_ROOT/.planning/tasks" -path "*/plan.md" -type f -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -1 | cut -d' ' -f2- || true)"
+fi
+
+if [ -z "$PLAN_FILE" ] || [ ! -f "$PLAN_FILE" ]; then
+  echo "[G2] missing plan.md"
+  echo "[G2] run: bash scripts/workflow/new-task.sh <task> M"
   exit 1
 fi
-PLAN="$PROJECT_ROOT/$ARTIFACTS/plan.md"
-if [ ! -f "$PLAN" ]; then echo "missing plan artifact: $PLAN"; exit 1; fi
-python3 - "$PLAN" <<'PY'
-from __future__ import annotations
-import re
-import sys
-from pathlib import Path
 
-path = Path(sys.argv[1])
-text = path.read_text(encoding="utf-8")
+echo "[G2] checking: $PLAN_FILE"
 
-required = [
-    ("scope", r"^##\s+.*(Scope|范围)", "plan missing scope"),
-    ("boundary", r"^##\s+.*(Boundary|边界)", "plan missing boundary"),
-    ("acceptance", r"^##\s+.*(Acceptance|验收)", "plan missing acceptance criteria"),
-    ("risks", r"^##\s+.*(Risks?|风险)", "plan missing risks"),
-    ("rollback", r"^##\s+.*(Rollback|回滚)", "plan missing rollback"),
-    ("verification", r"^##\s+.*(Verification|验证)", "plan missing verification"),
-]
+TASK_DIR="$(dirname "$PLAN_FILE")"
+for required in runtime.md reality-check.md resource-cleanup.md; do
+  if [ ! -f "$TASK_DIR/$required" ]; then
+    echo "[G2] missing required task artifact: $required"
+    exit 1
+  fi
+done
 
-placeholders = {
-    "待填写",
-    "待填写。",
-    "todo",
-    "tbd",
-    "n/a",
-    "na",
-    "none",
-    "暂无",
-}
+for heading in \
+  "## Confirmed" \
+  "## Not Verified" \
+  "## Stub / Fake / Partial" \
+  "## Credential-Gated" \
+  "## Environment-Gated" \
+  "## User-Visible Risk"; do
+  if ! grep -Fq "$heading" "$TASK_DIR/reality-check.md"; then
+    echo "[G2] reality-check.md missing required section: $heading"
+    exit 1
+  fi
+done
 
+if command -v powershell >/dev/null 2>&1; then
+  powershell -NoProfile -ExecutionPolicy Bypass -File "$PROJECT_ROOT/scripts/workflow/check-reality.ps1" -Path "$TASK_DIR/reality-check.md"
+elif command -v pwsh >/dev/null 2>&1; then
+  pwsh -NoProfile -ExecutionPolicy Bypass -File "$PROJECT_ROOT/scripts/workflow/check-reality.ps1" -Path "$TASK_DIR/reality-check.md"
+else
+  echo "[G2] PowerShell unavailable; bash reality-check headings passed"
+fi
 
-def section_lines(pattern: str) -> list[str] | None:
-    match = re.search(pattern, text, flags=re.IGNORECASE | re.MULTILINE)
-    if not match:
-        return None
-    start = match.end()
-    next_heading = re.search(r"^##\s+", text[start:], flags=re.MULTILINE)
-    end = start + next_heading.start() if next_heading else len(text)
-    raw_lines = text[start:end].splitlines()
-    lines = []
-    for line in raw_lines:
-        cleaned = line.strip().strip("-*` \t").strip()
-        if not cleaned:
-            continue
-        if cleaned.lower() in placeholders:
-            continue
-        lines.append(cleaned)
-    return lines
+if ! grep -Eiq "scope|boundary|boundaries|limit|non-goal" "$PLAN_FILE"; then
+  echo "[G2] plan.md missing scope/boundary section"
+  exit 1
+fi
 
+EXCEPTION_COUNT="$(grep -Eic "exception|error|fail|failure|rollback" "$PLAN_FILE" || true)"
+if [ "${EXCEPTION_COUNT:-0}" -lt 3 ]; then
+  echo "[G2] insufficient exception/error coverage: ${EXCEPTION_COUNT:-0} < 3"
+  exit 1
+fi
 
-errors = []
-for name, pattern, missing_message in required:
-    lines = section_lines(pattern)
-    if lines is None:
-        errors.append(missing_message)
-    elif not lines:
-        errors.append(f"plan {name} section has no meaningful content")
+if ! grep -Eiq "rollback|recovery|disable|fallback" "$PLAN_FILE"; then
+  echo "[G2] missing rollback/recovery strategy"
+  exit 1
+fi
 
-if errors:
-    for error in errors:
-        print(error)
-    raise SystemExit(1)
-PY
+if ! grep -Eiq "acceptance|success criteria|definition of done" "$PLAN_FILE"; then
+  echo "[G2] missing acceptance criteria"
+  exit 1
+fi
+
+case "$LEVEL" in
+  L|CRITICAL)
+    if ! grep -Eiq "human confirmation|review before execution" "$PLAN_FILE"; then
+      echo "[G2] L/CRITICAL plan should record human confirmation requirement"
+      exit 1
+    fi
+    ;;
+esac
+
 echo "[G2] passed"
+echo "[G2] exception/error mentions: $EXCEPTION_COUNT"

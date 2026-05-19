@@ -19,7 +19,7 @@
 ## 任务目录
 
 ```text
-docs/worklog/tasks/<yyyy-mm-dd>-<task-slug>/
+.planning/tasks/<yyyy-mm-dd>-<task-slug>/
 |-- explore.md
 |-- mini-prd.md
 |-- plan.md
@@ -46,7 +46,7 @@ PowerShell：
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
 ```
 
-## SCALE v0.20 扩展
+## SCALE v0.21.1 扩展
 
 ```bash
 make scale-mode TASK='修复权限校验' FILES='src/auth.ts,tests/auth.test.ts'

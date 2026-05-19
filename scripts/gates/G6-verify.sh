@@ -27,7 +27,7 @@ if [ -f "$STATE_FILE" ]; then
         echo "[G6] M/L task artifacts_dir missing"
         exit 1
       fi
-      for file in explore.md plan.md verification.md review.md summary.md; do
+      for file in explore.md plan.md runtime.md reality-check.md resource-cleanup.md verification.md review.md summary.md; do
         if [ ! -f "$ROOT/$ARTIFACTS/$file" ]; then
           echo "[G6] missing task artifact: $file"
           exit 1

@@ -36,8 +36,8 @@ Gate G3-G7 (质量)
 
 | 脚本 | 目录 | 状态 | G2 能读到？ |
 |------|------|------|-----------|
-| new-task.sh | `docs/worklog/tasks/YYYY-MM-DD-{name}/` | ✅ init | ✅ |
-| plan.sh | `docs/plans/YYYY-MM-DD-{name}/` | ❌ | ❌ |
+| new-task.sh | `.planning/tasks/YYYY-MM-DD-{name}/` | ✅ init | ✅ |
+| plan.sh | `.planning/tasks/YYYY-MM-DD-{name}/` | ❌ | ❌ |
 
 **方案**：删除 `plan.sh`，统一用 `new-task.sh`。
 
@@ -46,7 +46,7 @@ Gate G3-G7 (质量)
 2. CLAUDE.md §4.2 改为：
    ```bash
    # 任务已在 new-task 阶段创建，直接编辑 plan.md
-   vim docs/worklog/tasks/$TASK_ID/plan.md
+   vim .planning/tasks/$TASK_ID/plan.md
    bash scripts/gates/G2-verify.sh
    ```
 3. Makefile 删除 `make plan` 目标（如有）
@@ -188,7 +188,7 @@ validate:        bash scripts/validate-config.sh
 # 在输出状态后，给出具体建议
 case "$PHASE" in
     explore)  echo "→ 继续: make explore FILES='...' MSG='...'" ;;
-    plan)     echo "→ 继续: 编辑 docs/worklog/tasks/$TASK_ID/plan.md" ;;
+    plan)     echo "→ 继续: 编辑 .planning/tasks/$TASK_ID/plan.md" ;;
     execute)  echo "→ 继续: 按 plan.md 执行，完成后 make gate-quality" ;;
     verify)   echo "→ 继续: make gate --all" ;;
 esac

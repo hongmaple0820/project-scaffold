@@ -1,6 +1,6 @@
 # Module Documentation
 
-派生项目在这里按模块维护长期文档。任务过程记录放在 `docs/worklog/tasks/`，不能替代模块文档。
+派生项目在这里按模块维护长期文档。任务过程记录放在 `.planning/tasks/`，不能替代模块文档。
 
 推荐结构：
 

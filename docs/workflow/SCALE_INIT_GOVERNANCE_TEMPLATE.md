@@ -24,7 +24,7 @@ scripts/lib/workflow_state.py
 ## Required Defaults
 
 - `current.json` is the only authoritative workflow state.
-- M/L/CRITICAL tasks use `docs/worklog/tasks/<yyyy-mm-dd>-<task-slug>/`.
+- M/L/CRITICAL tasks use `.planning/tasks/<yyyy-mm-dd>-<task-slug>/`.
 - `new-task.sh` creates all task artifacts from `docs/workflow/templates/`.
 - `verify.sh` reads `.agent/project.json` profiles and services.
 - `G2` rejects empty plan templates.

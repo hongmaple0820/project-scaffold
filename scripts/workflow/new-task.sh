@@ -10,13 +10,13 @@ fi
 case "$LEVEL" in S|M|L|CRITICAL) ;; *) echo "invalid level: $LEVEL"; exit 1 ;; esac
 DATE="$(date +%Y-%m-%d)"
 TASK_ID="$DATE-$NAME"
-TASK_DIR="$PROJECT_ROOT/docs/worklog/tasks/$TASK_ID"
+TASK_DIR="$PROJECT_ROOT/.planning/tasks/$TASK_ID"
 STATE_DIR="$PROJECT_ROOT/.agent/state"
 STATE_FILE="$STATE_DIR/current.json"
 PY_STATE="$PROJECT_ROOT/scripts/lib/workflow_state.py"
 TEMPLATE_DIR="$PROJECT_ROOT/docs/workflow/templates"
 mkdir -p "$TASK_DIR" "$STATE_DIR"
-for file in explore.md mini-prd.md plan.md verification.md review.md summary.md; do
+for file in explore.md mini-prd.md plan.md runtime.md reality-check.md resource-cleanup.md verification.md review.md summary.md; do
   target="$TASK_DIR/$file"
   if [ ! -f "$target" ]; then
     if [ -f "$TEMPLATE_DIR/$file" ]; then
@@ -26,6 +26,7 @@ for file in explore.md mini-prd.md plan.md verification.md review.md summary.md;
     fi
   fi
 done
-python3 "$PY_STATE" init "$STATE_FILE" "$TASK_ID" "$LEVEL" "docs/worklog/tasks/$TASK_ID"
+python3 "$PY_STATE" init "$STATE_FILE" "$TASK_ID" "$LEVEL" ".planning/tasks/$TASK_ID"
 echo "[NEW-TASK] created: $TASK_DIR"
 echo "[NEW-TASK] state: $STATE_FILE"
+echo "[NEW-TASK] next: fill explore.md, runtime.md, and reality-check.md before execution"

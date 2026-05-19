@@ -49,10 +49,10 @@
    - 回滚方案
 
 ### 输出
-- `docs/worklog/tasks/YYYY-MM-DD-feature/mini-prd.md` - 用户侧需求和验收
-- `docs/worklog/tasks/YYYY-MM-DD-feature/plan.md` - 方案、边界、风险和回滚
-- `docs/worklog/tasks/YYYY-MM-DD-feature/verification.md` - 验证命令和结果
-- `docs/worklog/tasks/YYYY-MM-DD-feature/review.md` - 评审和剩余风险
+- `.planning/tasks/YYYY-MM-DD-feature/mini-prd.md` - 用户侧需求和验收
+- `.planning/tasks/YYYY-MM-DD-feature/plan.md` - 方案、边界、风险和回滚
+- `.planning/tasks/YYYY-MM-DD-feature/verification.md` - 验证命令和结果
+- `.planning/tasks/YYYY-MM-DD-feature/review.md` - 评审和剩余风险
 
 ### 门控 G2
 - [ ] `plan.md` 已填写，且不保留 TODO/待填写
@@ -148,7 +148,7 @@ make verify PROFILE=default
 - [ ] 有无 AI 生成痕迹？
 
 ### 文档更新
-- [ ] 任务证据 → `docs/worklog/tasks/`
+- [ ] 任务证据 → `.planning/tasks/`
 - [ ] 模块长期文档 → `docs/modules/<module>/`
 - [ ] 架构决策 → `docs/adr/`
 - [ ] 可复用模式 → `docs/skills/`

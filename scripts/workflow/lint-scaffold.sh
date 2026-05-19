@@ -32,4 +32,11 @@ done
 
 python3 -m py_compile "$ROOT/scripts/lib/workflow_state.py"
 
+for script in \
+  "$ROOT/scripts/workflow/check-reality.ps1" \
+  "$ROOT/scripts/workflow/check-docs-scope.ps1" \
+  "$ROOT/scripts/workflow/write-runtime-contract.ps1"; do
+  [ -f "$script" ] || { echo "[LINT] missing $script"; exit 1; }
+done
+
 echo "[LINT] scaffold scripts OK"

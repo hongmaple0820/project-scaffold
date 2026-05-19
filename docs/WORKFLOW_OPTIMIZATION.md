@@ -51,7 +51,7 @@
 | 脚本 | 用途 | 产物 |
 |------|------|------|
 | `scripts/workflow/explore.sh` | 记录探索结果 | `.agent/state/explore.json` |
-| `scripts/workflow/plan.sh` | 创建计划目录 | `docs/plans/YYYY-MM-DD-{name}/` |
+| `scripts/workflow/plan.sh` | 创建计划目录 | `.planning/tasks/YYYY-MM-DD-{name}/` |
 | `scripts/workflow/checkpoint.sh` | 保存工作流状态 | `.agent/state/current.json` |
 | `scripts/workflow/resume.sh` | 恢复上次状态 | 读取 current.json |
 
@@ -81,7 +81,7 @@ bash scripts/workflow/plan.sh "user-auth-refactor"
 
 **产出**（Gate 检查的真实目录）：
 ```
-docs/plans/2026-05-14-user-auth-refactor/
+.planning/tasks/2026-05-14-user-auth-refactor/
 ├── spec.md    ← WHAT（用户故事 + 验收标准）
 ├── plan.md    ← HOW（技术选型 + 数据模型）
 └── tasks.md   ← DO（原子任务列表）
@@ -98,7 +98,7 @@ docs/plans/2026-05-14-user-auth-refactor/
 | Gate | 检查什么 | 产物来源 |
 |------|---------|---------|
 | G1 探索 | `explore.json` 存在 + ≥3 文件 + 主要矛盾 | `explore.sh` 产出 |
-| G2 规划 | `docs/plans/YYYY-MM-DD-*/plan.md` 存在 + 含边界/异常/回滚 | `plan.sh` 产出 |
+| G2 规划 | `.planning/tasks/YYYY-MM-DD-*/plan.md` 存在 + 含边界/异常/回滚 | `plan.sh` 产出 |
 | G3 TDD | `*_test.go` mtime ≤ 实现文件 mtime | Git 记录 |
 | G4 Lint | `golangci-lint run` exit 0 | 命令输出 |
 | G5 Test | `go test ./... -race` exit 0 | 命令输出 |

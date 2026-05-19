@@ -92,7 +92,7 @@ docs/
 | 模块 | `docs/modules/<module>/` | README、API、数据、流程、风险 |
 | ADR | `docs/adr/` | 长期有效的架构决策和取舍 |
 | 工作流 | `docs/workflow/`、`scripts/workflow/` | 任务生命周期和脚本说明 |
-| 任务记录 | `docs/worklog/tasks/` | 探索、计划、验证、复盘 |
+| 任务记录 | `.planning/tasks/` | 探索、计划、验证、复盘 |
 | 经验沉淀 | `thoughts/` 或项目约定目录 | 错误、复盘、资源索引 |
 
 ### 4.1 关联关系

@@ -12,7 +12,7 @@ function Invoke-Scale {
     return
   }
 
-  & npx @hongmaple0820/scale-engine@latest @ScaleArgs
+  & npx @hongmaple0820/scale-engine@0.21.1 @ScaleArgs
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 

@@ -26,7 +26,7 @@ make gate-workflow
 make verify PROFILE=scaffold
 ```
 
-## SCALE v0.20 能力入口
+## SCALE v0.21.1 能力入口
 
 ```bash
 make scale-smoke TASK='为 Go 服务接入工作流' FILES='AGENTS.md,README.md'

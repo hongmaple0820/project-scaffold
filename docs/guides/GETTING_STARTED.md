@@ -87,7 +87,7 @@ make lint
 make new-task NAME=my-first-feature LEVEL=M
 
 # 2. 编辑文档
-# docs/worklog/tasks/YYYY-MM-DD-my-first-feature/
+# .planning/tasks/YYYY-MM-DD-my-first-feature/
 #   ├── explore.md
 #   ├── mini-prd.md
 #   ├── plan.md

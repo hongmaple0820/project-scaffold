@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-这里保存长期有效的架构决策。普通任务计划放在 `docs/worklog/tasks/`，不要把一次性过程记录写成 ADR。
+这里保存长期有效的架构决策。普通任务计划放在 `.planning/tasks/`，不要把一次性过程记录写成 ADR。
 
 命名格式：
 

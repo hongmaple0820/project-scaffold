@@ -1,17 +1,17 @@
-# plan - {{TASK_ID}}
+# Plan - {{TASK_ID}}
 
 Date: {{DATE}}
 Level: {{LEVEL}}
 
-## Scope / 范围
+## Scope
 
 - TODO
 
-## Boundary / 边界
+## Boundary
 
 - TODO
 
-## Required Skills / 专业能力
+## Required Skills
 
 - [ ] product / mini-prd
 - [ ] security review
@@ -19,18 +19,30 @@ Level: {{LEVEL}}
 - [ ] code review
 - [ ] release review
 
-## Acceptance Criteria / 验收标准
+## Acceptance Criteria
 
 - TODO
 
-## Risks / 风险
+## Risks
 
 - TODO
 
-## Rollback / 回滚方案
+## Exception Contract
+
+1. TODO
+2. TODO
+3. TODO
+
+## Rollback
 
 - TODO
 
-## Verification / 验证
+## Human Confirmation
+
+- Required for L/CRITICAL tasks:
+- Confirmation source:
+- Execution boundary approved:
+
+## Verification
 
 - TODO

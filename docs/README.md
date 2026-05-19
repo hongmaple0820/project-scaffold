@@ -92,10 +92,10 @@ docs/
 
 | 变更类型 | 需更新文档 |
 |----------|------------|
-| 新增功能 | `worklog/tasks/` + 对应 `modules/<module>/` + 必要 ADR |
+| 新增功能 | `.planning/tasks/` + 对应 `modules/<module>/` + 必要 ADR |
 | 修改接口 | `modules/<module>/api.md` + `standards/common/API_STANDARDS.md` |
 | 重构代码 | `architecture/` + 对应模块文档 |
-| 修复Bug | `worklog/tasks/` + 故障复盘或排障指南 |
+| 修复Bug | `.planning/tasks/` + 故障复盘或排障指南 |
 | 工作流变更 | `workflow/README.md` + `AGENTS.md` / `CLAUDE.md` + 相关脚本 |
 
 ---

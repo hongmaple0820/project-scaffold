@@ -25,7 +25,7 @@ make gate-workflow
 make verify PROFILE=scaffold
 ```
 
-SCALE v0.20 能力：
+SCALE v0.21.1 能力：
 
 ```bash
 make scale-mode TASK='...' FILES='...'
@@ -66,7 +66,7 @@ Agent 应主动选择合适工具，但必须保留证据：
 ## 文档和资源
 
 - 长期事实写入 README、标准、ADR、架构文档或 CONTEXT。
-- 任务过程写入 `docs/worklog/tasks/<date>-<slug>/`。
+- 任务过程写入 `.planning/tasks/<date>-<slug>/`。
 - 截图、coverage、E2E report、临时脚本、运行日志默认不提交。
 - 模块变更必须更新对应模块文档和 `docs/CONTEXT-MAP.md` 的关系说明。
 

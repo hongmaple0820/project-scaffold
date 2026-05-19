@@ -7,7 +7,7 @@ if [ ! -f "$STATE_FILE" ]; then
   echo "[RESUME] no workflow state"
   exit 0
 fi
-for key in task_id level phase updated_at artifacts_dir explored_files main_contradiction completed_gates open_tasks files_modified; do
+for key in task_id level phase updated_at artifacts_dir runtime_contract reality_check resource_cleanup explored_files main_contradiction completed_gates open_tasks files_modified; do
   value=$(python3 "$PY_STATE" get "$STATE_FILE" "$key" "")
   printf "%-20s %s\n" "$key:" "$value"
 done
@@ -19,7 +19,7 @@ ARTIFACTS=$(python3 "$PY_STATE" get "$STATE_FILE" artifacts_dir "")
 echo ""
 case "$PHASE" in
   explore)
-    echo "next: fill $ARTIFACTS/plan.md, then run make gate-workflow"
+    echo "next: fill $ARTIFACTS/plan.md, $ARTIFACTS/runtime.md, and $ARTIFACTS/reality-check.md, then run make gate-workflow"
     ;;
   plan)
     echo "next: execute $ARTIFACTS/plan.md, then run make checkpoint PHASE=execute"
@@ -28,7 +28,7 @@ case "$PHASE" in
     echo "next: run make gate-quality and update $ARTIFACTS/verification.md"
     ;;
   verify)
-    echo "next: update $ARTIFACTS/review.md, $ARTIFACTS/summary.md, and docs/worklog/metrics.md"
+    echo "next: update $ARTIFACTS/review.md, $ARTIFACTS/summary.md, and $ARTIFACTS/resource-cleanup.md"
     ;;
   done)
     echo "next: review final diff and prepare handoff"
