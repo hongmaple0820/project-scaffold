@@ -1,85 +1,95 @@
 #!/bin/bash
-# scripts/validate-config.sh
-# 验证配置有效性
-
-set -e
+set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ERRORS=0
 
 echo "========================================"
-echo "[VALIDATE] 配置验证"
+echo "[VALIDATE] configuration"
 echo "========================================"
 echo ""
 
-# 检查必需文件
-echo "[CHECK] 必需文件..."
+echo "[CHECK] required files..."
 REQUIRED_FILES=(
-    "CLAUDE.md"
-    "README.md"
-    "Makefile"
-    ".scale/workspace.json"
-    ".agent/project.json"
-    ".claude/settings.json"
-    ".claude/workflow.json"
+  "AGENTS.md"
+  "CLAUDE.md"
+  "README.md"
+  "Makefile"
+  ".scale/workspace.json"
+  ".scale/governance.lock.json"
+  ".agent/project.json"
+  ".claude/settings.json"
+  ".claude/workflow.json"
 )
 
 for file in "${REQUIRED_FILES[@]}"; do
-    if [ -f "$PROJECT_ROOT/$file" ]; then
-        echo "[OK] $file"
-    else
-        echo "[ERROR] 缺少: $file"
-        ERRORS=$((ERRORS+1))
-    fi
+  if [ -f "$PROJECT_ROOT/$file" ]; then
+    echo "[OK] $file"
+  else
+    echo "[ERROR] missing: $file"
+    ERRORS=$((ERRORS+1))
+  fi
 done
 echo ""
 
-# 检查脚本可执行
-echo "[CHECK] 脚本可执行..."
+echo "[CHECK] executable scripts..."
 REQUIRED_SCRIPTS=(
-    "scripts/preflight/all.sh"
-    "scripts/gates/all.sh"
-    "scripts/checkpoint/save.sh"
+  "scripts/preflight/all.sh"
+  "scripts/gates/all.sh"
+  "scripts/checkpoint/save.sh"
+  "scripts/workflow/verify.sh"
+  "scripts/workflow/lint-scaffold.sh"
 )
 
 for script in "${REQUIRED_SCRIPTS[@]}"; do
-    if [ -x "$PROJECT_ROOT/$script" ]; then
-        echo "[OK] $script"
-    else
-        if [ -f "$PROJECT_ROOT/$script" ]; then
-            echo "[WARN] 不可执行: $script (尝试修复...)"
-            chmod +x "$PROJECT_ROOT/$script"
-        else
-            echo "[ERROR] 缺少: $script"
-            ERRORS=$((ERRORS+1))
-        fi
-    fi
+  if [ -f "$PROJECT_ROOT/$script" ]; then
+    chmod +x "$PROJECT_ROOT/$script" 2>/dev/null || true
+    echo "[OK] $script"
+  else
+    echo "[ERROR] missing: $script"
+    ERRORS=$((ERRORS+1))
+  fi
 done
 echo ""
 
-# 检查JSON有效性
-echo "[CHECK] JSON文件..."
-if command -v jq &>/dev/null; then
-    for json in "$PROJECT_ROOT/.scale/workspace.json" "$PROJECT_ROOT/.claude"/*.json "$PROJECT_ROOT/.agent"/*.json; do
-        if [ -f "$json" ]; then
-            if jq empty "$json" 2>/dev/null; then
-                echo "[OK] ${json#$PROJECT_ROOT/}"
-            else
-                echo "[ERROR] 无效JSON: ${json#$PROJECT_ROOT/}"
-                ERRORS=$((ERRORS+1))
-            fi
-        fi
-    done
+echo "[CHECK] JSON files..."
+if command -v python3 >/dev/null 2>&1; then
+  python3 - "$PROJECT_ROOT" <<'PY' || ERRORS=$((ERRORS+1))
+from __future__ import annotations
+import json
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+paths = [
+    root / ".scale" / "workspace.json",
+    root / ".scale" / "governance.lock.json",
+    root / ".agent" / "project.json",
+    root / ".claude" / "settings.json",
+    root / ".claude" / "workflow.json",
+]
+
+failed = False
+for path in paths:
+    try:
+        with path.open(encoding="utf-8") as f:
+            json.load(f)
+        print(f"[OK] {path.relative_to(root)}")
+    except Exception as exc:
+        failed = True
+        print(f"[ERROR] invalid JSON: {path.relative_to(root)} :: {exc}")
+
+raise SystemExit(1 if failed else 0)
+PY
 else
-    echo "[SKIP] jq未安装，跳过JSON验证"
+  echo "[ERROR] python3 not available for JSON validation"
+  ERRORS=$((ERRORS+1))
 fi
 echo ""
 
-# 检查换行格式
-echo "[CHECK] Shell脚本换行..."
+echo "[CHECK] shell LF endings..."
 CRLF_FILES=$(python3 - "$PROJECT_ROOT" <<'PY'
 from __future__ import annotations
-import os
 import sys
 from pathlib import Path
 
@@ -93,24 +103,24 @@ for base in [root / "scripts", root / ".claude" / "hooks"]:
         except OSError:
             continue
         if b"\r\n" in data:
-            print(path)
+            print(path.relative_to(root))
 PY
 )
+
 if [ -n "$CRLF_FILES" ]; then
-    echo "[ERROR] Shell脚本包含CRLF换行:"
-    echo "$CRLF_FILES"
-    ERRORS=$((ERRORS+1))
+  echo "[ERROR] shell scripts contain CRLF:"
+  echo "$CRLF_FILES"
+  ERRORS=$((ERRORS+1))
 else
-    echo "[OK] Shell脚本均为LF换行"
+  echo "[OK] shell scripts use LF"
 fi
 echo ""
 
-# 总结
 echo "========================================"
-if [ $ERRORS -eq 0 ]; then
-    echo "[VALIDATE] ✅ 配置有效"
-    exit 0
+if [ "$ERRORS" -eq 0 ]; then
+  echo "[VALIDATE] OK"
+  exit 0
 else
-    echo "[VALIDATE] ❌ 发现 $ERRORS 个问题"
-    exit 1
+  echo "[VALIDATE] FAIL: $ERRORS issue(s)"
+  exit 1
 fi

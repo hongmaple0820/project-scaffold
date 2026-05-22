@@ -55,6 +55,7 @@ make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='workflow adaptation'
 make gate-workflow
 make gate-quality
 make verify PROFILE=scaffold
+make verify-list
 ```
 
 PowerShell：
@@ -63,7 +64,7 @@ PowerShell：
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workflow/verify.ps1
 ```
 
-## SCALE v0.21.2 扩展
+## SCALE 最新工作流扩展
 
 ```bash
 make scale-mode TASK='修复权限校验' FILES='src/auth.ts,tests/auth.test.ts'
@@ -123,9 +124,9 @@ feature/fix/docs/chore/codex -> dev -> main/master -> tag/package publish
 
 `.agent/project.json` 定义 service matrix 和 profiles。脚手架默认：
 
-- `scaffold`：验证脚手架自身脚本。
-- `default`：派生项目的默认服务集合。
-- `all`：显式要求时才运行所有服务和安全检查。
+- `scaffold`：验证脚手架自身脚本、配置和门禁调度。
+- `default`：验证脚手架仓库的标准工作流面。
+- `all`：显式要求时运行脚手架全部自检项。
 
 派生项目应优先复用已有 `npm/pnpm/maven/go test` 等命令，不在门禁脚本里硬编码第二套业务验证。
 

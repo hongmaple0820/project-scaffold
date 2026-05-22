@@ -5,11 +5,12 @@ TASK ?= workflow scaffold adaptation
 FILES ?= AGENTS.md,CLAUDE.md,README.md
 LEVEL ?= M
 PHASE ?= plan
+PROFILE ?= scaffold
 SERVICES ?=
 
 help:
 	@echo "make preflight | make new-task NAME=x LEVEL=M | make explore FILES='...' MSG='...'"
-	@echo "make checkpoint PHASE=execute | make gate | make verify PROFILE=scaffold | make validate"
+	@echo "make checkpoint PHASE=execute | make gate | make verify PROFILE=scaffold | make verify-list | make validate"
 	@echo "make scale-smoke TASK='...' FILES='AGENTS.md,README.md'"
 	@echo "make bootstrap-scale | make bootstrap-scale-install | make bootstrap-scale-latest"
 	@echo "make workflow-upgrade-check | make workflow-upgrade-plan | make workflow-upgrade-apply | make workflow-upgrade-verify"

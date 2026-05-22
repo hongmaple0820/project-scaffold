@@ -58,7 +58,11 @@ Thumbs.db
 .claude/settings.local.json
 
 # Agent local state
-.agent/
+.agent/*
+!.agent/
+!.agent/project.json
+.agent/logs/
+.agent/state/
 .claude/worktrees/
 .claude/tmp/
 .claude/local/

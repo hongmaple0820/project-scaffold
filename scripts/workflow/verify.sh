@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CONFIG="$ROOT/.agent/project.json"
@@ -33,6 +33,40 @@ if [ ! -f "$CONFIG" ]; then
   exit 1
 fi
 
+tool_available() {
+  local tool="$1"
+  if command -v "$tool" >/dev/null 2>&1; then
+    return 0
+  fi
+  if [ "$tool" = "go" ] && command -v go.exe >/dev/null 2>&1; then
+    return 0
+  fi
+  return 1
+}
+
+run_check_command() {
+  local relative_path="$1"
+  local command="$2"
+  local workdir="$ROOT/$relative_path"
+
+  # Windows-hosted worktrees can expose Windows node_modules to WSL/Linux Node.
+  # Prefer Windows PowerShell for npm/npx commands when the checkout is under /mnt.
+  if command -v powershell.exe >/dev/null 2>&1; then
+    local physical_dir
+    physical_dir="$(cd "$workdir" && pwd -P)"
+    if [[ "$physical_dir" == /mnt/* ]] && [[ "$command" =~ ^(npm|npx|pnpm)[[:space:]] ]]; then
+      local win_dir escaped_dir escaped_command
+      win_dir="$(wslpath -w "$physical_dir" 2>/dev/null || printf '%s' "$physical_dir")"
+      escaped_dir="${win_dir//\'/\'\'}"
+      escaped_command="${command//\'/\'\'}"
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-Location -LiteralPath '$escaped_dir'; cmd.exe /d /c '$escaped_command'" < /dev/null
+      return $?
+    fi
+  fi
+
+  (cd "$workdir" && bash -lc "$command") < /dev/null
+}
+
 if [ "$LIST" = true ]; then
   python3 - "$CONFIG" <<'PY'
 import json, sys
@@ -49,6 +83,7 @@ PY
 fi
 
 if [ "$PROFILE" = "scaffold" ] && [ -z "$SERVICE" ]; then
+  bash "$ROOT/scripts/validate-config.sh"
   bash "$ROOT/scripts/workflow/lint-scaffold.sh"
   bash "$ROOT/scripts/gates/all.sh" --dry-run
   echo "[VERIFY] profile scaffold passed"
@@ -119,19 +154,21 @@ while IFS=$'\t' read -r kind name path check tools command; do
       ;;
     RUN)
       IFS=',' read -ra tool_list <<< "$tools"
+      MISSING_TOOL=0
       for tool in "${tool_list[@]}"; do
-        if [ -n "$tool" ] && [ "$tool" != "-" ] && ! command -v "$tool" >/dev/null 2>&1; then
+        if [ -n "$tool" ] && [ "$tool" != "-" ] && ! tool_available "$tool"; then
           echo "[VERIFY] missing tool for $name/$check: $tool"
-          STATUS=1
+          MISSING_TOOL=1
         fi
       done
-      if [ "$STATUS" -ne 0 ]; then
+      if [ "$MISSING_TOOL" -ne 0 ]; then
+        STATUS=1
         continue
       fi
       log_dir="$ROOT/.agent/logs/$name"
       mkdir -p "$log_dir"
       echo "[VERIFY] run $name/$check"
-      if ! (cd "$ROOT/$path" && bash -lc "$command") >"$log_dir/$check.log" 2>&1; then
+      if ! run_check_command "$path" "$command" >"$log_dir/$check.log" 2>&1; then
         echo "[VERIFY] failed $name/$check; log: .agent/logs/$name/$check.log"
         STATUS=1
       fi

@@ -18,6 +18,7 @@ make new-task NAME=task-slug LEVEL=M
 make explore FILES='AGENTS.md CLAUDE.md README.md' MSG='main contradiction'
 make gate-workflow
 make verify PROFILE=scaffold
+make verify-list
 make scale-smoke TASK='workflow scaffold adaptation' FILES='AGENTS.md,README.md'
 make bootstrap-scale
 make workflow-upgrade-check

@@ -8,7 +8,7 @@ Project: project-scaffold
 | Workflow scripts | workflow maintainers | `README.md` | `scripts/workflow/` |
 | Gate system | workflow maintainers | `docs/workflow/README.md` | `scripts/gates/` |
 | Standards | governance maintainers | `docs/standards/README.md` | `docs/standards/common/` |
-| SCALE v0.21.2 adapters | workflow maintainers | `README.md` | `.scale/code-intelligence.json`, `.scale/evals/` |
+| SCALE latest workflow adapters | workflow maintainers | `README.md` | `.scale/code-intelligence.json`, `.scale/evals/` |
 
 ## Cross-Module Rules
 

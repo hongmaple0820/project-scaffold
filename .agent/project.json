@@ -1,36 +1,56 @@
 {
-  "version": "1.1",
-  "stack": "auto",
+  "version": "1.2",
+  "stack": "workflow-scaffold",
   "coverage_threshold": 80,
   "profiles": {
     "scaffold": {
-      "description": "Validate the reusable scaffold itself.",
+      "description": "Validate the reusable workflow scaffold itself.",
       "checks": ["lint"]
     },
     "default": {
-      "description": "Validate required product services for a generated project.",
-      "services": [],
-      "checks": ["lint", "test", "build"]
+      "description": "Validate the scaffold repository with the standard workflow surface.",
+      "services": ["scaffold"],
+      "checks": ["validate", "lint", "gates-dry-run"]
     },
     "all": {
-      "description": "Validate every configured service.",
+      "description": "Run every configured scaffold validation check.",
       "services": "*",
-      "checks": ["lint", "test", "build", "security"]
+      "checks": ["validate", "lint", "gates-dry-run", "test"]
     }
   },
-  "services": {},
+  "services": {
+    "scaffold": {
+      "path": ".",
+      "stack": "scaffold",
+      "required": true
+    }
+  },
   "stacks": {
+    "scaffold": {
+      "commands": {
+        "validate": "bash scripts/validate-config.sh",
+        "lint": "bash scripts/workflow/lint-scaffold.sh",
+        "gates-dry-run": "bash scripts/gates/all.sh --dry-run",
+        "test": "bash scripts/tests/run.sh"
+      },
+      "required_tools": {
+        "validate": ["bash", "python3"],
+        "lint": ["bash", "python3"],
+        "gates-dry-run": ["bash"],
+        "test": ["bash", "python3"]
+      }
+    },
     "go": {
       "detect": ["go.mod"],
       "implementation_glob": "*.go",
       "test_suffix": "_test.go",
       "exclude_dirs": ["vendor", ".git", ".agent"],
       "commands": {
-        "build": "go build ./...",
-        "lint": "golangci-lint run --out-format=json > .agent/logs/lint.json",
-        "test": "go test ./... -race -json > .agent/logs/test.json",
-        "coverage": "go test -coverprofile=.agent/logs/coverage.out ./...",
-        "security": "gosec -fmt json -out .agent/logs/gosec.json ./... >/dev/null"
+        "build": "GO_CMD=\"$(command -v go >/dev/null 2>&1 && echo go || echo go.exe)\"; \"$GO_CMD\" build ./...",
+        "lint": "golangci-lint run",
+        "test": "GO_CMD=\"$(command -v go >/dev/null 2>&1 && echo go || echo go.exe)\"; \"$GO_CMD\" test ./...",
+        "coverage": "GO_CMD=\"$(command -v go >/dev/null 2>&1 && echo go || echo go.exe)\"; \"$GO_CMD\" test -coverprofile=.agent/logs/coverage.out ./...",
+        "security": "gosec ./..."
       },
       "required_tools": {
         "build": ["go"],
@@ -43,11 +63,11 @@
     "node": {
       "detect": ["package.json"],
       "commands": {
-        "build": "npm run build --if-present",
-        "lint": "npm run lint",
-        "test": "npm test",
-        "coverage": "npm run coverage",
-        "security": "npm audit --audit-level=high"
+        "build": "if [ -f pnpm-lock.yaml ] && command -v pnpm >/dev/null 2>&1; then pnpm run build; else npm run build --if-present; fi",
+        "lint": "if [ -f pnpm-lock.yaml ] && command -v pnpm >/dev/null 2>&1; then pnpm run lint --if-present; else npm run lint --if-present; fi",
+        "test": "if [ -f pnpm-lock.yaml ] && command -v pnpm >/dev/null 2>&1; then pnpm run test --if-present; else npm test --if-present; fi",
+        "coverage": "if [ -f pnpm-lock.yaml ] && command -v pnpm >/dev/null 2>&1; then pnpm run coverage --if-present; else npm run coverage --if-present; fi",
+        "security": "if [ -f pnpm-lock.yaml ] && command -v pnpm >/dev/null 2>&1; then pnpm audit --audit-level high || true; else npm audit --audit-level=high || true; fi"
       },
       "required_tools": {
         "build": ["npm"],

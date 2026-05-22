@@ -29,4 +29,4 @@ jobs:
           fi
 
       - name: Run SCALE preflight
-        run: npx @hongmaple0820/scale-engine@0.21.2 preflight --service all
+        run: npx @hongmaple0820/scale-engine@0.25.0 preflight --service all

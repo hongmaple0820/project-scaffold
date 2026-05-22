@@ -20,10 +20,13 @@ copy_fixture() {
     mkdir -p "$fixture"
     cp -R "$PROJECT_ROOT/.claude" "$fixture/.claude"
     cp -R "$PROJECT_ROOT/.agent" "$fixture/.agent"
+    cp -R "$PROJECT_ROOT/.scale" "$fixture/.scale"
     cp -R "$PROJECT_ROOT/scripts" "$fixture/scripts"
+    cp "$PROJECT_ROOT/AGENTS.md" "$fixture/AGENTS.md"
     cp "$PROJECT_ROOT/CLAUDE.md" "$fixture/CLAUDE.md"
     cp "$PROJECT_ROOT/README.md" "$fixture/README.md"
     cp "$PROJECT_ROOT/Makefile" "$fixture/Makefile"
+    rm -rf "$fixture/.agent/logs" "$fixture/.agent/state"
     if [ -f "$PROJECT_ROOT/.gitattributes" ]; then
         cp "$PROJECT_ROOT/.gitattributes" "$fixture/.gitattributes"
     fi
@@ -64,8 +67,8 @@ test_validate_config_passes() {
 }
 
 test_invalid_json_fails() {
-    if ! command -v jq >/dev/null 2>&1; then
-        skip "invalid JSON detection requires jq"
+    if ! command -v python3 >/dev/null 2>&1; then
+        skip "invalid JSON detection requires python3"
         return 0
     fi
 
@@ -78,7 +81,7 @@ test_invalid_json_fails() {
         return 1
     fi
 
-    grep -q "无效JSON" /tmp/scaffold-invalid-json.log
+    grep -q "invalid JSON" /tmp/scaffold-invalid-json.log
 }
 
 test_crlf_shell_fails() {
@@ -91,7 +94,7 @@ test_crlf_shell_fails() {
         return 1
     fi
 
-    grep -q "Shell脚本包含CRLF换行" /tmp/scaffold-crlf.log
+    grep -q "shell scripts contain CRLF" /tmp/scaffold-crlf.log
 }
 
 test_dry_run_is_honest() {
@@ -117,6 +120,19 @@ package main
 
 func main() {}
 EOF
+    python3 - "$fixture/.agent/project.json" "$fixture/.agent/project.json.tmp" <<'PY'
+import json
+import sys
+
+source, target = sys.argv[1], sys.argv[2]
+with open(source, encoding="utf-8") as f:
+    data = json.load(f)
+data["stack"] = "auto"
+with open(target, "w", encoding="utf-8") as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+    f.write("\n")
+PY
+    mv "$fixture/.agent/project.json.tmp" "$fixture/.agent/project.json"
 
     if (cd "$fixture" && bash scripts/gates/G3-verify.sh >/tmp/scaffold-g3.log 2>&1); then
         cat /tmp/scaffold-g3.log
@@ -146,6 +162,7 @@ import sys
 source, target = sys.argv[1], sys.argv[2]
 with open(source, encoding="utf-8") as f:
     data = json.load(f)
+data["stack"] = "auto"
 data["stacks"]["go"]["required_tools"]["security"] = ["__missing_gosec_for_scaffold_test__"]
 with open(target, "w", encoding="utf-8") as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
@@ -168,8 +185,8 @@ PY
 }
 
 test_node_stack_uses_configured_lint_command() {
-    if ! command -v jq >/dev/null 2>&1; then
-        skip "node service matrix test requires jq"
+    if ! command -v python3 >/dev/null 2>&1; then
+        skip "node service matrix test requires python3"
         return 0
     fi
 
@@ -179,10 +196,26 @@ test_node_stack_uses_configured_lint_command() {
     cat > "$fixture/web/package.json" <<'EOF'
 {"scripts":{"lint":"echo lint-ok"}}
 EOF
-    jq '.profiles.default.services = ["web"] |
-        .profiles.default.checks = ["lint"] |
-        .services.web = {"path":"web","stack":"node","required":true,"commands":{"lint":"echo node-lint-ok"},"required_tools":{"lint":[]}}' \
-        "$fixture/.agent/project.json" > "$fixture/.agent/project.json.tmp"
+    python3 - "$fixture/.agent/project.json" "$fixture/.agent/project.json.tmp" <<'PY'
+import json
+import sys
+
+source, target = sys.argv[1], sys.argv[2]
+with open(source, encoding="utf-8") as f:
+    data = json.load(f)
+data["profiles"]["default"]["services"] = ["web"]
+data["profiles"]["default"]["checks"] = ["lint"]
+data["services"]["web"] = {
+    "path": "web",
+    "stack": "node",
+    "required": True,
+    "commands": {"lint": "echo node-lint-ok"},
+    "required_tools": {"lint": []},
+}
+with open(target, "w", encoding="utf-8") as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+    f.write("\n")
+PY
     mv "$fixture/.agent/project.json.tmp" "$fixture/.agent/project.json"
 
     (cd "$fixture" && bash scripts/workflow/verify.sh --profile default >/tmp/scaffold-node-lint.log 2>&1)

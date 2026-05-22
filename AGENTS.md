@@ -26,9 +26,10 @@ make verify PROFILE=scaffold
 make bootstrap-scale
 make workflow-upgrade-check
 make workflow-upgrade-plan
+make verify-list
 ```
 
-SCALE v0.21.2 能力：
+SCALE 最新工作流能力：
 
 ```bash
 make scale-mode TASK='...' FILES='...'

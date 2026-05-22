@@ -1,11 +1,16 @@
 {
   "version": 1,
   "scalePackage": "@hongmaple0820/scale-engine",
-  "scaleVersion": "0.21.2",
+  "scaleVersion": "0.25.0",
   "pack": "project-scaffold",
-  "packVersion": 2,
-  "generatedAt": "2026-05-18T09:19:43.858Z",
+  "packVersion": 3,
+  "generatedAt": "2026-05-20T00:00:00.000Z",
   "files": [
+    {
+      "path": ".agent/project.json",
+      "sha256": "254b30134527f94bc4b6fe4fb2f1e5f4390ad3351ead8cb8361188fcd8b34d97",
+      "owned": true
+    },
     {
       "path": "docs/workflow/templates/skill-plan.md",
       "sha256": "22f18e550836650e3094fcde0c4b270bd43a35bcec83a7ef20b419d9662ce007",
@@ -43,12 +48,12 @@
     },
     {
       "path": "docs/workflow/templates/github-actions-scale-preflight.yml",
-      "sha256": "b1eb1c4918c3ee63543356e2f23511afd6053f1c7ec227d9e8522ae2a19fb70c",
+      "sha256": "74a26c3cc534c7292e5cdb2fc778c4f8aa9600567a6fa91f4804f4fd2fee425b",
       "owned": true
     },
     {
       "path": "docs/workflow/templates/pre-push-scale-preflight.sh",
-      "sha256": "3b3a8e45ab3ac8774e54fbcbd5b44cddbf1df06a74aa671f535289b9629a3f7c",
+      "sha256": "68b9f53e925850fd9e96a7016fb079701619a74066fa704da71d7f48ef7f16c4",
       "owned": true
     },
     {
@@ -143,7 +148,7 @@
     },
     {
       "path": "docs/workflow/README.md",
-      "sha256": "2882d77eaaf2162ead34fe8e9aba7db2a8f8843e8fb6a2d5bbcc9b37cdabc0c5",
+      "sha256": "863875fdc3a4c968d103496476467faf5c1948ecbca5c6f771a16e33584a4dc3",
       "owned": true
     }
   ]
