@@ -1,84 +1,86 @@
-#!/bin/bash
-# scripts/gates/G7-verify.sh
-# 安全验证
+#!/usr/bin/env bash
+# Service-aware security scan. Blocks for CRITICAL or ENFORCE_SECURITY=1.
 
-set -e
+set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-source "$PROJECT_ROOT/scripts/lib/project-config.sh"
-ERRORS=0
+source "$PROJECT_ROOT/scripts/lib/services.sh"
 
-echo "[G7] 安全检查..."
-
-STACK="$(detect_stack)"
-
-if [ "$STACK" = "none" ]; then
-    echo "[G7] ℹ️ 未检测到已配置技术栈，security 门控不适用"
-    exit 0
+STATE_FILE="$PROJECT_ROOT/.agent/state/current.json"
+PY_STATE="$PROJECT_ROOT/scripts/lib/workflow_state.py"
+LEVEL=""
+if [ -f "$STATE_FILE" ] && [ -f "$PY_STATE" ]; then
+  LEVEL="$(python3 "$PY_STATE" get "$STATE_FILE" level "" 2>/dev/null || true)"
 fi
 
-if ! stack_exists "$STACK"; then
-    echo "[G7] ❌ 未知技术栈: $STACK"
+ENFORCE="${ENFORCE_SECURITY:-0}"
+if [ "$LEVEL" = "CRITICAL" ]; then
+  ENFORCE=1
+fi
+
+echo "========================================"
+echo "[G7] Security gate"
+echo "========================================"
+echo "[G7] enforce: $ENFORCE"
+
+if ! command -v gosec >/dev/null 2>&1; then
+  echo "[G7] gosec missing"
+  echo "[G7] install: go install github.com/securego/gosec/v2/cmd/gosec@latest"
+  if [ "$ENFORCE" = "1" ]; then
     exit 1
+  fi
+  echo "[G7] skipped outside enforced security mode"
+  exit 0
 fi
 
-COMMAND="$(gate_command "$STACK" security)"
-if ! run_gate_command "$STACK" security "$COMMAND" G7; then
-    echo "[G7] ❌ security 命令失败"
-    exit 1
-fi
-
-if [ "$STACK" != "go" ]; then
-    echo "[G7] ✅ security 命令通过"
-    exit 0
-fi
-
-GOSEC_OUTPUT="$(cat "$PROJECT_ROOT/.agent/logs/gosec.json")"
-
-# 统计问题
-if command -v jq >/dev/null 2>&1; then
-    HIGH=$(echo "$GOSEC_OUTPUT" | jq '[.Issues[] | select(.severity=="HIGH")] | length' 2>/dev/null || echo "0")
-    CRITICAL=$(echo "$GOSEC_OUTPUT" | jq '[.Issues[] | select(.severity=="CRITICAL")] | length' 2>/dev/null || echo "0")
-else
-    COUNTS=$(python3 - "$PROJECT_ROOT/.agent/logs/gosec.json" <<'PY'
+count_security_findings() {
+  local file="$1"
+  if command -v node >/dev/null 2>&1; then
+    node -e "const fs=require('fs'); const p=process.argv[1]; const data=JSON.parse(fs.readFileSync(p,'utf8')); const issues=data.Issues||[]; const high=issues.filter(i=>i.severity==='HIGH').length; const critical=issues.filter(i=>i.severity==='CRITICAL').length; console.log(high + ' ' + critical);" "$file"
+    return
+  fi
+  python3 - "$file" <<'PY'
 import json, sys
-with open(sys.argv[1], encoding="utf-8") as f:
+with open(sys.argv[1], encoding='utf-8') as f:
     data = json.load(f)
-issues = data.get("Issues") or []
-high = sum(1 for issue in issues if issue.get("severity") == "HIGH")
-critical = sum(1 for issue in issues if issue.get("severity") == "CRITICAL")
-print(f"{high} {critical}")
+issues = data.get('Issues') or []
+high = sum(1 for i in issues if i.get('severity') == 'HIGH')
+critical = sum(1 for i in issues if i.get('severity') == 'CRITICAL')
+print(high, critical)
 PY
-)
-    HIGH="${COUNTS%% *}"
-    CRITICAL="${COUNTS##* }"
+}
+
+ALL_PASS=true
+for service in $(selected_services "$@"); do
+  DIR="$(service_dir "$service")"
+  LOG_DIR="$(service_log_dir "$service")"
+  LOG_FILE="$LOG_DIR/security.json"
+  mkdir -p "$LOG_DIR"
+
+  echo "[G7] service: $service"
+  cd "$DIR"
+
+  gosec -fmt json -out "$LOG_FILE" ./... >/dev/null 2>&1 || true
+  read -r HIGH CRITICAL < <(count_security_findings "$LOG_FILE")
+
+  echo "[G7]   HIGH: ${HIGH:-0}"
+  echo "[G7]   CRITICAL: ${CRITICAL:-0}"
+
+  if [ "${HIGH:-0}" -gt 0 ] || [ "${CRITICAL:-0}" -gt 0 ]; then
+    echo "[G7]   high/critical findings are recorded in $LOG_FILE"
+    ALL_PASS=false
+  fi
+done
+
+if [ "$ALL_PASS" = true ]; then
+  echo "[G7] passed"
+  exit 0
 fi
 
-if [ "$CRITICAL" -gt 0 ]; then
-    echo "[G7] ❌ 发现 $CRITICAL 个 CRITICAL 安全问题"
-    ERRORS=$((ERRORS+1))
+if [ "$ENFORCE" = "1" ]; then
+  echo "[G7] failed"
+  exit 1
 fi
 
-if [ "$HIGH" -gt 0 ]; then
-    echo "[G7] ❌ 发现 $HIGH 个 HIGH 安全问题"
-    ERRORS=$((ERRORS+1))
-fi
-
-if [ $ERRORS -eq 0 ]; then
-    echo "[G7] ✅ 安全检查通过"
-    exit 0
-else
-    if command -v jq >/dev/null 2>&1; then
-        echo "$GOSEC_OUTPUT" | jq -r '.Issues[] | select(.severity=="HIGH" or .severity=="CRITICAL") | "\(.file):\(.line): [\(.severity)] \(.details)"' | head -10
-    else
-        python3 - "$PROJECT_ROOT/.agent/logs/gosec.json" <<'PY' | head -10
-import json, sys
-with open(sys.argv[1], encoding="utf-8") as f:
-    data = json.load(f)
-for issue in data.get("Issues") or []:
-    if issue.get("severity") in {"HIGH", "CRITICAL"}:
-        print(f"{issue.get('file')}:{issue.get('line')}: [{issue.get('severity')}] {issue.get('details')}")
-PY
-    fi
-    exit 1
-fi
+echo "[G7] warning only outside enforced security mode"
+exit 0

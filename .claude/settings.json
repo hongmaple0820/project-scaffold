@@ -65,7 +65,8 @@
       "Edit(templates/**)",
       "Edit(README.md)",
       "MultiEdit(docs/**)",
-      "MultiEdit(scripts/**)"
+      "MultiEdit(scripts/**)",
+      "Bash(scale:*)"
     ],
     "deny": [
       "Bash(rm -rf /*)",
@@ -102,23 +103,39 @@
   "mcpServers": {
     "memory": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ]
     },
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-filesystem", "."]
+      "args": [
+        "-y",
+        "@anthropic/mcp-filesystem",
+        "."
+      ]
     },
     "context7": {
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"]
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ]
     },
     "fetch": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch"
+      ]
     },
     "sequential-thinking": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
     }
   },
   "hooks": {
@@ -127,6 +144,10 @@
         "command": "echo '[SCAFFOLD] CLAUDE.md 已优化 | 门控: make gate | 图谱: graphify .'",
         "description": "极简启动提醒",
         "timeout": 3000
+      },
+      {
+        "matcher": "",
+        "command": "scale context inject --session-id $CLAUDE_SESSION_ID"
       }
     ],
     "PreToolUse": [
@@ -147,6 +168,10 @@
         "command": "bash scripts/hooks/check-tdd.sh",
         "timeout": 3000,
         "description": "TDD合规提醒（首次提醒）"
+      },
+      {
+        "matcher": "Bash",
+        "command": "scale gate pre-tool Bash --args-json $TOOL_INPUT_JSON --session-id $CLAUDE_SESSION_ID"
       }
     ],
     "PostToolUse": [
@@ -155,6 +180,10 @@
         "command": "gofmt -w \"${CLAUDE_FILE_PATH}\" 2>/dev/null || true",
         "timeout": 3000,
         "description": "Go自动格式化"
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "command": "scale gate post-tool Edit --args-json $TOOL_INPUT_JSON --output-json $TOOL_OUTPUT_JSON --session-id $CLAUDE_SESSION_ID"
       }
     ],
     "Stop": [
@@ -163,6 +192,16 @@
         "command": "DIRTY=$(git diff --name-only -- '*.go' 2>/dev/null | head -5); if [ -n \"$DIRTY\" ]; then echo '[STOP] 未提交的 .go 改动:'; echo \"$DIRTY\"; echo '考虑: git add + commit'; fi",
         "timeout": 5000,
         "description": "检查未提交改动"
+      },
+      {
+        "matcher": "",
+        "command": "scale gate before-stop --session-id $CLAUDE_SESSION_ID"
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "command": "scale session end --session-id $CLAUDE_SESSION_ID"
       }
     ]
   }

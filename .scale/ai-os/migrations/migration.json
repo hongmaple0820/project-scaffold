@@ -1,0 +1,20 @@
+{
+  "version": "0.40.2",
+  "generatedAt": "2026-05-26T03:06:31.117Z",
+  "status": "migrated",
+  "scaleRoot": "F:\\project\\project-scaffold\\.scale",
+  "created": [
+    ".scale/ai-os",
+    ".scale/ai-os/runs",
+    ".scale/ai-os/benchmarks",
+    ".scale/ai-os/migrations"
+  ],
+  "existing": [],
+  "files": {
+    "migrationReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\migrations\\migration.json"
+  },
+  "warnings": [],
+  "nextActions": [
+    "Run `scale ai-os run --dry-run --json` to create the first AI OS runtime report."
+  ]
+}

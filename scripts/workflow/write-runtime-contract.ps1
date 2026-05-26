@@ -1,8 +1,11 @@
 param(
     [string]$Path = "",
     [string]$ConfigSource = "TBD",
-    [string]$Environment = "TBD",
-    [string]$PrimaryCommand = "TBD",
+    [string]$NacosNamespace = "TBD",
+    [string]$NacosGroup = "TBD",
+    [string]$DataId = "TBD",
+    [string]$GatewayUrl = "TBD",
+    [string]$ServiceUrl = "TBD",
     [string]$AuthMode = "TBD"
 )
 
@@ -37,21 +40,24 @@ $content = @"
 ## Configuration Source
 
 - Source: $ConfigSource
-- Environment/profile: $Environment
+- Nacos namespace: $NacosNamespace
+- Nacos group: $NacosGroup
+- DataId: $DataId
 - Local override file: TBD
 
 ## Service Topology
 
-| Service | URL / Command | Config source | Auth mode | Status |
+| Service | URL | Config source | Auth mode | Status |
 | --- | --- | --- | --- | --- |
-| primary | $PrimaryCommand | $ConfigSource | $AuthMode | TBD |
+| service1 | TBD | $ConfigSource | $AuthMode | TBD |
+| service2 | TBD | TBD | TBD | TBD |
 
 ## Verification Boundary
 
 - Confirmed:
 - Not covered:
 - Requires external credentials:
-- Requires shared/cloud environment:
+- Requires cloud test environment:
 "@
 
 Set-Content -Path $target -Value $content -Encoding UTF8

@@ -1,0 +1,142 @@
+{
+  "version": "0.40.2",
+  "generatedAt": "2026-05-26T03:07:00.394Z",
+  "scenarios": [
+    {
+      "id": "docs-governance",
+      "task": "Update bilingual governance documentation and keep README, docs map, and strategy aligned",
+      "level": "M",
+      "governanceMode": "expanded",
+      "workflowProfile": "strict",
+      "metrics": {
+        "estimatedTokens": 2383,
+        "budget": 2400,
+        "estimatedTokenSavings": 4522,
+        "memoryItems": 0,
+        "selectedProviders": [],
+        "skillSteps": 2,
+        "requiredSkillSteps": 1,
+        "evaluatorGates": 2,
+        "toolStrategySteps": 2,
+        "toolStrategyCostUnits": 6,
+        "evolutionProposals": 1,
+        "gates": 7,
+        "roiModules": 5
+      }
+    },
+    {
+      "id": "security-code-change",
+      "task": "Harden auth token handling and verify runtime evidence for a security-sensitive code change",
+      "level": "L",
+      "governanceMode": "critical",
+      "workflowProfile": "critical",
+      "metrics": {
+        "estimatedTokens": 2383,
+        "budget": 2400,
+        "estimatedTokenSavings": 4728,
+        "memoryItems": 0,
+        "selectedProviders": [],
+        "skillSteps": 14,
+        "requiredSkillSteps": 10,
+        "evaluatorGates": 3,
+        "toolStrategySteps": 14,
+        "toolStrategyCostUnits": 54,
+        "evolutionProposals": 3,
+        "gates": 10,
+        "roiModules": 5
+      }
+    },
+    {
+      "id": "browser-ui-flow",
+      "task": "Verify a browser callback UI flow with screenshots, runtime evidence, and guarded workflow gates",
+      "level": "L",
+      "governanceMode": "expanded",
+      "workflowProfile": "strict",
+      "metrics": {
+        "estimatedTokens": 2383,
+        "budget": 2400,
+        "estimatedTokenSavings": 7699,
+        "memoryItems": 0,
+        "selectedProviders": [],
+        "skillSteps": 39,
+        "requiredSkillSteps": 23,
+        "evaluatorGates": 2,
+        "toolStrategySteps": 39,
+        "toolStrategyCostUnits": 138,
+        "evolutionProposals": 1,
+        "gates": 7,
+        "roiModules": 5
+      }
+    }
+  ],
+  "summary": {
+    "scenarios": 3,
+    "totalEstimatedTokens": 7149,
+    "totalBudget": 7200,
+    "totalEstimatedTokenSavings": 16949,
+    "totalMemoryItems": 0,
+    "totalSkillSteps": 55,
+    "requiredSkillSteps": 34,
+    "totalEvaluatorGates": 7,
+    "totalToolStrategySteps": 55,
+    "totalToolStrategyCostUnits": 198,
+    "totalEvolutionProposals": 5,
+    "governanceModes": [
+      "expanded",
+      "critical"
+    ],
+    "workflowProfiles": [
+      "strict",
+      "critical"
+    ],
+    "averageTokenUtilization": 0.9929
+  },
+  "dashboard": {
+    "version": "0.40.2",
+    "generatedAt": "2026-05-26T03:07:00.395Z",
+    "runsDir": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs",
+    "summary": {
+      "totalRuns": 1,
+      "readyRuns": 1,
+      "blockedRuns": 0,
+      "dryRunRuns": 1,
+      "guardedRuns": 0,
+      "verificationCommands": 0,
+      "failedVerificationCommands": 0,
+      "pendingEvidence": 5,
+      "failureLearningCandidates": 0
+    },
+    "health": {
+      "status": "healthy",
+      "score": 100,
+      "reasons": [
+        "All AI OS runs are ready."
+      ]
+    },
+    "latestRuns": [
+      {
+        "taskId": "AIOS-ADOPT-1779764791118",
+        "task": "升级 project-scaffold 工作流并接入 AI OS runtime",
+        "mode": "dry-run",
+        "status": "ready",
+        "generatedAt": "2026-05-26T03:06:40.876Z",
+        "runReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1779764791118.json",
+        "verificationCommands": 0,
+        "failedVerificationCommands": 0,
+        "pendingEvidence": 5,
+        "failureLearningCandidates": 0
+      }
+    ],
+    "recommendations": [
+      "Add guarded verification runs for at least one representative task to validate evidence flow."
+    ],
+    "warnings": []
+  },
+  "artifacts": {
+    "benchmarkReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\benchmarks\\latest.json"
+  },
+  "recommendations": [
+    "Use benchmark deltas in release notes only after comparing the same scenario set across versions.",
+    "Context utilization is high; lower budgets or improve relevance filtering before scaling."
+  ]
+}

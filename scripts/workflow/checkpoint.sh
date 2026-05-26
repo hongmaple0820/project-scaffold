@@ -1,12 +1,18 @@
 #!/bin/bash
+# Save current workflow phase into .agent/state/current.json.
+# Usage: bash scripts/workflow/checkpoint.sh [phase]
+
 set -e
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-STATE_FILE="$PROJECT_ROOT/.agent/state/current.json"
+STATE_DIR="$PROJECT_ROOT/.agent/state"
+OUTPUT="$STATE_DIR/current.json"
 PY_STATE="$PROJECT_ROOT/scripts/lib/workflow_state.py"
-PHASE="${1:-execute}"
 
-python3 "$PY_STATE" checkpoint "$STATE_FILE" "$PROJECT_ROOT" "$PHASE"
+mkdir -p "$STATE_DIR"
 
-echo "[CHECKPOINT] saved: phase=$PHASE"
-echo "[CHECKPOINT] state: $STATE_FILE"
+PHASE="${1:-unknown}"
+python3 "$PY_STATE" checkpoint "$OUTPUT" "$PROJECT_ROOT" "$PHASE"
+
+echo "[CHECKPOINT] saved phase=$PHASE"
+echo "[CHECKPOINT] state: $OUTPUT"

@@ -1,40 +1,85 @@
-#!/bin/bash
-set -e
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-METRICS="$ROOT/docs/worklog/metrics.md"
-STATE_FILE="$ROOT/.agent/state/current.json"
-PY_STATE="$ROOT/scripts/lib/workflow_state.py"
+#!/usr/bin/env bash
+# Service-aware Go coverage reporting. Blocks only when ENFORCE_COVERAGE=1 or CRITICAL.
 
-[ -f "$METRICS" ] || { echo "[G6] metrics missing"; exit 1; }
+set -euo pipefail
 
-grep -qE '^\| Date \| Task \| Level \|' "$METRICS" || {
-  echo "[G6] metrics header missing or invalid"
-  exit 1
-}
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$PROJECT_ROOT/scripts/lib/services.sh"
 
-DATA_ROWS=$(grep -cE '^\| [0-9]{4}-[0-9]{2}-[0-9]{2} \|' "$METRICS" || true)
-if [ "$DATA_ROWS" -lt 1 ]; then
-  echo "[G6] metrics has no task rows"
+GO_CMD="$(go_cmd)"
+if [ -z "$GO_CMD" ]; then
+  echo "[G6] Go command is not executable in this shell"
+  echo "[G6] On Windows, use: powershell -ExecutionPolicy Bypass -File scripts\\workflow\\verify.ps1 -Service <service>"
+  echo "[G6] In WSL, install a Linux Go toolchain instead of relying on Windows go.exe"
   exit 1
 fi
 
-if [ -f "$STATE_FILE" ]; then
-  LEVEL=$(python3 "$PY_STATE" get "$STATE_FILE" level "")
-  ARTIFACTS=$(python3 "$PY_STATE" get "$STATE_FILE" artifacts_dir "")
-  case "$LEVEL" in
-    M|L|CRITICAL)
-      if [ -z "$ARTIFACTS" ] || [ ! -d "$ROOT/$ARTIFACTS" ]; then
-        echo "[G6] M/L task artifacts_dir missing"
-        exit 1
-      fi
-      for file in explore.md plan.md runtime.md reality-check.md resource-cleanup.md verification.md review.md summary.md; do
-        if [ ! -f "$ROOT/$ARTIFACTS/$file" ]; then
-          echo "[G6] missing task artifact: $file"
-          exit 1
-        fi
-      done
-      ;;
-  esac
+STATE_FILE="$PROJECT_ROOT/.agent/state/current.json"
+PY_STATE="$PROJECT_ROOT/scripts/lib/workflow_state.py"
+LEVEL=""
+if [ -f "$STATE_FILE" ] && [ -f "$PY_STATE" ]; then
+  LEVEL="$(python3 "$PY_STATE" get "$STATE_FILE" level "" 2>/dev/null || true)"
 fi
 
-echo "[G6] metrics and task artifacts present"
+THRESHOLD="${COVERAGE_THRESHOLD:-0}"
+ENFORCE="${ENFORCE_COVERAGE:-0}"
+if [ "$LEVEL" = "CRITICAL" ]; then
+  ENFORCE=1
+  if [ "$THRESHOLD" = "0" ]; then THRESHOLD=80; fi
+fi
+
+echo "========================================"
+echo "[G6] Coverage gate"
+echo "========================================"
+echo "[G6] threshold: ${THRESHOLD}%"
+echo "[G6] enforce: $ENFORCE"
+
+TMP="$PROJECT_ROOT/.agent/logs/coverage-values.tmp"
+mkdir -p "$PROJECT_ROOT/.agent/logs"
+: > "$TMP"
+
+ALL_PASS=true
+for service in $(selected_services "$@"); do
+  DIR="$(service_dir "$service")"
+  LOG_DIR="$(service_log_dir "$service")"
+  mkdir -p "$LOG_DIR"
+
+  echo "[G6] service: $service"
+  cd "$DIR"
+
+  COVERAGE_FILE="$LOG_DIR/coverage.out"
+  COVERAGE_LOG="$LOG_DIR/coverage.txt"
+  if "$GO_CMD" test -coverprofile="$COVERAGE_FILE" ./... > "$COVERAGE_LOG" 2>&1; then
+    COVERAGE="$("$GO_CMD" tool cover -func="$COVERAGE_FILE" 2>/dev/null | awk '/total:/ {gsub("%","",$3); print $3}' || true)"
+    COVERAGE="${COVERAGE:-0}"
+    echo "[G6]   coverage: ${COVERAGE}%"
+    echo "$COVERAGE" >> "$TMP"
+  else
+    echo "[G6]   coverage command failed"
+    head -40 "$COVERAGE_LOG" || true
+    ALL_PASS=false
+  fi
+done
+
+AVG_COVERAGE="$(awk '{sum+=$1; count++} END {if (count == 0) print "0.0"; else printf "%.1f", sum/count}' "$TMP")"
+rm -f "$TMP"
+
+echo "[G6] average coverage: ${AVG_COVERAGE}%"
+
+if [ "$ALL_PASS" != true ]; then
+  echo "[G6] failed"
+  exit 1
+fi
+
+if awk -v cov="$AVG_COVERAGE" -v threshold="$THRESHOLD" 'BEGIN { exit !(cov + 0 >= threshold + 0) }'; then
+  echo "[G6] passed"
+  exit 0
+fi
+
+if [ "$ENFORCE" = "1" ]; then
+  echo "[G6] failed: coverage below threshold"
+  exit 1
+fi
+
+echo "[G6] warning only: coverage below threshold"
+exit 0

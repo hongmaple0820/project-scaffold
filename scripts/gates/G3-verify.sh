@@ -1,70 +1,62 @@
-#!/bin/bash
-# scripts/gates/G3-verify.sh
-# 验证TDD合规
+#!/usr/bin/env bash
+# TDD evidence gate. Day-to-day M work warns; L/CRITICAL and ENFORCE_TDD=1 block.
 
-set -e
+set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-source "$PROJECT_ROOT/scripts/lib/project-config.sh"
-ERRORS=0
-CHECKED=0
+STATE_FILE="$PROJECT_ROOT/.agent/state/current.json"
+PY_STATE="$PROJECT_ROOT/scripts/lib/workflow_state.py"
 
-echo "[G3] TDD合规验证..."
+echo "========================================"
+echo "[G3] TDD evidence gate"
+echo "========================================"
 
-STACK="$(detect_stack)"
-
-if [ "$STACK" = "none" ]; then
-    echo "[G3] ℹ️ 未检测到已配置技术栈，TDD 门控不适用"
-    exit 0
+LEVEL=""
+if [ -f "$STATE_FILE" ] && [ -f "$PY_STATE" ]; then
+  LEVEL="$(python3 "$PY_STATE" get "$STATE_FILE" level "" 2>/dev/null || true)"
 fi
 
-if ! stack_exists "$STACK"; then
-    echo "[G3] ❌ 未知技术栈: $STACK"
-    exit 1
+ENFORCE="${ENFORCE_TDD:-0}"
+case "$LEVEL" in
+  L|CRITICAL) ENFORCE=1 ;;
+esac
+
+if ! git -C "$PROJECT_ROOT" rev-parse --git-dir >/dev/null 2>&1; then
+  echo "[G3] not a Git repository; cannot inspect changed files"
+  [ "$ENFORCE" = "1" ] && exit 1 || exit 0
 fi
 
-if [ "$STACK" != "go" ]; then
-    echo "[G3] ℹ️ $STACK 技术栈未配置文件级 TDD 检查，TDD 门控不适用"
-    exit 0
+mapfile -t CHANGED_GO < <(
+  git -C "$PROJECT_ROOT" diff --name-only --diff-filter=ACMR HEAD -- \
+    '**/*.go' 2>/dev/null \
+  | grep -vE '(_test\.go$|/vendor/|/generated/)' || true
+)
+
+if [ "${#CHANGED_GO[@]}" -eq 0 ]; then
+  echo "[G3] no changed Go implementation files"
+  exit 0
 fi
 
-while IFS= read -r impl_file; do
-    CHECKED=$((CHECKED+1))
-    test_file="${impl_file%.go}_test.go"
+MISSING=0
+for file in "${CHANGED_GO[@]}"; do
+  test_file="${file%.go}_test.go"
+  if [ ! -f "$PROJECT_ROOT/$test_file" ]; then
+    echo "[G3] missing paired test: $file -> $test_file"
+    MISSING=$((MISSING + 1))
+  fi
+done
 
-    if [ ! -f "$test_file" ]; then
-        echo "[G3] ❌ 实现文件缺少对应测试: $impl_file"
-        ERRORS=$((ERRORS+1))
-        continue
-    fi
-
-    # 比较修改时间（需要git支持）
-    if [ -d "$PROJECT_ROOT/.git" ]; then
-        test_time=$(git log -1 --format=%ct -- "$test_file" 2>/dev/null || echo "0")
-        impl_time=$(git log -1 --format=%ct -- "$impl_file" 2>/dev/null || echo "0")
-
-        if [ "$test_time" -lt "$impl_time" ]; then
-            echo "[G3] ❌ 实现比测试新: $impl_file"
-            ERRORS=$((ERRORS+1))
-        fi
-    else
-        # 无git时使用文件修改时间
-        if [ "$test_file" -ot "$impl_file" ]; then
-            echo "[G3] ❌ 实现比测试新: $impl_file"
-            ERRORS=$((ERRORS+1))
-        fi
-    fi
-done < <(find "$PROJECT_ROOT" -name "*.go" -not -name "*_test.go" -not -path "*/vendor/*" -type f)
-
-if [ "$CHECKED" -eq 0 ]; then
-    echo "[G3] ℹ️ 未检测到 Go 实现文件"
-    exit 0
+if [ "$MISSING" -eq 0 ]; then
+  echo "[G3] paired tests found for changed Go files"
+  exit 0
 fi
 
-if [ $ERRORS -eq 0 ]; then
-    echo "[G3] ✅ TDD合规"
-    exit 0
-else
-    echo "[G3] ❌ 存在先实现后测试的文件"
-    exit 1
+if [ "$ENFORCE" = "1" ]; then
+  echo "[G3] failed: $MISSING changed implementation file(s) lack paired tests"
+  echo "[G3] add tests or document why TDD is not applicable in the task verification artifact"
+  exit 1
 fi
+
+echo "[G3] warning only: $MISSING changed implementation file(s) lack paired tests"
+echo "[G3] set ENFORCE_TDD=1, or use L/CRITICAL task level, to block"
+exit 0

@@ -46,3 +46,4 @@ if ($Strict -and $content -match "(?m)^-\s*TBD\s*$") {
 }
 
 Write-Host "[REALITY] PASS $resolved"
+

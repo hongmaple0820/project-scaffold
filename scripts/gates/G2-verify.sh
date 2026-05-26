@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Verify planning artifacts, runtime contract, and reality-check coverage.
+# Verify plan artifact has boundaries, exception handling, rollback, and acceptance criteria.
 
 set -euo pipefail
 
@@ -63,30 +63,30 @@ else
   echo "[G2] PowerShell unavailable; bash reality-check headings passed"
 fi
 
-if ! grep -Eiq "scope|boundary|boundaries|limit|non-goal" "$PLAN_FILE"; then
+if ! grep -Eiq "scope|boundary|boundaries|limit|non-goal|范围|边界|非目标" "$PLAN_FILE"; then
   echo "[G2] plan.md missing scope/boundary section"
   exit 1
 fi
 
-EXCEPTION_COUNT="$(grep -Eic "exception|error|fail|failure|rollback" "$PLAN_FILE" || true)"
+EXCEPTION_COUNT="$(grep -Eic "exception|error|fail|failure|rollback|异常|失败|错误|回滚" "$PLAN_FILE" || true)"
 if [ "${EXCEPTION_COUNT:-0}" -lt 3 ]; then
   echo "[G2] insufficient exception/error coverage: ${EXCEPTION_COUNT:-0} < 3"
   exit 1
 fi
 
-if ! grep -Eiq "rollback|recovery|disable|fallback" "$PLAN_FILE"; then
+if ! grep -Eiq "rollback|recovery|disable|fallback|回滚|恢复|禁用|降级" "$PLAN_FILE"; then
   echo "[G2] missing rollback/recovery strategy"
   exit 1
 fi
 
-if ! grep -Eiq "acceptance|success criteria|definition of done" "$PLAN_FILE"; then
+if ! grep -Eiq "acceptance|success criteria|definition of done|验收|完成定义" "$PLAN_FILE"; then
   echo "[G2] missing acceptance criteria"
   exit 1
 fi
 
 case "$LEVEL" in
   L|CRITICAL)
-    if ! grep -Eiq "human confirmation|review before execution" "$PLAN_FILE"; then
+    if ! grep -Eiq "human confirmation|review before execution|人工确认|执行前评审" "$PLAN_FILE"; then
       echo "[G2] L/CRITICAL plan should record human confirmation requirement"
       exit 1
     fi

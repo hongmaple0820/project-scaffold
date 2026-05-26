@@ -1,9 +1,9 @@
 param(
-    [string]$Task = "workflow scaffold adaptation",
-    [string]$Files = "AGENTS.md,README.md",
+    [string]$Task = "scaffold workflow adaptation",
+    [string]$Files = "AGENTS.md,README.md,docs/workflow/README.md",
     [string]$Level = "M",
     [string]$Phase = "plan",
-    [string]$Services = "",
+    [string]$Services = "all",
     [string]$ScaleCommand = "scale"
 )
 
@@ -27,4 +27,4 @@ Invoke-Scale @("codegraph", "status", "--dir", ".")
 Invoke-Scale @("eval", "run", "--dir", ".")
 Invoke-Scale @("artifact", "dashboard", "--dir", ".", "--lang", "zh")
 
-Write-Host "[OK] SCALE v0.21.2 smoke completed"
+Write-Host "[OK] SCALE v0.21.2 scaffold smoke completed"

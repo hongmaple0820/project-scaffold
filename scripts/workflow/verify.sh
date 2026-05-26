@@ -1,11 +1,23 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Profile-aware repository verification.
+
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-CONFIG="$ROOT/.agent/project.json"
-PROFILE="scaffold"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+CONFIG="$PROJECT_ROOT/.agent/project.json"
+STATE_FILE="$PROJECT_ROOT/.agent/state/current.json"
+PY_STATE="$PROJECT_ROOT/scripts/lib/workflow_state.py"
+PROFILE="default"
 SERVICE=""
 LIST=false
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  bash scripts/workflow/verify.sh [--profile default|backend|ui|all|scaffold] [--service name] [--list]
+  bash scripts/workflow/verify.sh [service_name|all]
+USAGE
+}
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -21,9 +33,22 @@ while [ "$#" -gt 0 ]; do
       LIST=true
       shift
       ;;
-    *)
-      echo "usage: bash scripts/workflow/verify.sh [--profile name] [--service name] [--list]"
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -*)
+      echo "[VERIFY] unknown argument: $1" >&2
+      usage >&2
       exit 2
+      ;;
+    all)
+      PROFILE="all"
+      shift
+      ;;
+    *)
+      SERVICE="$1"
+      shift
       ;;
   esac
 done
@@ -33,48 +58,18 @@ if [ ! -f "$CONFIG" ]; then
   exit 1
 fi
 
-tool_available() {
-  local tool="$1"
-  if command -v "$tool" >/dev/null 2>&1; then
-    return 0
-  fi
-  if [ "$tool" = "go" ] && command -v go.exe >/dev/null 2>&1; then
-    return 0
-  fi
-  return 1
-}
-
-run_check_command() {
-  local relative_path="$1"
-  local command="$2"
-  local workdir="$ROOT/$relative_path"
-
-  # Windows-hosted worktrees can expose Windows node_modules to WSL/Linux Node.
-  # Prefer Windows PowerShell for npm/npx commands when the checkout is under /mnt.
-  if command -v powershell.exe >/dev/null 2>&1; then
-    local physical_dir
-    physical_dir="$(cd "$workdir" && pwd -P)"
-    if [[ "$physical_dir" == /mnt/* ]] && [[ "$command" =~ ^(npm|npx|pnpm)[[:space:]] ]]; then
-      local win_dir escaped_dir escaped_command
-      win_dir="$(wslpath -w "$physical_dir" 2>/dev/null || printf '%s' "$physical_dir")"
-      escaped_dir="${win_dir//\'/\'\'}"
-      escaped_command="${command//\'/\'\'}"
-      powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-Location -LiteralPath '$escaped_dir'; cmd.exe /d /c '$escaped_command'" < /dev/null
-      return $?
-    fi
-  fi
-
-  (cd "$workdir" && bash -lc "$command") < /dev/null
-}
-
 if [ "$LIST" = true ]; then
   python3 - "$CONFIG" <<'PY'
-import json, sys
+import json
+import sys
+
 with open(sys.argv[1], encoding="utf-8") as f:
     cfg = json.load(f)
+
 print("profiles:")
-for name in sorted((cfg.get("profiles") or {}).keys()):
-    print(f"  - {name}")
+for name, profile in sorted((cfg.get("profiles") or {}).items()):
+    print(f"  - {name}: {profile.get('description', '')}")
+
 print("services:")
 for name, service in sorted((cfg.get("services") or {}).items()):
     print(f"  - {name}: {service.get('path', '.')}")
@@ -83,16 +78,16 @@ PY
 fi
 
 if [ "$PROFILE" = "scaffold" ] && [ -z "$SERVICE" ]; then
-  bash "$ROOT/scripts/validate-config.sh"
-  bash "$ROOT/scripts/workflow/lint-scaffold.sh"
-  bash "$ROOT/scripts/gates/all.sh" --dry-run
+  bash "$PROJECT_ROOT/scripts/validate-config.sh"
+  bash "$PROJECT_ROOT/scripts/gates/all.sh" --dry-run
   echo "[VERIFY] profile scaffold passed"
   exit 0
 fi
 
 PLAN="$(
 python3 - "$CONFIG" "$PROFILE" "$SERVICE" <<'PY'
-import json, sys
+import json
+import sys
 
 config_path, profile_name, selected_service = sys.argv[1:4]
 with open(config_path, encoding="utf-8") as f:
@@ -104,14 +99,14 @@ stacks = cfg.get("stacks") or {}
 
 if selected_service:
     service_names = [selected_service]
-    checks = (profiles.get(profile_name) or {}).get("checks") or ["lint", "test"]
+    checks = (profiles.get(profile_name) or {}).get("checks") or ["build", "lint", "test"]
 else:
     profile = profiles.get(profile_name)
     if profile is None:
         print(f"ERROR\tunknown profile: {profile_name}")
         raise SystemExit(0)
     service_names = profile.get("services") or []
-    checks = profile.get("checks") or ["lint", "test"]
+    checks = profile.get("checks") or ["build", "lint", "test"]
     if service_names == "*":
         service_names = sorted(services.keys())
 
@@ -156,20 +151,23 @@ while IFS=$'\t' read -r kind name path check tools command; do
       IFS=',' read -ra tool_list <<< "$tools"
       MISSING_TOOL=0
       for tool in "${tool_list[@]}"; do
-        if [ -n "$tool" ] && [ "$tool" != "-" ] && ! tool_available "$tool"; then
+        if [ "$tool" = "go" ] && command -v go.exe >/dev/null 2>&1; then
+          continue
+        fi
+        if [ -n "$tool" ] && [ "$tool" != "-" ] && ! command -v "$tool" >/dev/null 2>&1; then
           echo "[VERIFY] missing tool for $name/$check: $tool"
           MISSING_TOOL=1
+          STATUS=1
         fi
       done
       if [ "$MISSING_TOOL" -ne 0 ]; then
-        STATUS=1
         continue
       fi
-      log_dir="$ROOT/.agent/logs/$name"
+      log_dir="$PROJECT_ROOT/.agent/logs/$name"
       mkdir -p "$log_dir"
       echo "[VERIFY] run $name/$check"
-      if ! run_check_command "$path" "$command" >"$log_dir/$check.log" 2>&1; then
-        echo "[VERIFY] failed $name/$check; log: .agent/logs/$name/$check.log"
+      if ! (cd "$PROJECT_ROOT/$path" && bash -lc "$command") >"$log_dir/$check.profile.log" 2>&1 < /dev/null; then
+        echo "[VERIFY] failed $name/$check; log: .agent/logs/$name/$check.profile.log"
         STATUS=1
       fi
       ;;
@@ -181,4 +179,8 @@ if [ "$STATUS" -ne 0 ]; then
   exit "$STATUS"
 fi
 
-echo "[VERIFY] passed"
+if [ -f "$STATE_FILE" ]; then
+  python3 "$PY_STATE" add-gates "$STATE_FILE" G4 G5 G6 G7 2>/dev/null || true
+fi
+
+echo "[VERIFY] profile passed: $PROFILE${SERVICE:+ service=$SERVICE}"
