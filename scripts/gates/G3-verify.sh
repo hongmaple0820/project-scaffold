@@ -26,11 +26,22 @@ if ! git -C "$PROJECT_ROOT" rev-parse --git-dir >/dev/null 2>&1; then
   [ "$ENFORCE" = "1" ] && exit 1 || exit 0
 fi
 
-mapfile -t CHANGED_GO < <(
-  git -C "$PROJECT_ROOT" diff --name-only --diff-filter=ACMR HEAD -- \
-    '**/*.go' 2>/dev/null \
-  | grep -vE '(_test\.go$|/vendor/|/generated/)' || true
-)
+collect_changed_go_files() {
+  local tracked untracked
+
+  tracked="$(
+    git -C "$PROJECT_ROOT" diff --name-only --diff-filter=ACMR HEAD -- '*.go' 2>/dev/null || true
+    git -C "$PROJECT_ROOT" diff --cached --name-only --diff-filter=ACMR -- '*.go' 2>/dev/null || true
+  )"
+  untracked="$(git -C "$PROJECT_ROOT" ls-files --others --exclude-standard -- '*.go' 2>/dev/null || true)"
+
+  printf '%s\n%s\n' "$tracked" "$untracked" \
+    | sed '/^$/d' \
+    | grep -vE '(_test\.go$|/vendor/|/generated/)' \
+    | sort -u
+}
+
+mapfile -t CHANGED_GO < <(collect_changed_go_files || true)
 
 if [ "${#CHANGED_GO[@]}" -eq 0 ]; then
   echo "[G3] no changed Go implementation files"

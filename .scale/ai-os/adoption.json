@@ -1,6 +1,6 @@
 {
-  "version": "0.40.2",
-  "generatedAt": "2026-05-26T03:06:31.102Z",
+  "version": "0.50.5",
+  "generatedAt": "2026-06-15T06:02:12.160Z",
   "status": "ready",
   "projectDir": "F:\\project\\project-scaffold",
   "scaleRoot": "F:\\project\\project-scaffold\\.scale",
@@ -8,7 +8,7 @@
     {
       "id": "migrate",
       "status": "passed",
-      "summary": "Created 4 AI OS runtime path(s).",
+      "summary": "AI OS runtime paths were already compatible.",
       "evidence": [
         "F:\\project\\project-scaffold\\.scale\\ai-os\\migrations\\migration.json",
         ".scale/ai-os",
@@ -22,10 +22,11 @@
       "status": "passed",
       "summary": "Created first dry-run AI OS run report with 16 step(s).",
       "evidence": [
-        "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1779764791118.json",
+        "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1781503332164.json",
         "ai-os-plan",
         "context-compiler",
-        "memory-provider-recall"
+        "memory-provider-recall",
+        "agent-collaboration"
       ]
     },
     {
@@ -45,6 +46,7 @@
         ".scale/ai-os/runs",
         ".scale/ai-os/benchmarks",
         ".scale/ai-os/migrations",
+        "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1781503332164.json",
         "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1779764791118.json",
         "All AI OS runs are ready.",
         "F:\\project\\project-scaffold\\.scale\\ai-os\\benchmarks\\latest.json"
@@ -52,118 +54,95 @@
     }
   ],
   "migration": {
-    "version": "0.40.2",
-    "generatedAt": "2026-05-26T03:06:31.117Z",
-    "status": "migrated",
+    "version": "0.50.5",
+    "generatedAt": "2026-06-15T06:02:12.163Z",
+    "status": "compatible",
     "scaleRoot": "F:\\project\\project-scaffold\\.scale",
-    "created": [
+    "created": [],
+    "existing": [
       ".scale/ai-os",
       ".scale/ai-os/runs",
       ".scale/ai-os/benchmarks",
       ".scale/ai-os/migrations"
     ],
-    "existing": [],
     "files": {
       "migrationReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\migrations\\migration.json"
     },
     "warnings": [],
     "nextActions": [
-      "Run `scale ai-os run --dry-run --json` to create the first AI OS runtime report."
+      "AI OS runtime directories are compatible; continue with run, dashboard, or benchmark commands."
     ]
   },
   "run": {
-    "version": "0.40.2",
-    "generatedAt": "2026-05-26T03:06:40.876Z",
+    "version": "0.50.5",
+    "generatedAt": "2026-06-15T06:02:20.660Z",
     "mode": "dry-run",
     "dryRun": true,
     "status": "ready",
     "plan": {
-      "version": "0.40.2",
-      "generatedAt": "2026-05-26T03:06:40.876Z",
+      "version": "0.50.5",
+      "generatedAt": "2026-06-15T06:02:20.660Z",
       "task": {
-        "taskId": "AIOS-ADOPT-1779764791118",
-        "task": "升级 project-scaffold 工作流并接入 AI OS runtime",
+        "taskId": "AIOS-ADOPT-1781503332164",
+        "task": "接入 AI OS runtime",
         "level": "M",
-        "files": [
-          "AGENTS.md",
-          "README.md",
-          "docs/workflow/README.md",
-          ".scale/governance.lock.json"
-        ],
+        "files": [],
         "services": []
       },
       "preamble": {
-        "sessionId": "a69f024a",
-        "timestamp": "2026-05-26T03:06:31.278Z",
+        "sessionId": "6ce6ace6",
+        "timestamp": "2026-06-15T06:02:12.392Z",
         "gitBranch": "main",
         "gitRoot": "F:/project/project-scaffold",
         "projectSlug": "project-scaffold",
-        "scaleVersion": "0.40.2",
-        "activeRunCount": 0,
+        "scaleVersion": "0.50.5",
+        "activeRunCount": 1,
         "learningCount": 0,
         "verificationProfile": "default",
         "governanceMode": "standard",
+        "cortex": {
+          "instinctCount": 0,
+          "instinctsApplied": [],
+          "content": "## 证据纪律 (Evidence Discipline)\n\n汇报进度前，先把每个声明与本轮工具结果对齐：\n- 只汇报有证据支持的工作；未验证的内容明确标注（如 [UNCERTAIN]）。\n- 测试失败就报告失败输出；步骤被跳过就说明跳过，不要掩盖。\n- 完成并验证后再直接说\"完成\"，不要使用模糊措辞。\n- 没有实际验证结果，不声称\"已通过\"；dry-run 只代表入口可调度，不代表质量通过。\n\n---\n_SCALE Cortex is active. Run `scale cortex metrics` for ROI dashboard._"
+        },
         "warnings": []
       },
       "governance": {
-        "recommendedMode": "expanded",
-        "effectiveMode": "expanded",
+        "recommendedMode": "standard",
+        "effectiveMode": "standard",
         "escalated": false,
         "signals": [
           {
             "id": "normal-engineering-work",
             "mode": "standard",
             "reason": "Task has implementation or verification context.",
-            "evidence": [
-              "AGENTS.md",
-              "README.md",
-              "docs/workflow/README.md",
-              ".scale/governance.lock.json"
-            ]
-          },
-          {
-            "id": "cross-module-scope",
-            "mode": "expanded",
-            "reason": "Changed files span enough paths to require broader impact analysis.",
-            "evidence": [
-              "AGENTS.md",
-              "README.md",
-              "docs/workflow/README.md",
-              ".scale/governance.lock.json"
-            ]
+            "evidence": []
           }
         ],
         "requiredBehaviors": [
           "record verification evidence",
-          "summarize context budget",
-          "attempt code intelligence or explain fallback",
-          "run skill radar when tool, browser, UI, or external CLI signals apply"
+          "summarize context budget"
         ]
       },
       "adaptiveWorkflow": {
         "strategy": "risk-adaptive-runtime-v1",
-        "profile": "strict",
+        "profile": "standard",
         "escalationReasons": [
-          "Governance mode \"expanded\" sets baseline profile \"strict\"."
+          "Governance mode \"standard\" sets baseline profile \"standard\"."
         ],
-        "mode": "expanded",
+        "mode": "standard",
         "requiredBehaviors": [
           "record verification evidence",
           "summarize context budget",
-          "attempt code intelligence or explain fallback",
-          "run skill radar when tool, browser, UI, or external CLI signals apply",
           "Record verification evidence before claiming completion.",
           "Summarize context budget and explain included/omitted sections.",
-          "Run skill radar when tool, browser, UI, or external CLI signals apply.",
-          "Code review is required before merge or promotion.",
-          "Log uncertainty score, rejected alternatives, and evidence gaps."
+          "Run skill radar when tool, browser, UI, or external CLI signals apply."
         ],
         "gates": [
           "context-compiler",
           "memory-provider-recall",
           "skill-evidence",
           "runtime-evidence",
-          "impact-analysis",
           "architecture-critique",
           "uncertainty-decision-log"
         ],
@@ -172,10 +151,7 @@
           "Memory recall records provider, score, and evidence paths.",
           "Skill plan lists required proof and fallback policy.",
           "Governance ROI states benefit and overhead before completion.",
-          "Verification evidence is recorded for the completed task.",
-          "Code review evidence is recorded.",
-          "Required evaluator gates record critique outcome and follow-up.",
-          "Uncertainty decision log records rejected alternatives and evidence gaps."
+          "Verification evidence is recorded for the completed task."
         ]
       },
       "evaluator": {
@@ -183,10 +159,9 @@
         "required": true,
         "riskLevel": "medium",
         "uncertainty": {
-          "score": 0.66,
+          "score": 0.41,
           "threshold": 0.45,
           "drivers": [
-            "expanded-governance-mode",
             "required-skill-evidence",
             "architecture-critique"
           ]
@@ -196,17 +171,13 @@
             "id": "architecture-critique",
             "required": true,
             "reason": "Architecture, runtime, platform, or design decisions need an explicit critique before implementation claims.",
-            "evidence": [
-              "README.md",
-              "docs/workflow/README.md"
-            ]
+            "evidence": []
           },
           {
             "id": "uncertainty-decision-log",
-            "required": true,
+            "required": false,
             "reason": "The agent must record uncertainty, rejected alternatives, and evidence gaps before completion.",
             "evidence": [
-              "expanded-governance-mode",
               "required-skill-evidence",
               "architecture-critique"
             ]
@@ -219,60 +190,6 @@
       "toolStrategy": {
         "strategy": "tool-strategy-v1",
         "nodes": [
-          {
-            "id": "skill:code-reviewer",
-            "kind": "skill",
-            "required": true,
-            "cost": {
-              "units": 5,
-              "timeRisk": "medium",
-              "sideEffectRisk": "low"
-            },
-            "retry": {
-              "maxAttempts": 1,
-              "backoff": "manual-review"
-            },
-            "fallback": "If unavailable, record skipped/fallback status with manual evidence; block when routing mode is block.",
-            "evidence": [
-              "Record used/executed status and concrete output path in skill-evidence.md."
-            ]
-          },
-          {
-            "id": "skill:workflow-guide",
-            "kind": "skill",
-            "required": false,
-            "cost": {
-              "units": 4,
-              "timeRisk": "medium",
-              "sideEffectRisk": "low"
-            },
-            "retry": {
-              "maxAttempts": 1,
-              "backoff": "manual-review"
-            },
-            "fallback": "Use the nearest built-in verification or explain why the recommendation was not needed.",
-            "evidence": [
-              "Record used or skipped status when it materially affects delivery quality."
-            ]
-          },
-          {
-            "id": "skill:pr-creator",
-            "kind": "skill",
-            "required": false,
-            "cost": {
-              "units": 4,
-              "timeRisk": "medium",
-              "sideEffectRisk": "low"
-            },
-            "retry": {
-              "maxAttempts": 1,
-              "backoff": "manual-review"
-            },
-            "fallback": "Use the nearest built-in verification or explain why the recommendation was not needed.",
-            "evidence": [
-              "Record used or skipped status when it materially affects delivery quality."
-            ]
-          },
           {
             "id": "artifact:skill-plan.md",
             "kind": "artifact",
@@ -290,216 +207,196 @@
             "evidence": [
               "Write substantive skill-plan.md content before verification or ship."
             ]
-          },
-          {
-            "id": "artifact:skill-evidence.md",
-            "kind": "artifact",
-            "required": true,
-            "cost": {
-              "units": 2,
-              "timeRisk": "low",
-              "sideEffectRisk": "low"
-            },
-            "retry": {
-              "maxAttempts": 1,
-              "backoff": "none"
-            },
-            "fallback": "No silent fallback; document accepted non-goal only when the gate policy allows it.",
-            "evidence": [
-              "Write substantive skill-evidence.md content before verification or ship."
-            ]
-          },
-          {
-            "id": "artifact:review.md",
-            "kind": "artifact",
-            "required": true,
-            "cost": {
-              "units": 2,
-              "timeRisk": "low",
-              "sideEffectRisk": "low"
-            },
-            "retry": {
-              "maxAttempts": 1,
-              "backoff": "none"
-            },
-            "fallback": "No silent fallback; document accepted non-goal only when the gate policy allows it.",
-            "evidence": [
-              "Write substantive review.md content before verification or ship."
-            ]
-          },
-          {
-            "id": "verification:review-evidence",
-            "kind": "verification",
-            "required": true,
-            "cost": {
-              "units": 4,
-              "timeRisk": "medium",
-              "sideEffectRisk": "medium"
-            },
-            "retry": {
-              "maxAttempts": 1,
-              "backoff": "linear"
-            },
-            "fallback": "If the verification cannot run, record the blocker and a lower-fidelity fallback.",
-            "evidence": [
-              "Attach command, screenshot, report, or reviewer evidence for review-evidence."
-            ]
           }
         ],
-        "edges": [
-          {
-            "from": "skill:code-reviewer",
-            "to": "artifact:skill-plan.md",
-            "reason": "Skill execution must leave artifact evidence when both are required or review-relevant."
-          },
-          {
-            "from": "skill:workflow-guide",
-            "to": "artifact:skill-plan.md",
-            "reason": "Skill execution must leave artifact evidence when both are required or review-relevant."
-          },
-          {
-            "from": "skill:pr-creator",
-            "to": "artifact:skill-plan.md",
-            "reason": "Skill execution must leave artifact evidence when both are required or review-relevant."
-          },
-          {
-            "from": "skill:code-reviewer",
-            "to": "artifact:skill-evidence.md",
-            "reason": "Skill execution must leave artifact evidence when both are required or review-relevant."
-          },
-          {
-            "from": "skill:workflow-guide",
-            "to": "artifact:skill-evidence.md",
-            "reason": "Skill execution must leave artifact evidence when both are required or review-relevant."
-          },
-          {
-            "from": "skill:pr-creator",
-            "to": "artifact:skill-evidence.md",
-            "reason": "Skill execution must leave artifact evidence when both are required or review-relevant."
-          },
-          {
-            "from": "skill:code-reviewer",
-            "to": "artifact:review.md",
-            "reason": "Skill execution must leave artifact evidence when both are required or review-relevant."
-          },
-          {
-            "from": "skill:workflow-guide",
-            "to": "artifact:review.md",
-            "reason": "Skill execution must leave artifact evidence when both are required or review-relevant."
-          },
-          {
-            "from": "skill:pr-creator",
-            "to": "artifact:review.md",
-            "reason": "Skill execution must leave artifact evidence when both are required or review-relevant."
-          },
-          {
-            "from": "artifact:skill-plan.md",
-            "to": "verification:review-evidence",
-            "reason": "Required artifacts should exist before verification evidence is accepted."
-          },
-          {
-            "from": "artifact:skill-evidence.md",
-            "to": "verification:review-evidence",
-            "reason": "Required artifacts should exist before verification evidence is accepted."
-          },
-          {
-            "from": "artifact:review.md",
-            "to": "verification:review-evidence",
-            "reason": "Required artifacts should exist before verification evidence is accepted."
-          }
-        ],
+        "edges": [],
         "summary": {
-          "totalSteps": 7,
-          "requiredSteps": 5,
+          "totalSteps": 1,
+          "requiredSteps": 1,
           "highRiskSteps": 0,
-          "estimatedCostUnits": 23,
-          "fallbackCoveredSteps": 7
+          "estimatedCostUnits": 2,
+          "fallbackCoveredSteps": 1
         },
         "recommendations": [
           "Execute required tool strategy nodes before claiming task completion."
         ]
       },
+      "agentCollaboration": {
+        "strategy": "agent-collaboration-v1",
+        "mode": "review-escalated",
+        "roles": [
+          {
+            "profileId": "architect-agent",
+            "name": "Software Architect",
+            "domain": "architecture",
+            "responsibility": "orchestrator",
+            "required": true,
+            "reason": "Owns the machine-readable collaboration plan, role DAG, handoff contracts, and risk-based escalation. Architecture, runtime, platform, or design decisions need an explicit critique before implementation claims.",
+            "capabilities": [
+              "system-design",
+              "microservices",
+              "patterns",
+              "scalability",
+              "trade-offs"
+            ],
+            "preferredModel": "powerful",
+            "budgetTokens": 2741,
+            "evidence": [
+              "agent-collaboration.strategy"
+            ]
+          },
+          {
+            "profileId": "code-review-agent",
+            "name": "Code Reviewer",
+            "domain": "code-review",
+            "responsibility": "reviewer",
+            "required": false,
+            "reason": "The agent must record uncertainty, rejected alternatives, and evidence gaps before completion.",
+            "capabilities": [
+              "quality",
+              "security",
+              "patterns",
+              "best-practices",
+              "clean-code"
+            ],
+            "preferredModel": "powerful",
+            "budgetTokens": 1974,
+            "evidence": [
+              "required-skill-evidence",
+              "architecture-critique"
+            ]
+          },
+          {
+            "profileId": "ops-agent",
+            "name": "DevOps Engineer",
+            "domain": "operations",
+            "responsibility": "releaser",
+            "required": true,
+            "reason": "Release, deployment, CI, or workflow surface detected.",
+            "capabilities": [
+              "deploy",
+              "cicd",
+              "monitoring",
+              "docker",
+              "k8s",
+              "terraform"
+            ],
+            "preferredModel": "fast",
+            "budgetTokens": 2085,
+            "evidence": [
+              "接入 ai os runtime skill-plan.md architecture-critique uncertainty-decision-log"
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "from": "code-review-agent",
+            "to": "ops-agent",
+            "type": "handoff",
+            "reason": "Release should only proceed after review evidence."
+          }
+        ],
+        "handoffs": [
+          {
+            "from": "code-review-agent",
+            "to": "ops-agent",
+            "artifact": "code-review-agent-to-ops-agent.handoff.md",
+            "evidence": [
+              "agentCollaboration.edges.code-review-agent->ops-agent",
+              "agentCollaboration.roles.code-review-agent",
+              "agentCollaboration.roles.ops-agent"
+            ],
+            "exitCriteria": [
+              "Upstream output is linked to a concrete file, command, screenshot, or runtime evidence item.",
+              "Downstream owner records accept/reject decision and unresolved gaps."
+            ]
+          }
+        ],
+        "reviewGates": [
+          {
+            "id": "implementation-review",
+            "owner": "code-review-agent",
+            "required": true,
+            "reason": "Independent code review catches design drift, missing tests, and hallucinated claims.",
+            "evidence": [
+              "review-ledger.md"
+            ]
+          },
+          {
+            "id": "release-review",
+            "owner": "ops-agent",
+            "required": false,
+            "reason": "Release or deployment path needs rollback and publish readiness evidence.",
+            "evidence": [
+              "release-checklist.md",
+              "rollback-plan.md"
+            ]
+          }
+        ],
+        "budget": {
+          "totalTokens": 8000,
+          "assignedTokens": 6800,
+          "reserveTokens": 1200,
+          "perRole": [
+            {
+              "profileId": "architect-agent",
+              "tokens": 2741
+            },
+            {
+              "profileId": "code-review-agent",
+              "tokens": 1974
+            },
+            {
+              "profileId": "ops-agent",
+              "tokens": 2085
+            }
+          ]
+        },
+        "summary": {
+          "totalRoles": 3,
+          "requiredRoles": 2,
+          "reviewerRoles": 1,
+          "handoffCount": 1,
+          "reviewGateCount": 2,
+          "estimatedCostUnits": 2,
+          "multiAgentRecommended": true,
+          "reviewEscalated": true
+        },
+        "recommendations": [
+          "Execute agents by DAG stage, not open-ended chat; each agent must produce a bounded artifact and evidence reference.",
+          "Do not promote implementation output until required review gates have accept/reject evidence.",
+          "Use tool-strategy cost and fallback data to cap agent context and prevent duplicate tool calls."
+        ]
+      },
       "evolutionShadow": {
         "strategy": "evolution-shadow-promotion-v1",
-        "proposals": [
-          {
-            "id": "SHADOW-RULE-1779764800875-001",
-            "title": "Governance signal: cross-module-scope",
-            "description": "Shadow rule from governance signal \"cross-module-scope\" (mode=expanded). Changed files span enough paths to require broader impact analysis.",
-            "source": "failure-learning",
-            "sourceEvidenceIds": [
-              "AGENTS.md",
-              "README.md",
-              "docs/workflow/README.md",
-              ".scale/governance.lock.json"
-            ],
-            "pattern": "cross-module-scope",
-            "enforcement": "prompt",
-            "maturity": {
-              "ruleId": "SHADOW-RULE-1779764800875-001",
-              "stage": "shadow",
-              "shadowHits": 0,
-              "defectEvidenceIds": [
-                "AGENTS.md",
-                "README.md",
-                "docs/workflow/README.md",
-                ".scale/governance.lock.json"
-              ],
-              "falsePositiveCount": 0,
-              "rollback": "Remove shadow rule for governance signal \"cross-module-scope\" if false positive rate exceeds threshold.",
-              "evidenceIds": [],
-              "createdAt": 1779764800875,
-              "updatedAt": 1779764800875
-            },
-            "createdAt": "2026-05-26T03:06:40.875Z"
-          }
-        ],
-        "validations": [
-          {
-            "proposalId": "SHADOW-RULE-1779764800875-001",
-            "shadowHits": 0,
-            "falsePositiveCount": 0,
-            "promotionDecision": {
-              "eligible": false,
-              "nextStage": "shadow",
-              "blockers": [
-                "shadow hits 0/10"
-              ]
-            },
-            "validationEvidence": []
-          }
-        ],
+        "proposals": [],
+        "validations": [],
         "summary": {
-          "totalProposals": 1,
-          "shadowRules": 1,
+          "totalProposals": 0,
+          "shadowRules": 0,
           "candidateHooks": 0,
           "approvedBlocking": 0,
-          "pendingValidation": 1
+          "pendingValidation": 0
         }
       },
       "context": {
         "task": {
-          "taskId": "AIOS-ADOPT-1779764791118",
-          "task": "升级 project-scaffold 工作流并接入 AI OS runtime",
+          "taskId": "AIOS-ADOPT-1781503332164",
+          "task": "接入 AI OS runtime",
           "level": "M",
-          "files": [
-            "AGENTS.md",
-            "README.md",
-            "docs/workflow/README.md",
-            ".scale/governance.lock.json"
-          ],
-          "budget": 2400
+          "files": [],
+          "budget": 8000
         },
-        "generatedAt": "2026-05-26T03:06:31.321Z",
-        "totalEstimatedTokens": 2383,
-        "lazyLoaded": [],
-        "omitted": [
+        "generatedAt": "2026-06-15T06:02:13.771Z",
+        "totalEstimatedTokens": 6905,
+        "lazyLoaded": [
           {
             "id": "runtime-evidence",
-            "reason": "budget-exceeded",
-            "estimatedTokens": 4522
+            "reason": "Evidence is needed for completion and verification claims. Matched: runtime."
           }
         ],
+        "omitted": [],
         "sections": [
           {
             "id": "always-core",
@@ -519,9 +416,9 @@
           {
             "id": "runtime-evidence",
             "category": "evidence",
-            "included": false,
+            "included": true,
             "estimatedTokens": 4522,
-            "reason": "Evidence is needed for completion and verification claims. Omitted by context compiler: budget-exceeded.",
+            "reason": "Evidence is needed for completion and verification claims. Matched: runtime.",
             "paths": [
               "docs/worklog/tasks/2026-05-15-workflow-governance-template/plan.md",
               "docs/worklog/tasks/2026-05-15-workflow-governance-template/verification.md",
@@ -549,62 +446,52 @@
         ],
         "compiler": {
           "strategy": "relevance-budget-v1",
-          "budget": 2400,
+          "budget": 8000,
           "totalCandidateTokens": 6905,
-          "estimatedTokenSavings": 4522,
+          "estimatedTokenSavings": 0,
           "ranking": [
             {
               "id": "always-core",
               "included": true,
-              "score": 1734,
-              "matchedSignals": [
-                "agents.md",
-                "file:AGENTS.md"
-              ],
+              "score": 1502,
+              "matchedSignals": [],
               "reason": "Core agent entry rules and governance policy. Required context within budget."
             },
             {
               "id": "runtime-evidence",
-              "included": false,
+              "included": true,
               "score": 233,
               "matchedSignals": [
                 "runtime"
               ],
-              "reason": "budget-exceeded"
+              "reason": "Evidence is needed for completion and verification claims. Matched: runtime."
             }
           ]
         }
       },
       "memory": {
         "providerOrder": [
-          "gbrain",
-          "agentmemory",
-          "scale-local"
+          "gbrain"
         ],
         "selectedProviders": [],
-        "fallbackUsed": true,
+        "fallbackUsed": false,
         "items": [],
         "warnings": [
-          "agentmemory skipped: disabled by memory provider policy"
+          "gbrain skipped: gbrain doctor reported core recall issue(s): connection (Could not connect to configured DB (URL from config-file-path); filesystem checks only)"
         ],
         "contextPack": {
           "version": "1.0",
-          "generatedAt": "2026-05-26T03:06:40.869Z",
+          "generatedAt": "2026-06-15T06:02:20.650Z",
           "task": {
-            "task": "升级 project-scaffold 工作流并接入 AI OS runtime",
-            "taskId": "AIOS-ADOPT-1779764791118",
+            "task": "接入 AI OS runtime",
+            "taskId": "AIOS-ADOPT-1781503332164",
             "level": "M",
-            "files": [
-              "AGENTS.md",
-              "README.md",
-              "docs/workflow/README.md",
-              ".scale/governance.lock.json"
-            ]
+            "files": []
           },
           "budget": {
-            "limit": 1200,
-            "used": 48,
-            "remaining": 1152,
+            "limit": 4000,
+            "used": 184,
+            "remaining": 3816,
             "overBudget": false
           },
           "sections": [
@@ -621,6 +508,15 @@
               "id": "session-events",
               "title": "Session Events",
               "priority": 80,
+              "items": [],
+              "estimatedTokens": 1,
+              "included": false,
+              "reason": "no data available"
+            },
+            {
+              "id": "cortex-instincts",
+              "title": "Cortex Learned Instincts",
+              "priority": 75,
               "items": [],
               "estimatedTokens": 1,
               "included": false,
@@ -648,10 +544,22 @@
               "id": "graph",
               "title": "Project Graph",
               "priority": 40,
-              "items": [],
-              "estimatedTokens": 1,
-              "included": false,
-              "reason": "no data available"
+              "items": [
+                {
+                  "type": "graph",
+                  "path": "graphify-out/graph.json",
+                  "kind": "graph-manifest",
+                  "summary": "{ \"directed\": false, \"multigraph\": false, \"graph\": {}, \"nodes\": [ { \"label\": \"project.json\", \"file_type\": \"code\", \"source_file\": \".agent/project.json\", \"source_location\": \"L1\", \"community\": 23, \"norm_label\": \"project...."
+                },
+                {
+                  "type": "graph",
+                  "path": "graphify-out/GRAPH_REPORT.md",
+                  "kind": "graph-report",
+                  "summary": "# Graph Report - . (2026-05-26) ## Corpus Check - cluster-only mode — file stats not available ## Summary - 2250 nodes · 2189 edges · 234 communities (183 shown, 51 thin omitted) - Extraction: 100% EXTRACTED · 0% INFE..."
+                }
+              ],
+              "estimatedTokens": 162,
+              "included": true
             }
           ],
           "omittedSections": [
@@ -668,6 +576,12 @@
               "estimatedTokens": 1
             },
             {
+              "id": "cortex-instincts",
+              "title": "Cortex Learned Instincts",
+              "reason": "no data available",
+              "estimatedTokens": 1
+            },
+            {
               "id": "provider-memory",
               "title": "Provider Memory Recall",
               "reason": "no data available",
@@ -678,137 +592,48 @@
               "title": "Knowledge Recall",
               "reason": "no data available",
               "estimatedTokens": 1
-            },
-            {
-              "id": "graph",
-              "title": "Project Graph",
-              "reason": "no data available",
-              "estimatedTokens": 1
             }
           ]
         }
       },
       "skillPlan": {
-        "taskId": "AIOS-ADOPT-1779764791118",
-        "taskName": "升级 project-scaffold 工作流并接入 AI OS runtime",
+        "taskId": "AIOS-ADOPT-1781503332164",
+        "taskName": "接入 AI OS runtime",
         "level": "M",
-        "intents": [
-          {
-            "domain": "docs",
-            "score": 4,
-            "reasons": [
-              "file:docs/**"
-            ]
-          },
-          {
-            "domain": "review",
-            "score": 3,
-            "reasons": [
-              "keyword:pr"
-            ]
-          }
-        ],
-        "requiredSkills": [
-          "code-reviewer"
-        ],
-        "recommendedSkills": [
-          "workflow-guide",
-          "pr-creator"
-        ],
+        "intents": [],
+        "requiredSkills": [],
+        "recommendedSkills": [],
         "requiredArtifacts": [
-          "skill-plan.md",
-          "skill-evidence.md",
-          "review.md"
+          "skill-plan.md"
         ],
         "recommendedArtifacts": [],
-        "requiredVerification": [
-          "review-evidence"
-        ],
+        "requiredVerification": [],
         "mode": "warn",
         "required": true,
         "executionPlan": {
           "strategy": "intent-evidence-graph-v1",
           "steps": [
             {
-              "kind": "skill",
-              "id": "code-reviewer",
-              "required": true,
-              "priority": 100,
-              "reason": "Detected intents: docs(4), review(3).",
-              "evidenceRequired": "Record used/executed status and concrete output path in skill-evidence.md.",
-              "fallback": "If unavailable, record skipped/fallback status with manual evidence; block when routing mode is block."
-            },
-            {
-              "kind": "skill",
-              "id": "workflow-guide",
-              "required": false,
-              "priority": 99,
-              "reason": "Detected intents: docs(4), review(3).",
-              "evidenceRequired": "Record used or skipped status when it materially affects delivery quality.",
-              "fallback": "Use the nearest built-in verification or explain why the recommendation was not needed."
-            },
-            {
-              "kind": "skill",
-              "id": "pr-creator",
-              "required": false,
-              "priority": 98,
-              "reason": "Detected intents: docs(4), review(3).",
-              "evidenceRequired": "Record used or skipped status when it materially affects delivery quality.",
-              "fallback": "Use the nearest built-in verification or explain why the recommendation was not needed."
-            },
-            {
               "kind": "artifact",
               "id": "skill-plan.md",
               "required": true,
-              "priority": 97,
+              "priority": 100,
               "reason": "Required artifact for task evidence and gate review.",
               "evidenceRequired": "Write substantive skill-plan.md content before verification or ship.",
               "fallback": "No silent fallback; document accepted non-goal only when the gate policy allows it."
-            },
-            {
-              "kind": "artifact",
-              "id": "skill-evidence.md",
-              "required": true,
-              "priority": 96,
-              "reason": "Required artifact for task evidence and gate review.",
-              "evidenceRequired": "Write substantive skill-evidence.md content before verification or ship.",
-              "fallback": "No silent fallback; document accepted non-goal only when the gate policy allows it."
-            },
-            {
-              "kind": "artifact",
-              "id": "review.md",
-              "required": true,
-              "priority": 95,
-              "reason": "Required artifact for task evidence and gate review.",
-              "evidenceRequired": "Write substantive review.md content before verification or ship.",
-              "fallback": "No silent fallback; document accepted non-goal only when the gate policy allows it."
-            },
-            {
-              "kind": "verification",
-              "id": "review-evidence",
-              "required": true,
-              "priority": 94,
-              "reason": "Required verification evidence for detected task intent.",
-              "evidenceRequired": "Attach command, screenshot, report, or reviewer evidence for review-evidence.",
-              "fallback": "If the verification cannot run, record the blocker and a lower-fidelity fallback."
             }
           ],
           "fallbackPolicy": "Required steps need concrete evidence or an explicit skipped/fallback record; recommended steps may be skipped with a reason.",
           "evidenceSummary": [
-            "Record used/executed status and concrete output path in skill-evidence.md.",
-            "Record used or skipped status when it materially affects delivery quality.",
-            "Write substantive skill-plan.md content before verification or ship.",
-            "Write substantive skill-evidence.md content before verification or ship.",
-            "Write substantive review.md content before verification or ship.",
-            "Attach command, screenshot, report, or reviewer evidence for review-evidence."
+            "Write substantive skill-plan.md content before verification or ship."
           ]
         },
-        "generatedAt": "2026-05-26T03:06:40.873Z"
+        "generatedAt": "2026-06-15T06:02:20.653Z"
       },
       "sessionLearnings": [],
       "roi": {
-        "taskId": "AIOS-ADOPT-1779764791118",
-        "generatedAt": "2026-05-26T03:06:40.876Z",
+        "taskId": "AIOS-ADOPT-1781503332164",
+        "generatedAt": "2026-06-15T06:02:20.660Z",
         "summary": {
           "evidenceLevel": "estimated",
           "recommendation": "needs-evidence"
@@ -817,46 +642,46 @@
           {
             "module": "context-budget",
             "evidenceLevel": "estimated",
-            "benefit": "Visible context cost: 69282 estimated tokens across 122 files; Always-loaded cost 2383.",
+            "benefit": "Visible context cost: 1240883 estimated tokens across 301 files; Always-loaded cost 2383.",
             "overhead": "One filesystem scan over governance and documentation artifacts.",
             "recommendation": "needs-evidence"
           },
           {
             "module": "context-compiler",
             "evidenceLevel": "estimated",
-            "benefit": "Selected 1/2 context section(s); estimated savings 4522 tokens from 6905 candidates.",
+            "benefit": "Selected 2/2 context section(s); estimated savings 0 tokens from 6905 candidates.",
             "overhead": "One relevance ranking pass with 2 candidate section(s).",
-            "recommendation": "keep-default"
+            "recommendation": "keep-optional"
           },
           {
             "module": "progressive-governance",
             "evidenceLevel": "estimated",
-            "benefit": "Recommended expanded mode from 2 risk signal(s); effective mode expanded.",
-            "overhead": "4 required behavior(s) activated.",
+            "benefit": "Recommended standard mode from 1 risk signal(s); effective mode standard.",
+            "overhead": "2 required behavior(s) activated.",
             "recommendation": "keep-optional"
           },
           {
             "module": "memory-provider-runtime",
             "evidenceLevel": "missing",
-            "benefit": "No memory item recalled; provider order was gbrain -> agentmemory -> scale-local.",
-            "overhead": "3 provider route(s), 1 warning(s).",
+            "benefit": "No memory item recalled; provider order was gbrain.",
+            "overhead": "1 provider route(s), 1 warning(s).",
             "recommendation": "keep-optional"
           },
           {
             "module": "skill-routing-engine",
             "evidenceLevel": "estimated",
-            "benefit": "Detected 2 intent(s), 1 required skill(s), and 7 executable evidence step(s).",
-            "overhead": "3 required artifact(s), 1 verification evidence item(s).",
+            "benefit": "Detected 0 intent(s), 0 required skill(s), and 1 executable evidence step(s).",
+            "overhead": "1 required artifact(s), 0 verification evidence item(s).",
             "recommendation": "keep-default"
           }
         ]
       },
       "recommendations": [
-        "Keep context compiler active; estimated savings 4522 tokens for this task pack.",
         "No memory recall result found; continue with local evidence and settle reusable knowledge after verification.",
-        "Follow 7 skill routing step(s) and record evidence before ship.",
+        "Follow 1 skill routing step(s) and record evidence before ship.",
         "Evaluator intelligence requires 2 critique gate(s); record uncertainty and review evidence before promotion.",
-        "Tool strategy planner created 7 cost/retry/fallback node(s); execute required nodes with evidence."
+        "Tool strategy planner created 1 cost/retry/fallback node(s); execute required nodes with evidence.",
+        "Agent collaboration planner selected 3 role(s), 2 review gate(s), and 1 handoff(s); use them as the delegation contract."
       ]
     },
     "steps": [
@@ -866,7 +691,7 @@
         "title": "Create unified AI OS runtime plan",
         "status": "passed",
         "required": true,
-        "summary": "Governance mode expanded; 7 skill step(s).",
+        "summary": "Governance mode standard; 1 skill step(s).",
         "evidence": [
           "governance",
           "context",
@@ -881,7 +706,7 @@
         "title": "Compile task context",
         "status": "passed",
         "required": true,
-        "summary": "2383/2400 estimated tokens; saved 4522.",
+        "summary": "6905/8000 estimated tokens; saved 0.",
         "evidence": [
           "context.compiler",
           "context.includedSections",
@@ -897,7 +722,7 @@
         "title": "Recall provider-backed memory",
         "status": "passed",
         "required": true,
-        "summary": "0 recalled item(s); providers gbrain -> agentmemory -> scale-local.",
+        "summary": "0 recalled item(s); providers gbrain.",
         "evidence": [
           "memory.providerOrder",
           "memory.selectedProviders",
@@ -908,12 +733,117 @@
         ]
       },
       {
+        "id": "agent-collaboration-plan",
+        "kind": "agent",
+        "title": "Plan agent collaboration",
+        "status": "passed",
+        "required": true,
+        "summary": "3 role(s), 2 review gate(s), mode review-escalated.",
+        "evidence": [
+          "agentCollaboration.roles",
+          "agentCollaboration.edges",
+          "agentCollaboration.budget"
+        ],
+        "dependsOn": [
+          "runtime-plan"
+        ]
+      },
+      {
+        "id": "agent:architect-agent",
+        "kind": "agent",
+        "title": "orchestrator: Software Architect",
+        "status": "planned",
+        "required": true,
+        "summary": "Owns the machine-readable collaboration plan, role DAG, handoff contracts, and risk-based escalation. Architecture, runtime, platform, or design decisions need an explicit critique before implementation claims. Budget 2741/8000 tokens.",
+        "evidence": [
+          "agent-collaboration.strategy"
+        ],
+        "dependsOn": [
+          "agent-collaboration-plan"
+        ]
+      },
+      {
+        "id": "agent:code-review-agent",
+        "kind": "agent",
+        "title": "reviewer: Code Reviewer",
+        "status": "planned",
+        "required": false,
+        "summary": "The agent must record uncertainty, rejected alternatives, and evidence gaps before completion. Budget 1974/8000 tokens.",
+        "evidence": [
+          "required-skill-evidence",
+          "architecture-critique"
+        ],
+        "dependsOn": [
+          "agent-collaboration-plan"
+        ]
+      },
+      {
+        "id": "agent:ops-agent",
+        "kind": "agent",
+        "title": "releaser: DevOps Engineer",
+        "status": "planned",
+        "required": true,
+        "summary": "Release, deployment, CI, or workflow surface detected. Budget 2085/8000 tokens.",
+        "evidence": [
+          "接入 ai os runtime skill-plan.md architecture-critique uncertainty-decision-log"
+        ],
+        "dependsOn": [
+          "agent-collaboration-plan"
+        ]
+      },
+      {
+        "id": "agent-handoff:code-review-agent->ops-agent",
+        "kind": "agent",
+        "title": "Handoff code-review-agent to ops-agent",
+        "status": "planned",
+        "required": true,
+        "summary": "code-review-agent-to-ops-agent.handoff.md; exit criteria: Upstream output is linked to a concrete file, command, screenshot, or runtime evidence item. Downstream owner records accept/reject decision and unresolved gaps.",
+        "evidence": [
+          "agentCollaboration.edges.code-review-agent->ops-agent",
+          "agentCollaboration.roles.code-review-agent",
+          "agentCollaboration.roles.ops-agent"
+        ],
+        "dependsOn": [
+          "agent:code-review-agent",
+          "agent:ops-agent"
+        ]
+      },
+      {
+        "id": "agent-review:implementation-review",
+        "kind": "agent",
+        "title": "Agent review gate: implementation-review",
+        "status": "planned",
+        "required": true,
+        "summary": "code-review-agent: Independent code review catches design drift, missing tests, and hallucinated claims.",
+        "evidence": [
+          "review-ledger.md"
+        ],
+        "dependsOn": [
+          "agent:code-review-agent"
+        ]
+      },
+      {
+        "id": "agent-review:release-review",
+        "kind": "agent",
+        "title": "Agent review gate: release-review",
+        "status": "planned",
+        "required": false,
+        "summary": "ops-agent: Release or deployment path needs rollback and publish readiness evidence.",
+        "evidence": [
+          "release-checklist.md",
+          "rollback-plan.md"
+        ],
+        "dependsOn": [
+          "agent:ops-agent"
+        ]
+      },
+      {
         "id": "skill-evidence",
         "kind": "gate",
         "title": "Satisfy skill-evidence gate",
         "status": "planned",
         "required": true,
-        "summary": "Required by risk-adaptive-runtime-v1 in strict profile (expanded mode).",
+        "summary": "Required by risk-adaptive-runtime-v1 in standard profile (standard mode).",
         "evidence": [
           "gate.skill-evidence"
         ],
@@ -927,23 +857,9 @@
         "title": "Satisfy runtime-evidence gate",
         "status": "planned",
         "required": true,
-        "summary": "Required by risk-adaptive-runtime-v1 in strict profile (expanded mode).",
+        "summary": "Required by risk-adaptive-runtime-v1 in standard profile (standard mode).",
         "evidence": [
           "gate.runtime-evidence"
-        ],
-        "dependsOn": [
-          "runtime-plan"
-        ]
-      },
-      {
-        "id": "impact-analysis",
-        "kind": "gate",
-        "title": "Satisfy impact-analysis gate",
-        "status": "planned",
-        "required": true,
-        "summary": "Required by risk-adaptive-runtime-v1 in strict profile (expanded mode).",
-        "evidence": [
-          "gate.impact-analysis"
         ],
         "dependsOn": [
           "runtime-plan"
@@ -955,7 +871,7 @@
         "title": "Satisfy architecture-critique gate",
         "status": "planned",
         "required": true,
-        "summary": "Required by risk-adaptive-runtime-v1 in strict profile (expanded mode).",
+        "summary": "Required by risk-adaptive-runtime-v1 in standard profile (standard mode).",
         "evidence": [
           "gate.architecture-critique"
         ],
@@ -969,54 +885,12 @@
         "title": "Satisfy uncertainty-decision-log gate",
         "status": "planned",
         "required": true,
-        "summary": "Required by risk-adaptive-runtime-v1 in strict profile (expanded mode).",
+        "summary": "Required by risk-adaptive-runtime-v1 in standard profile (standard mode).",
         "evidence": [
           "gate.uncertainty-decision-log"
         ],
         "dependsOn": [
           "runtime-plan"
-        ]
-      },
-      {
-        "id": "skill:code-reviewer",
-        "kind": "skill",
-        "title": "skill: code-reviewer",
-        "status": "planned",
-        "required": true,
-        "summary": "Detected intents: docs(4), review(3). Fallback: If unavailable, record skipped/fallback status with manual evidence; block when routing mode is block..",
-        "evidence": [
-          "Record used/executed status and concrete output path in skill-evidence.md."
-        ],
-        "dependsOn": [
-          "skill-evidence"
-        ]
-      },
-      {
-        "id": "skill:workflow-guide",
-        "kind": "skill",
-        "title": "skill: workflow-guide",
-        "status": "planned",
-        "required": false,
-        "summary": "Detected intents: docs(4), review(3). Fallback: Use the nearest built-in verification or explain why the recommendation was not needed..",
-        "evidence": [
-          "Record used or skipped status when it materially affects delivery quality."
-        ],
-        "dependsOn": [
-          "skill-evidence"
-        ]
-      },
-      {
-        "id": "skill:pr-creator",
-        "kind": "skill",
-        "title": "skill: pr-creator",
-        "status": "planned",
-        "required": false,
-        "summary": "Detected intents: docs(4), review(3). Fallback: Use the nearest built-in verification or explain why the recommendation was not needed..",
-        "evidence": [
-          "Record used or skipped status when it materially affects delivery quality."
-        ],
-        "dependsOn": [
-          "skill-evidence"
         ]
       },
       {
@@ -1028,48 +902,6 @@
         "summary": "Required artifact for task evidence and gate review. Fallback: No silent fallback; document accepted non-goal only when the gate policy allows it..",
         "evidence": [
           "Write substantive skill-plan.md content before verification or ship."
-        ],
-        "dependsOn": [
-          "skill-evidence"
-        ]
-      },
-      {
-        "id": "skill:skill-evidence.md",
-        "kind": "skill",
-        "title": "artifact: skill-evidence.md",
-        "status": "planned",
-        "required": true,
-        "summary": "Required artifact for task evidence and gate review. Fallback: No silent fallback; document accepted non-goal only when the gate policy allows it..",
-        "evidence": [
-          "Write substantive skill-evidence.md content before verification or ship."
-        ],
-        "dependsOn": [
-          "skill-evidence"
-        ]
-      },
-      {
-        "id": "skill:review.md",
-        "kind": "skill",
-        "title": "artifact: review.md",
-        "status": "planned",
-        "required": true,
-        "summary": "Required artifact for task evidence and gate review. Fallback: No silent fallback; document accepted non-goal only when the gate policy allows it..",
-        "evidence": [
-          "Write substantive review.md content before verification or ship."
-        ],
-        "dependsOn": [
-          "skill-evidence"
-        ]
-      },
-      {
-        "id": "skill:review-evidence",
-        "kind": "skill",
-        "title": "verification: review-evidence",
-        "status": "planned",
-        "required": true,
-        "summary": "Required verification evidence for detected task intent. Fallback: If the verification cannot run, record the blocker and a lower-fidelity fallback..",
-        "evidence": [
-          "Attach command, screenshot, report, or reviewer evidence for review-evidence."
         ],
         "dependsOn": [
           "skill-evidence"
@@ -1090,26 +922,136 @@
         ]
       }
     ],
+    "agentExecution": {
+      "strategy": "agent-execution-settlement-v1",
+      "generatedAt": "2026-06-15T06:02:20.660Z",
+      "mode": "dry-run",
+      "status": "planned",
+      "roles": [
+        {
+          "profileId": "architect-agent",
+          "responsibility": "orchestrator",
+          "required": true,
+          "status": "planned",
+          "budgetTokens": 2741,
+          "summary": "Role architect-agent is contracted but not executed in dry-run mode.",
+          "evidence": [
+            "agent-collaboration.strategy"
+          ]
+        },
+        {
+          "profileId": "code-review-agent",
+          "responsibility": "reviewer",
+          "required": false,
+          "status": "planned",
+          "budgetTokens": 1974,
+          "summary": "Role code-review-agent is contracted but not executed in dry-run mode.",
+          "evidence": [
+            "required-skill-evidence",
+            "architecture-critique"
+          ]
+        },
+        {
+          "profileId": "ops-agent",
+          "responsibility": "releaser",
+          "required": true,
+          "status": "planned",
+          "budgetTokens": 2085,
+          "summary": "Role ops-agent is contracted but not executed in dry-run mode.",
+          "evidence": [
+            "接入 ai os runtime skill-plan.md architecture-critique uncertainty-decision-log"
+          ]
+        }
+      ],
+      "handoffs": [
+        {
+          "id": "agent-handoff:code-review-agent->ops-agent",
+          "from": "code-review-agent",
+          "to": "ops-agent",
+          "required": true,
+          "status": "planned",
+          "artifact": "code-review-agent-to-ops-agent.handoff.md",
+          "summary": "Handoff code-review-agent -> ops-agent is planned; execute after role outputs exist.",
+          "evidence": [
+            "agentCollaboration.edges.code-review-agent->ops-agent",
+            "agentCollaboration.roles.code-review-agent",
+            "agentCollaboration.roles.ops-agent"
+          ]
+        }
+      ],
+      "reviewGates": [
+        {
+          "id": "agent-review:implementation-review",
+          "owner": "code-review-agent",
+          "required": true,
+          "status": "planned",
+          "summary": "Review gate implementation-review is planned; attach reviewer evidence before ship.",
+          "evidence": [
+            "review-ledger.md"
+          ]
+        },
+        {
+          "id": "agent-review:release-review",
+          "owner": "ops-agent",
+          "required": false,
+          "status": "planned",
+          "summary": "Review gate release-review is planned; attach reviewer evidence before ship.",
+          "evidence": [
+            "release-checklist.md",
+            "rollback-plan.md"
+          ]
+        }
+      ],
+      "evidence": {
+        "required": [
+          "agent:architect-agent",
+          "agent:ops-agent",
+          "agent-handoff:code-review-agent->ops-agent",
+          "agent-review:implementation-review"
+        ],
+        "produced": [],
+        "pending": [
+          "agent:architect-agent",
+          "agent:ops-agent",
+          "agent-handoff:code-review-agent->ops-agent",
+          "agent-review:implementation-review"
+        ]
+      },
+      "summary": {
+        "totalRoles": 3,
+        "settledRoles": 0,
+        "blockedRoles": 0,
+        "totalHandoffs": 1,
+        "settledHandoffs": 0,
+        "reviewGates": 2,
+        "settledReviewGates": 0,
+        "producedEvidence": 0
+      },
+      "recommendations": [
+        "Run `scale ai-os run --mode guarded --verify \"<command>\"` after reviewing the dry-run plan to settle agent execution evidence."
+      ]
+    },
     "evidence": {
       "required": [
         "ai-os-plan",
         "context-compiler",
         "memory-provider-recall",
+        "agent-collaboration",
         "skill-routing-engine",
         "runtime-evidence",
-        "gate:impact-analysis",
         "gate:architecture-critique",
         "gate:uncertainty-decision-log"
       ],
       "produced": [
         "ai-os-plan",
         "context-compiler",
-        "memory-provider-recall"
+        "memory-provider-recall",
+        "agent-collaboration"
       ],
       "pending": [
+        "agent-collaboration",
         "skill-routing-engine",
         "runtime-evidence",
-        "gate:impact-analysis",
         "gate:architecture-critique",
         "gate:uncertainty-decision-log"
       ]
@@ -1123,7 +1065,7 @@
       "candidates": []
     },
     "artifacts": {
-      "runReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1779764791118.json"
+      "runReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1781503332164.json"
     },
     "governanceRoi": {
       "cost": {
@@ -1157,22 +1099,21 @@
       ]
     },
     "nextActions": [
+      "Execute agent collaboration step \"orchestrator: Software Architect\" and attach evidence: agent-collaboration.strategy.",
+      "Execute agent collaboration step \"releaser: DevOps Engineer\" and attach evidence: 接入 ai os runtime skill-plan.md architecture-critique uncertainty-decision-log.",
+      "Execute agent collaboration step \"Handoff code-review-agent to ops-agent\" and attach evidence: agentCollaboration.edges.code-review-agent->ops-agent, agentCollaboration.roles.code-review-agent, agentCollaboration.roles.ops-agent.",
+      "Execute agent collaboration step \"Agent review gate: implementation-review\" and attach evidence: review-ledger.md.",
       "Satisfy gate \"skill-evidence\" before ship.",
       "Record runtime evidence for \"runtime-evidence\" before claiming completion.",
-      "Satisfy gate \"impact-analysis\" before ship.",
       "Satisfy gate \"architecture-critique\" before ship.",
       "Satisfy gate \"uncertainty-decision-log\" before ship.",
-      "Execute required skill step \"skill: code-reviewer\" and attach evidence: Record used/executed status and concrete output path in skill-evidence.md..",
       "Execute required skill step \"artifact: skill-plan.md\" and attach evidence: Write substantive skill-plan.md content before verification or ship..",
-      "Execute required skill step \"artifact: skill-evidence.md\" and attach evidence: Write substantive skill-evidence.md content before verification or ship..",
-      "Execute required skill step \"artifact: review.md\" and attach evidence: Write substantive review.md content before verification or ship..",
-      "Execute required skill step \"verification: review-evidence\" and attach evidence: Attach command, screenshot, report, or reviewer evidence for review-evidence..",
       "Re-run with guarded execution only after reviewing the dry-run report."
     ]
   },
   "benchmark": {
-    "version": "0.40.2",
-    "generatedAt": "2026-05-26T03:07:00.394Z",
+    "version": "0.50.5",
+    "generatedAt": "2026-06-15T06:02:33.374Z",
     "scenarios": [
       {
         "id": "docs-governance",
@@ -1181,9 +1122,9 @@
         "governanceMode": "expanded",
         "workflowProfile": "strict",
         "metrics": {
-          "estimatedTokens": 2383,
-          "budget": 2400,
-          "estimatedTokenSavings": 4522,
+          "estimatedTokens": 6905,
+          "budget": 8000,
+          "estimatedTokenSavings": 0,
           "memoryItems": 0,
           "selectedProviders": [],
           "skillSteps": 2,
@@ -1191,6 +1132,9 @@
           "evaluatorGates": 2,
           "toolStrategySteps": 2,
           "toolStrategyCostUnits": 6,
+          "agentRoles": 7,
+          "agentReviewerRoles": 2,
+          "agentReviewGates": 3,
           "evolutionProposals": 1,
           "gates": 7,
           "roiModules": 5
@@ -1203,9 +1147,9 @@
         "governanceMode": "critical",
         "workflowProfile": "critical",
         "metrics": {
-          "estimatedTokens": 2383,
-          "budget": 2400,
-          "estimatedTokenSavings": 4728,
+          "estimatedTokens": 7111,
+          "budget": 8000,
+          "estimatedTokenSavings": 0,
           "memoryItems": 0,
           "selectedProviders": [],
           "skillSteps": 14,
@@ -1213,6 +1157,9 @@
           "evaluatorGates": 3,
           "toolStrategySteps": 14,
           "toolStrategyCostUnits": 54,
+          "agentRoles": 6,
+          "agentReviewerRoles": 3,
+          "agentReviewGates": 4,
           "evolutionProposals": 3,
           "gates": 10,
           "roiModules": 5
@@ -1225,9 +1172,9 @@
         "governanceMode": "expanded",
         "workflowProfile": "strict",
         "metrics": {
-          "estimatedTokens": 2383,
-          "budget": 2400,
-          "estimatedTokenSavings": 7699,
+          "estimatedTokens": 7111,
+          "budget": 8000,
+          "estimatedTokenSavings": 2971,
           "memoryItems": 0,
           "selectedProviders": [],
           "skillSteps": 39,
@@ -1235,6 +1182,9 @@
           "evaluatorGates": 2,
           "toolStrategySteps": 39,
           "toolStrategyCostUnits": 138,
+          "agentRoles": 10,
+          "agentReviewerRoles": 3,
+          "agentReviewGates": 4,
           "evolutionProposals": 1,
           "gates": 7,
           "roiModules": 5
@@ -1243,15 +1193,19 @@
     ],
     "summary": {
       "scenarios": 3,
-      "totalEstimatedTokens": 7149,
-      "totalBudget": 7200,
-      "totalEstimatedTokenSavings": 16949,
+      "totalEstimatedTokens": 21127,
+      "totalBudget": 24000,
+      "totalEstimatedTokenSavings": 2971,
       "totalMemoryItems": 0,
       "totalSkillSteps": 55,
       "requiredSkillSteps": 34,
       "totalEvaluatorGates": 7,
       "totalToolStrategySteps": 55,
       "totalToolStrategyCostUnits": 198,
+      "totalAgentRoles": 23,
+      "totalAgentReviewerRoles": 8,
+      "totalAgentReviewGates": 11,
+      "multiAgentScenarios": 3,
       "totalEvolutionProposals": 5,
       "governanceModes": [
         "expanded",
@@ -1261,21 +1215,21 @@
         "strict",
         "critical"
       ],
-      "averageTokenUtilization": 0.9929
+      "averageTokenUtilization": 0.8803
     },
     "dashboard": {
-      "version": "0.40.2",
-      "generatedAt": "2026-05-26T03:07:00.395Z",
+      "version": "0.50.5",
+      "generatedAt": "2026-06-15T06:02:33.377Z",
       "runsDir": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs",
       "summary": {
-        "totalRuns": 1,
-        "readyRuns": 1,
+        "totalRuns": 2,
+        "readyRuns": 2,
         "blockedRuns": 0,
-        "dryRunRuns": 1,
+        "dryRunRuns": 2,
         "guardedRuns": 0,
         "verificationCommands": 0,
         "failedVerificationCommands": 0,
-        "pendingEvidence": 5,
+        "pendingEvidence": 10,
         "failureLearningCandidates": 0
       },
       "health": {
@@ -1286,6 +1240,18 @@
         ]
       },
       "latestRuns": [
+        {
+          "taskId": "AIOS-ADOPT-1781503332164",
+          "task": "接入 AI OS runtime",
+          "mode": "dry-run",
+          "status": "ready",
+          "generatedAt": "2026-06-15T06:02:20.660Z",
+          "runReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1781503332164.json",
+          "verificationCommands": 0,
+          "failedVerificationCommands": 0,
+          "pendingEvidence": 5,
+          "failureLearningCandidates": 0
+        },
         {
           "taskId": "AIOS-ADOPT-1779764791118",
           "task": "升级 project-scaffold 工作流并接入 AI OS runtime",
@@ -1308,29 +1274,28 @@
       "benchmarkReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\benchmarks\\latest.json"
     },
     "recommendations": [
-      "Use benchmark deltas in release notes only after comparing the same scenario set across versions.",
-      "Context utilization is high; lower budgets or improve relevance filtering before scaling."
+      "Use benchmark deltas in release notes only after comparing the same scenario set across versions."
     ]
   },
   "doctor": {
-    "version": "0.40.2",
-    "generatedAt": "2026-05-26T03:07:00.397Z",
+    "version": "0.50.5",
+    "generatedAt": "2026-06-15T06:02:33.382Z",
     "status": "ready",
     "projectDir": "F:\\project\\project-scaffold",
     "scaleRoot": "F:\\project\\project-scaffold\\.scale",
     "dashboard": {
-      "version": "0.40.2",
-      "generatedAt": "2026-05-26T03:07:00.396Z",
+      "version": "0.50.5",
+      "generatedAt": "2026-06-15T06:02:33.380Z",
       "runsDir": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs",
       "summary": {
-        "totalRuns": 1,
-        "readyRuns": 1,
+        "totalRuns": 2,
+        "readyRuns": 2,
         "blockedRuns": 0,
-        "dryRunRuns": 1,
+        "dryRunRuns": 2,
         "guardedRuns": 0,
         "verificationCommands": 0,
         "failedVerificationCommands": 0,
-        "pendingEvidence": 5,
+        "pendingEvidence": 10,
         "failureLearningCandidates": 0
       },
       "health": {
@@ -1341,6 +1306,18 @@
         ]
       },
       "latestRuns": [
+        {
+          "taskId": "AIOS-ADOPT-1781503332164",
+          "task": "接入 AI OS runtime",
+          "mode": "dry-run",
+          "status": "ready",
+          "generatedAt": "2026-06-15T06:02:20.660Z",
+          "runReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1781503332164.json",
+          "verificationCommands": 0,
+          "failedVerificationCommands": 0,
+          "pendingEvidence": 5,
+          "failureLearningCandidates": 0
+        },
         {
           "taskId": "AIOS-ADOPT-1779764791118",
           "task": "升级 project-scaffold 工作流并接入 AI OS runtime",
@@ -1362,7 +1339,7 @@
     "benchmark": {
       "status": "fresh",
       "reportPath": "F:\\project\\project-scaffold\\.scale\\ai-os\\benchmarks\\latest.json",
-      "generatedAt": "2026-05-26T03:07:00.394Z",
+      "generatedAt": "2026-06-15T06:02:33.374Z",
       "ageHours": 0,
       "scenarios": 3
     },
@@ -1383,8 +1360,9 @@
         "id": "ai-os-run-history",
         "title": "AI OS run history",
         "status": "passed",
-        "summary": "1 run report(s), 0 guarded.",
+        "summary": "2 run report(s), 0 guarded.",
         "evidence": [
+          "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1781503332164.json",
           "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1779764791118.json"
         ]
       },
@@ -1420,7 +1398,7 @@
   },
   "artifacts": {
     "migrationReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\migrations\\migration.json",
-    "runReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1779764791118.json",
+    "runReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1781503332164.json",
     "benchmarkReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\benchmarks\\latest.json",
     "adoptionReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\adoption.json"
   },

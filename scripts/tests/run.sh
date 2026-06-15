@@ -1,7 +1,6 @@
 #!/bin/bash
 # scripts/tests/run.sh
-# 脚手架自测：验证生成物能约束 agent，而不是只提供说明文档。
-
+# Scaffold self-tests: verify the workflow assets constrain real behavior.
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -30,6 +29,17 @@ copy_fixture() {
     if [ -f "$PROJECT_ROOT/.gitattributes" ]; then
         cp "$PROJECT_ROOT/.gitattributes" "$fixture/.gitattributes"
     fi
+}
+
+init_git_fixture() {
+    local fixture="$1"
+    (
+        cd "$fixture"
+        git init -q
+        git config user.name "Scaffold Test"
+        git config user.email "scaffold-test@example.com"
+        git commit --allow-empty -qm "init"
+    )
 }
 
 pass() {
@@ -110,6 +120,7 @@ test_dry_run_is_honest() {
 test_g3_blocks_go_without_tests() {
     local fixture="$TEST_ROOT/g3-missing-tests"
     copy_fixture "$fixture"
+    init_git_fixture "$fixture"
     cat > "$fixture/go.mod" <<'EOF'
 module example.com/scaffold-test
 
@@ -134,15 +145,15 @@ with open(target, "w", encoding="utf-8") as f:
 PY
     mv "$fixture/.agent/project.json.tmp" "$fixture/.agent/project.json"
 
-    if (cd "$fixture" && bash scripts/gates/G3-verify.sh >/tmp/scaffold-g3.log 2>&1); then
+    if (cd "$fixture" && ENFORCE_TDD=1 bash scripts/gates/G3-verify.sh >/tmp/scaffold-g3.log 2>&1); then
         cat /tmp/scaffold-g3.log
         return 1
     fi
 
-    grep -q "缺少对应测试" /tmp/scaffold-g3.log
+    grep -q "missing paired test" /tmp/scaffold-g3.log
 }
 
-test_g7_blocks_missing_gosec() {
+test_g7_blocks_missing_required_security_tool() {
     if ! command -v python3 >/dev/null 2>&1; then
         skip "G7 missing tool test requires python3"
         return 0
@@ -162,8 +173,7 @@ import sys
 source, target = sys.argv[1], sys.argv[2]
 with open(source, encoding="utf-8") as f:
     data = json.load(f)
-data["stack"] = "auto"
-data["stacks"]["go"]["required_tools"]["security"] = ["__missing_gosec_for_scaffold_test__"]
+data["services"]["scaffold"]["required_tools"] = {"security": ["__missing_gosec_for_scaffold_test__"]}
 with open(target, "w", encoding="utf-8") as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
     f.write("\n")
@@ -173,15 +183,12 @@ PY
     local log_file="$fixture/.agent/logs/scaffold-g7.log"
     mkdir -p "$(dirname "$log_file")"
 
-    if (cd "$fixture" && bash scripts/gates/G7-verify.sh >"$log_file" 2>&1); then
+    if (cd "$fixture" && bash scripts/gates/G7-verify.sh scaffold >"$log_file" 2>&1); then
         cat "$log_file"
         return 1
     fi
 
-    if ! grep -q "缺少工具: __missing_gosec_for_scaffold_test__" "$log_file"; then
-        cat "$log_file"
-        return 1
-    fi
+    grep -q "missing tool: __missing_gosec_for_scaffold_test__" "$log_file"
 }
 
 test_node_stack_uses_configured_lint_command() {
@@ -221,11 +228,11 @@ PY
     (cd "$fixture" && bash scripts/workflow/verify.sh --profile default >/tmp/scaffold-node-lint.log 2>&1)
 
     grep -q "run web/lint" /tmp/scaffold-node-lint.log
-    grep -q "node-lint-ok" "$fixture/.agent/logs/web/lint.log"
+    grep -q "node-lint-ok" "$fixture/.agent/logs/web/lint.profile.log"
 }
 
 echo "========================================"
-echo "[SCAFFOLD TESTS] 运行脚手架自测"
+echo "[SCAFFOLD TESTS] run scaffold self-tests"
 echo "========================================"
 echo ""
 
@@ -234,11 +241,11 @@ run_test "invalid JSON is rejected" test_invalid_json_fails
 run_test "CRLF shell scripts are rejected" test_crlf_shell_fails
 run_test "gate dry-run is honest" test_dry_run_is_honest
 run_test "G3 blocks Go implementation without tests" test_g3_blocks_go_without_tests
-run_test "G7 blocks missing gosec" test_g7_blocks_missing_gosec
+run_test "G7 blocks missing required security tool" test_g7_blocks_missing_required_security_tool
 run_test "Node stack uses configured lint command" test_node_stack_uses_configured_lint_command
 
 echo "========================================"
-echo "[SCAFFOLD TESTS] 结果: $PASSED 通过, $FAILED 失败, $SKIPPED 跳过"
+echo "[SCAFFOLD TESTS] result: $PASSED passed, $FAILED failed, $SKIPPED skipped"
 echo "========================================"
 
 if [ "$FAILED" -eq 0 ]; then

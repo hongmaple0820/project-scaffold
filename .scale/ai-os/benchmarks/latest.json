@@ -1,6 +1,6 @@
 {
-  "version": "0.40.2",
-  "generatedAt": "2026-05-26T03:07:00.394Z",
+  "version": "0.50.5",
+  "generatedAt": "2026-06-15T06:02:59.490Z",
   "scenarios": [
     {
       "id": "docs-governance",
@@ -9,9 +9,9 @@
       "governanceMode": "expanded",
       "workflowProfile": "strict",
       "metrics": {
-        "estimatedTokens": 2383,
-        "budget": 2400,
-        "estimatedTokenSavings": 4522,
+        "estimatedTokens": 6905,
+        "budget": 8000,
+        "estimatedTokenSavings": 0,
         "memoryItems": 0,
         "selectedProviders": [],
         "skillSteps": 2,
@@ -19,6 +19,9 @@
         "evaluatorGates": 2,
         "toolStrategySteps": 2,
         "toolStrategyCostUnits": 6,
+        "agentRoles": 7,
+        "agentReviewerRoles": 2,
+        "agentReviewGates": 3,
         "evolutionProposals": 1,
         "gates": 7,
         "roiModules": 5
@@ -31,9 +34,9 @@
       "governanceMode": "critical",
       "workflowProfile": "critical",
       "metrics": {
-        "estimatedTokens": 2383,
-        "budget": 2400,
-        "estimatedTokenSavings": 4728,
+        "estimatedTokens": 7111,
+        "budget": 8000,
+        "estimatedTokenSavings": 0,
         "memoryItems": 0,
         "selectedProviders": [],
         "skillSteps": 14,
@@ -41,6 +44,9 @@
         "evaluatorGates": 3,
         "toolStrategySteps": 14,
         "toolStrategyCostUnits": 54,
+        "agentRoles": 6,
+        "agentReviewerRoles": 3,
+        "agentReviewGates": 4,
         "evolutionProposals": 3,
         "gates": 10,
         "roiModules": 5
@@ -53,9 +59,9 @@
       "governanceMode": "expanded",
       "workflowProfile": "strict",
       "metrics": {
-        "estimatedTokens": 2383,
-        "budget": 2400,
-        "estimatedTokenSavings": 7699,
+        "estimatedTokens": 7111,
+        "budget": 8000,
+        "estimatedTokenSavings": 2971,
         "memoryItems": 0,
         "selectedProviders": [],
         "skillSteps": 39,
@@ -63,6 +69,9 @@
         "evaluatorGates": 2,
         "toolStrategySteps": 39,
         "toolStrategyCostUnits": 138,
+        "agentRoles": 10,
+        "agentReviewerRoles": 3,
+        "agentReviewGates": 4,
         "evolutionProposals": 1,
         "gates": 7,
         "roiModules": 5
@@ -71,15 +80,19 @@
   ],
   "summary": {
     "scenarios": 3,
-    "totalEstimatedTokens": 7149,
-    "totalBudget": 7200,
-    "totalEstimatedTokenSavings": 16949,
+    "totalEstimatedTokens": 21127,
+    "totalBudget": 24000,
+    "totalEstimatedTokenSavings": 2971,
     "totalMemoryItems": 0,
     "totalSkillSteps": 55,
     "requiredSkillSteps": 34,
     "totalEvaluatorGates": 7,
     "totalToolStrategySteps": 55,
     "totalToolStrategyCostUnits": 198,
+    "totalAgentRoles": 23,
+    "totalAgentReviewerRoles": 8,
+    "totalAgentReviewGates": 11,
+    "multiAgentScenarios": 3,
     "totalEvolutionProposals": 5,
     "governanceModes": [
       "expanded",
@@ -89,21 +102,21 @@
       "strict",
       "critical"
     ],
-    "averageTokenUtilization": 0.9929
+    "averageTokenUtilization": 0.8803
   },
   "dashboard": {
-    "version": "0.40.2",
-    "generatedAt": "2026-05-26T03:07:00.395Z",
+    "version": "0.50.5",
+    "generatedAt": "2026-06-15T06:02:59.493Z",
     "runsDir": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs",
     "summary": {
-      "totalRuns": 1,
-      "readyRuns": 1,
+      "totalRuns": 2,
+      "readyRuns": 2,
       "blockedRuns": 0,
-      "dryRunRuns": 1,
+      "dryRunRuns": 2,
       "guardedRuns": 0,
       "verificationCommands": 0,
       "failedVerificationCommands": 0,
-      "pendingEvidence": 5,
+      "pendingEvidence": 10,
       "failureLearningCandidates": 0
     },
     "health": {
@@ -114,6 +127,18 @@
       ]
     },
     "latestRuns": [
+      {
+        "taskId": "AIOS-ADOPT-1781503332164",
+        "task": "接入 AI OS runtime",
+        "mode": "dry-run",
+        "status": "ready",
+        "generatedAt": "2026-06-15T06:02:20.660Z",
+        "runReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1781503332164.json",
+        "verificationCommands": 0,
+        "failedVerificationCommands": 0,
+        "pendingEvidence": 5,
+        "failureLearningCandidates": 0
+      },
       {
         "taskId": "AIOS-ADOPT-1779764791118",
         "task": "升级 project-scaffold 工作流并接入 AI OS runtime",
@@ -136,7 +161,6 @@
     "benchmarkReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\benchmarks\\latest.json"
   },
   "recommendations": [
-    "Use benchmark deltas in release notes only after comparing the same scenario set across versions.",
-    "Context utilization is high; lower budgets or improve relevance filtering before scaling."
+    "Use benchmark deltas in release notes only after comparing the same scenario set across versions."
   ]
 }

@@ -8,6 +8,7 @@ source "$PROJECT_ROOT/scripts/lib/services.sh"
 
 STATE_FILE="$PROJECT_ROOT/.agent/state/current.json"
 PY_STATE="$PROJECT_ROOT/scripts/lib/workflow_state.py"
+CONFIG_FILE="$PROJECT_ROOT/.agent/project.json"
 LEVEL=""
 if [ -f "$STATE_FILE" ] && [ -f "$PY_STATE" ]; then
   LEVEL="$(python3 "$PY_STATE" get "$STATE_FILE" level "" 2>/dev/null || true)"
@@ -23,13 +24,64 @@ echo "[G7] Security gate"
 echo "========================================"
 echo "[G7] enforce: $ENFORCE"
 
-if ! command -v gosec >/dev/null 2>&1; then
-  echo "[G7] gosec missing"
-  echo "[G7] install: go install github.com/securego/gosec/v2/cmd/gosec@latest"
-  if [ "$ENFORCE" = "1" ]; then
+security_required_tools() {
+  python3 - "$CONFIG_FILE" "$@" <<'PY'
+import json
+import sys
+
+config_path = sys.argv[1]
+selected = sys.argv[2:]
+with open(config_path, encoding="utf-8") as f:
+    cfg = json.load(f)
+
+services = cfg.get("services") or {}
+stacks = cfg.get("stacks") or {}
+names = selected or list(services.keys())
+tools = []
+
+for name in names:
+    service = services.get(name)
+    if not service:
+        continue
+    stack = stacks.get(service.get("stack") or "", {})
+    required = dict(stack.get("required_tools") or {})
+    required.update(service.get("required_tools") or {})
+    tools.extend(required.get("security") or [])
+
+for tool in sorted(dict.fromkeys(tools)):
+    print(tool)
+PY
+}
+
+mapfile -t SERVICES < <(selected_services "$@" || true)
+if [ "${#SERVICES[@]}" -eq 0 ]; then
+  SERVICES=("placeholder-service")
+fi
+
+mapfile -t REQUIRED_TOOLS < <(security_required_tools "${SERVICES[@]}" || true)
+if [ "${#REQUIRED_TOOLS[@]}" -eq 0 ]; then
+  REQUIRED_TOOLS=("gosec")
+fi
+
+TOOL_STATUS=0
+for tool in "${REQUIRED_TOOLS[@]}"; do
+  if command -v "$tool" >/dev/null 2>&1; then
+    continue
+  fi
+  echo "[G7] missing tool: $tool"
+  if [ "$tool" = "gosec" ]; then
+    echo "[G7] install: go install github.com/securego/gosec/v2/cmd/gosec@latest"
+    if [ "$ENFORCE" != "1" ]; then
+      echo "[G7] skipped outside enforced security mode"
+    fi
+  fi
+  TOOL_STATUS=1
+done
+
+if [ "$TOOL_STATUS" -ne 0 ]; then
+  if [ "$ENFORCE" = "1" ] || [ "${#REQUIRED_TOOLS[@]}" -ne 1 ] || [ "${REQUIRED_TOOLS[0]}" != "gosec" ]; then
     exit 1
   fi
-  echo "[G7] skipped outside enforced security mode"
   exit 0
 fi
 
@@ -51,7 +103,7 @@ PY
 }
 
 ALL_PASS=true
-for service in $(selected_services "$@"); do
+for service in "${SERVICES[@]}"; do
   DIR="$(service_dir "$service")"
   LOG_DIR="$(service_log_dir "$service")"
   LOG_FILE="$LOG_DIR/security.json"

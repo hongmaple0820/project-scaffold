@@ -147,7 +147,7 @@
       },
       {
         "matcher": "",
-        "command": "scale context inject --session-id $CLAUDE_SESSION_ID"
+        "command": "scale cortex inject --dir . --minimal"
       }
     ],
     "PreToolUse": [
