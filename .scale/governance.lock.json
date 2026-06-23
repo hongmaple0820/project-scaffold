@@ -1,10 +1,10 @@
 {
   "version": 1,
   "scalePackage": "@hongmaple0820/scale-engine",
-  "scaleVersion": "0.50.5",
+  "scaleVersion": "0.50.11",
   "pack": "project-scaffold",
   "packVersion": 2,
-  "generatedAt": "2026-06-15T06:02:01.175Z",
+  "generatedAt": "2026-06-23T16:17:17.544Z",
   "files": [
     {
       "path": ".agent/project.json",
@@ -48,12 +48,12 @@
     },
     {
       "path": "docs/workflow/templates/github-actions-scale-preflight.yml",
-      "sha256": "74a26c3cc534c7292e5cdb2fc778c4f8aa9600567a6fa91f4804f4fd2fee425b",
+      "sha256": "762448e45fb6c207740899d10b21d0a7880c6a71cb700a5aa29ec84529874bbd",
       "owned": true
     },
     {
       "path": "docs/workflow/templates/pre-push-scale-preflight.sh",
-      "sha256": "68b9f53e925850fd9e96a7016fb079701619a74066fa704da71d7f48ef7f16c4",
+      "sha256": "147dc4997a60f927cafbc09e8938cf50a46219a726baa6d2a59530f6c03d3d38",
       "owned": true
     },
     {

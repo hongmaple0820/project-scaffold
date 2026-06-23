@@ -1,11 +1,20 @@
 name: SCALE Preflight
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches:
+      - dev
       - main
       - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scale-preflight-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   preflight:
@@ -29,4 +38,4 @@ jobs:
           fi
 
       - name: Run SCALE preflight
-        run: npx @hongmaple0820/scale-engine@0.25.0 preflight --service all
+        run: npx --yes @hongmaple0820/scale-engine@0.50.11 preflight --service all --preflight-profile quick
