@@ -26,6 +26,7 @@ make verify PROFILE=scaffold
 make bootstrap-scale
 make workflow-upgrade-check
 make workflow-upgrade-plan
+make workflow-aios-adopt
 make verify-list
 ```
 
@@ -40,7 +41,7 @@ make scale-eval
 make scale-dashboard
 ```
 
-SCALE 安装检查使用 `make bootstrap-scale`；工作流升级使用 `make workflow-upgrade-check` / `make workflow-upgrade-plan`，审阅计划后再执行 `make workflow-upgrade-apply`。
+SCALE 安装检查使用 `make bootstrap-scale`；工作流升级使用 `make workflow-upgrade-check` / `make workflow-upgrade-plan`，审阅计划后再执行 `make workflow-upgrade-apply`；需要刷新 AI OS runtime 证据时运行 `make workflow-aios-adopt`。
 
 ## 任务分级
 

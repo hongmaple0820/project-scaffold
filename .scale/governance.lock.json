@@ -1,10 +1,10 @@
 {
   "version": 1,
   "scalePackage": "@hongmaple0820/scale-engine",
-  "scaleVersion": "0.50.11",
+  "scaleVersion": "0.51.0",
   "pack": "project-scaffold",
   "packVersion": 2,
-  "generatedAt": "2026-06-23T16:17:17.544Z",
+  "generatedAt": "2026-06-24T12:39:17.423Z",
   "files": [
     {
       "path": ".agent/project.json",

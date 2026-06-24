@@ -74,9 +74,10 @@ make workflow-upgrade-check
 make workflow-upgrade-plan
 make workflow-upgrade-apply
 make workflow-upgrade-verify
+make workflow-aios-adopt
 ```
 
-`workflow-upgrade-apply` 只能在审阅计划后使用。遇到 `manual-review` 时，不要覆盖本地项目语义。
+`workflow-upgrade-apply` 只能在审阅计划后使用。遇到 `manual-review` 时，不要覆盖本地项目语义。需要刷新 AI OS runtime 证据时运行 `make workflow-aios-adopt`。
 
 SCALE 能力演示：
 

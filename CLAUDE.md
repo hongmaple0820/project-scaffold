@@ -23,6 +23,7 @@ make scale-smoke TASK='workflow scaffold adaptation' FILES='AGENTS.md,README.md'
 make bootstrap-scale
 make workflow-upgrade-check
 make workflow-upgrade-plan
+make workflow-aios-adopt
 ```
 
 PowerShell:

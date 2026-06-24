@@ -78,6 +78,7 @@ Thumbs.db
 .cline/tmp/
 .windsurf/
 .playwright-mcp/
+.scale/backups/
 .scale/evals/runs/
 .scale/memory/
 .scale/reports/

@@ -1,9 +1,10 @@
-.PHONY: help preflight new-task explore checkpoint gate gate-workflow gate-quality resume status lint-scaffold verify verify-list validate test-scaffold bootstrap-scale bootstrap-scale-install bootstrap-scale-latest workflow-upgrade-check workflow-upgrade-plan workflow-upgrade-apply workflow-upgrade-rollback workflow-upgrade-verify scale-version scale-mode scale-context scale-codegraph scale-eval scale-radar scale-dashboard scale-smoke
+.PHONY: help preflight new-task explore checkpoint gate gate-workflow gate-quality resume status lint-scaffold verify verify-list validate test-scaffold bootstrap-scale bootstrap-scale-install bootstrap-scale-latest workflow-upgrade-check workflow-upgrade-plan workflow-upgrade-apply workflow-upgrade-rollback workflow-upgrade-verify workflow-aios-adopt scale-version scale-mode scale-context scale-codegraph scale-eval scale-radar scale-dashboard scale-smoke
 SCALE ?= scale
 SCALE_VERSION ?= locked
 TASK ?= workflow scaffold adaptation
 FILES ?= AGENTS.md,CLAUDE.md,README.md
 LEVEL ?= M
+BUDGET ?= 8000
 PHASE ?= plan
 PROFILE ?= scaffold
 SERVICES ?=
@@ -13,7 +14,7 @@ help:
 	@echo "make checkpoint PHASE=execute | make gate | make verify PROFILE=scaffold | make verify-list | make validate"
 	@echo "make scale-smoke TASK='...' FILES='AGENTS.md,README.md'"
 	@echo "make bootstrap-scale | make bootstrap-scale-install | make bootstrap-scale-latest"
-	@echo "make workflow-upgrade-check | make workflow-upgrade-plan | make workflow-upgrade-apply | make workflow-upgrade-verify"
+	@echo "make workflow-upgrade-check | make workflow-upgrade-plan | make workflow-upgrade-apply | make workflow-upgrade-verify | make workflow-aios-adopt"
 gate:
 	bash scripts/gates/all.sh --all
 gate-workflow:
@@ -50,15 +51,17 @@ bootstrap-scale-install:
 bootstrap-scale-latest:
 	powershell -NoProfile -ExecutionPolicy Bypass -File scripts/bootstrap-scale.ps1 -Version latest -AutoInstall
 workflow-upgrade-check:
-	$(SCALE) upgrade check --dir .
+	$(SCALE) upgrade check --dir . --lang zh
 workflow-upgrade-plan:
-	$(SCALE) upgrade plan --dir . --html
+	$(SCALE) upgrade plan --dir . --html --lang zh
 workflow-upgrade-apply:
-	$(SCALE) upgrade apply --dir . --confirm
+	$(SCALE) upgrade apply --dir . --confirm --lang zh
 workflow-upgrade-rollback:
-	$(SCALE) upgrade rollback --dir .
+	$(SCALE) upgrade rollback --dir . --lang zh
 workflow-upgrade-verify:
 	$(SCALE) preflight --dir . --service all --preflight-profile quick
+workflow-aios-adopt:
+	$(SCALE) ai-os adopt --dir . --task "$(TASK)" --files "$(FILES)" --level "$(LEVEL)" --budget "$(BUDGET)" --lang zh
 scale-version:
 	$(SCALE) --version
 scale-mode:

@@ -1,6 +1,6 @@
 {
-  "version": "0.50.5",
-  "generatedAt": "2026-06-15T06:02:59.490Z",
+  "version": "0.51.0",
+  "generatedAt": "2026-06-24T12:40:42.449Z",
   "scenarios": [
     {
       "id": "docs-governance",
@@ -9,7 +9,7 @@
       "governanceMode": "expanded",
       "workflowProfile": "strict",
       "metrics": {
-        "estimatedTokens": 6905,
+        "estimatedTokens": 6930,
         "budget": 8000,
         "estimatedTokenSavings": 0,
         "memoryItems": 0,
@@ -34,17 +34,17 @@
       "governanceMode": "critical",
       "workflowProfile": "critical",
       "metrics": {
-        "estimatedTokens": 7111,
+        "estimatedTokens": 7136,
         "budget": 8000,
         "estimatedTokenSavings": 0,
         "memoryItems": 0,
         "selectedProviders": [],
-        "skillSteps": 14,
-        "requiredSkillSteps": 10,
+        "skillSteps": 16,
+        "requiredSkillSteps": 11,
         "evaluatorGates": 3,
-        "toolStrategySteps": 14,
-        "toolStrategyCostUnits": 54,
-        "agentRoles": 6,
+        "toolStrategySteps": 16,
+        "toolStrategyCostUnits": 62,
+        "agentRoles": 8,
         "agentReviewerRoles": 3,
         "agentReviewGates": 4,
         "evolutionProposals": 3,
@@ -59,7 +59,7 @@
       "governanceMode": "expanded",
       "workflowProfile": "strict",
       "metrics": {
-        "estimatedTokens": 7111,
+        "estimatedTokens": 7136,
         "budget": 8000,
         "estimatedTokenSavings": 2971,
         "memoryItems": 0,
@@ -80,16 +80,16 @@
   ],
   "summary": {
     "scenarios": 3,
-    "totalEstimatedTokens": 21127,
+    "totalEstimatedTokens": 21202,
     "totalBudget": 24000,
     "totalEstimatedTokenSavings": 2971,
     "totalMemoryItems": 0,
-    "totalSkillSteps": 55,
-    "requiredSkillSteps": 34,
+    "totalSkillSteps": 57,
+    "requiredSkillSteps": 35,
     "totalEvaluatorGates": 7,
-    "totalToolStrategySteps": 55,
-    "totalToolStrategyCostUnits": 198,
-    "totalAgentRoles": 23,
+    "totalToolStrategySteps": 57,
+    "totalToolStrategyCostUnits": 206,
+    "totalAgentRoles": 25,
     "totalAgentReviewerRoles": 8,
     "totalAgentReviewGates": 11,
     "multiAgentScenarios": 3,
@@ -102,11 +102,11 @@
       "strict",
       "critical"
     ],
-    "averageTokenUtilization": 0.8803
+    "averageTokenUtilization": 0.8834
   },
   "dashboard": {
-    "version": "0.50.5",
-    "generatedAt": "2026-06-15T06:02:59.493Z",
+    "version": "0.51.0",
+    "generatedAt": "2026-06-24T12:40:42.451Z",
     "runsDir": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs",
     "summary": {
       "totalRuns": 2,
@@ -116,7 +116,7 @@
       "guardedRuns": 0,
       "verificationCommands": 0,
       "failedVerificationCommands": 0,
-      "pendingEvidence": 10,
+      "pendingEvidence": 11,
       "failureLearningCandidates": 0
     },
     "health": {
@@ -128,15 +128,15 @@
     },
     "latestRuns": [
       {
-        "taskId": "AIOS-ADOPT-1781503332164",
+        "taskId": "AIOS-ADOPT-1782304831200",
         "task": "接入 AI OS runtime",
         "mode": "dry-run",
         "status": "ready",
-        "generatedAt": "2026-06-15T06:02:20.660Z",
-        "runReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1781503332164.json",
+        "generatedAt": "2026-06-24T12:40:35.145Z",
+        "runReport": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs\\AIOS-ADOPT-1782304831200.json",
         "verificationCommands": 0,
         "failedVerificationCommands": 0,
-        "pendingEvidence": 5,
+        "pendingEvidence": 6,
         "failureLearningCandidates": 0
       },
       {
