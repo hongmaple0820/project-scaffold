@@ -1,6 +1,6 @@
 {
-  "version": "0.51.0",
-  "generatedAt": "2026-06-24T12:40:42.449Z",
+  "version": "0.52.0",
+  "generatedAt": "2026-06-25T14:47:22.733Z",
   "scenarios": [
     {
       "id": "docs-governance",
@@ -105,8 +105,8 @@
     "averageTokenUtilization": 0.8834
   },
   "dashboard": {
-    "version": "0.51.0",
-    "generatedAt": "2026-06-24T12:40:42.451Z",
+    "version": "0.52.0",
+    "generatedAt": "2026-06-25T14:47:22.735Z",
     "runsDir": "F:\\project\\project-scaffold\\.scale\\ai-os\\runs",
     "summary": {
       "totalRuns": 2,
